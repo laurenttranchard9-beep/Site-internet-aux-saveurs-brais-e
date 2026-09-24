@@ -64,9 +64,31 @@ Puis, depuis Windows (PowerShell) :
 scp -i $HOME\Downloads\ma-cle.pem ec2-user@ADRESSE-IP:~/sauvegarde-*.tar.gz $HOME\Documents\
 ```
 
+## Quand vous aurez les noms de domaine
+
+Chaque site peut recevoir son propre nom de domaine, en HTTPS. Les sites restent aussi accessibles par l'adresse IP.
+
+1. **Acheter le domaine** chez un registraire (OVH, Gandi, IONOS… ou Route 53 dans AWS).
+2. **Le faire pointer vers le serveur** : dans la zone DNS du domaine, créez deux enregistrements **A** vers l'adresse IP Elastic :
+   - sous-domaine vide (ou `@`) → `ADRESSE-IP`
+   - `www` → `ADRESSE-IP`
+
+   Supprimez les éventuels enregistrements A ou AAAA déjà présents pour ces deux noms. La prise en compte prend de quelques minutes à quelques heures.
+3. **Ouvrir le HTTPS** : dans le groupe de sécurité EC2, ajoutez **HTTPS (443) depuis « N'importe où »**.
+4. **Relier le domaine au site**, depuis le terminal du serveur (une commande par site) :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/ajouter-domaine.sh | sudo bash -s -- restaurant auxsaveursbraisees.fr votre@email.fr
+```
+
+Remplacez `restaurant` par `fleur-dor` ou `toilettage`, le domaine par le vôtre, et l'e-mail par le vôtre (Let's Encrypt y prévient si un certificat risque d'expirer).
+
+Le script vérifie que le domaine pointe bien vers ce serveur, configure Apache, obtient le certificat HTTPS gratuit (renouvelé automatiquement), redirige le HTTP vers le HTTPS, puis vérifie que le site répond.
+
+Ensuite, **changez les mots de passe** depuis l'administration de chaque site : avant le HTTPS, ils circulaient sans chiffrement.
+
 ## À savoir
 
 - **Pas de HTTPS sans nom de domaine** : les certificats gratuits (Let's Encrypt) demandent un nom de domaine. En HTTP, les mots de passe ne sont pas chiffrés sur le réseau : évitez de vous connecter depuis un Wi-Fi public, et changez-les une fois le HTTPS en place.
-- **Avec des noms de domaine plus tard**, on passera à une configuration par domaine (`VirtualHost`) avec HTTPS.
 - **Mises à jour de sécurité** du serveur : `sudo dnf upgrade -y` de temps en temps.
 - En cas de problème : `sudo tail -n 30 /var/log/httpd/error_log`.
