@@ -57,7 +57,12 @@ function items(array $menu): array
 
 // --- Carte publique ---
 [$s, $menu] = call('menu', null, false);
-check('la carte publique est accessible sans connexion', $s === 200 && count($menu['categories']) === 5);
+check('la carte publique est accessible sans connexion', $s === 200 && count($menu['categories']) === 17);
+check('les plats suivent l\'ordre de la carte', $menu['categories'][0]['products'][0]['name'] === 'Formule midi : Entrée + Plat + Dessert'
+    && $menu['categories'][0]['name'] === 'Formules');
+$cote = array_values(array_filter(items($menu), fn($x) => str_starts_with($x['name'], 'Côte de bœuf')))[0];
+check('prix sur demande pour la côte de bœuf', $cote['priceCents'] === null);
+check('carte complète chargée', count(items($menu)) === 118);
 
 // --- Premier lancement ---
 [$s, $b] = call('me', null, false);
@@ -88,7 +93,12 @@ check('produit ajouté', $s === 200 && $p['tags'] === ['Épicé', 'Nouveau']);
 $id = $p['id'];
 $item = array_values(array_filter(items(call('menu', null, false)[1]), fn($x) => $x['id'] === $id))[0];
 check('stock faible affiché sur la carte', $item['remaining'] === 2);
+check('prix passé en « sur demande »', array_key_exists('priceCents', $r = call('product-update', ['id' => $id, 'priceCents' => null])[1]) && $r['priceCents'] === null);
 check('prix modifié', call('product-update', ['id' => $id, 'priceCents' => 1890])[1]['priceCents'] === 1890);
+check('nouveau produit placé en fin de catégorie', (function () use ($id, $cats) {
+    $inCat = array_values(array_filter(call('products')[1]['products'], fn($x) => $x['categoryId'] === $cats[1]['id']));
+    return end($inCat)['id'] === $id;
+})());
 check('stock ne descend pas sous zéro', call('product-stock', ['id' => $id, 'delta' => -5])[1]['stock'] === 0);
 $item = array_values(array_filter(items(call('menu', null, false)[1]), fn($x) => $x['id'] === $id))[0];
 check('produit épuisé affiché comme tel', $item['soldOut'] === true && $item['priceCents'] === 1890);
@@ -113,7 +123,7 @@ check('catégorie renommée', call('category-rename', ['id' => $c['id'], 'name' 
 $ids = array_reverse(array_column(call('categories')[1]['categories'], 'id'));
 call('category-order', ['ids' => $ids]);
 check('ordre des catégories modifié', array_column(call('categories')[1]['categories'], 'id') === $ids);
-$drinks = array_values(array_filter(call('categories')[1]['categories'], fn($x) => $x['name'] === 'Boissons'))[0];
+$drinks = array_values(array_filter(call('categories')[1]['categories'], fn($x) => $x['name'] === 'Bières pression'))[0];
 [$s, $b] = call('category-delete', ['id' => $drinks['id']]);
 check('catégorie non vide protégée', $s === 409 && $b['productCount'] === $drinks['productCount']);
 call('category-delete', ['id' => $drinks['id'], 'moveTo' => $c['id']]);
@@ -143,6 +153,41 @@ check("l'ancien compte n'existe plus", call('login', ['username' => 'admin', 'pa
 // --- Limitation des tentatives ---
 for ($i = 0; $i < 6; $i++) [$s] = call('login', ['username' => 'admin', 'password' => 'x'], false);
 check('blocage après trop de tentatives', $s === 429);
+
+// --- Mise à jour d'une ancienne base (carte d'exemple, prix obligatoire) ---
+$old = "$tmp/ancienne.sqlite";
+$pdo = new PDO("sqlite:$old");
+$pdo->exec("
+    CREATE TABLE categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE COLLATE NOCASE, position INTEGER NOT NULL DEFAULT 0);
+    CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER NOT NULL REFERENCES categories(id),
+        name TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', price_cents INTEGER NOT NULL CHECK (price_cents >= 0),
+        stock INTEGER, visible INTEGER NOT NULL DEFAULT 1, tags TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT (datetime('now')));
+    CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE COLLATE NOCASE, password_hash TEXT NOT NULL, password_changed_at INTEGER NOT NULL DEFAULT 0);
+    CREATE TABLE login_failures (ip TEXT NOT NULL, failed_at INTEGER NOT NULL);
+    INSERT INTO categories (name, position) VALUES ('Entrées', 0);
+    INSERT INTO products (category_id, name, price_cents, stock) VALUES (1, 'Salade braisée', 650, 20);
+");
+$pdo->prepare('INSERT INTO users (username, password_hash, password_changed_at) VALUES (?, ?, 1)')
+    ->execute(['patron', password_hash('ancien-mdp-123', PASSWORD_DEFAULT)]);
+$pdo = null;
+putenv("ASB_DB_FILE=$old");
+$port2 = 8766;
+$server2 = proc_open([PHP_BINARY, '-S', "127.0.0.1:$port2", '-t', $root], [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']], $pipes2);
+for ($i = 0; $i < 50 && !@fsockopen('127.0.0.1', $port2); $i++) usleep(100000);
+$port = $port2;
+$cookie = null;
+$menu = call('menu', null, false)[1];
+check('ancienne base : nouvelle carte chargée', count($menu['categories']) === 17 && !in_array('Salade braisée', array_column(items($menu), 'name'), true));
+check('ancienne base : compte conservé', call('login', ['username' => 'patron', 'password' => 'ancien-mdp-123'])[0] === 200);
+check('ancienne base : prix sur demande accepté', call('product-update', ['id' => array_values(array_filter(call('products')[1]['products'], fn($x) => $x['name'] === 'Burrata'))[0]['id'], 'priceCents' => null])[0] === 200);
+call('product-create', ['name' => 'Plat test', 'categoryId' => call('categories')[1]['categories'][0]['id'], 'priceCents' => 100]);
+proc_terminate($server2);
+proc_close($server2);
+$server2 = proc_open([PHP_BINARY, '-S', "127.0.0.1:$port2", '-t', $root], [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']], $pipes2);
+for ($i = 0; $i < 50 && !@fsockopen('127.0.0.1', $port2); $i++) usleep(100000);
+usleep(200000);
+check('la carte n\'est chargée qu\'une fois (modifications conservées)', in_array('Plat test', array_column(items(call('menu', null, false)[1]), 'name'), true));
+proc_terminate($server2);
 
 echo $failed ? "\n$failed test(s) en échec\n" : "\nTous les tests passent\n";
 exit($failed ? 1 : 0);

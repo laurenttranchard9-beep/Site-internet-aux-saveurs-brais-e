@@ -35,6 +35,22 @@ function db(): PDO
     return $pdo;
 }
 
+const PRODUCTS_TABLE = "
+    CREATE TABLE IF NOT EXISTS products (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        category_id  INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+        name         TEXT NOT NULL,
+        description  TEXT NOT NULL DEFAULT '',
+        price_cents  INTEGER CHECK (price_cents IS NULL OR price_cents >= 0), -- NULL = prix sur demande
+        stock        INTEGER CHECK (stock IS NULL OR stock >= 0),             -- NULL = stock non suivi (illimité)
+        visible      INTEGER NOT NULL DEFAULT 1,
+        tags         TEXT NOT NULL DEFAULT '',                                -- séparés par des virgules
+        position     INTEGER NOT NULL DEFAULT 0,                              -- ordre d'affichage dans la catégorie
+        updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
+";
+
 function migrate(PDO $pdo): void
 {
     $pdo->exec("
@@ -43,18 +59,6 @@ function migrate(PDO $pdo): void
             name      TEXT NOT NULL UNIQUE COLLATE NOCASE,
             position  INTEGER NOT NULL DEFAULT 0
         );
-        CREATE TABLE IF NOT EXISTS products (
-            id           INTEGER PRIMARY KEY AUTOINCREMENT,
-            category_id  INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-            name         TEXT NOT NULL,
-            description  TEXT NOT NULL DEFAULT '',
-            price_cents  INTEGER NOT NULL CHECK (price_cents >= 0),
-            stock        INTEGER CHECK (stock IS NULL OR stock >= 0), -- NULL = stock non suivi (illimité)
-            visible      INTEGER NOT NULL DEFAULT 1,
-            tags         TEXT NOT NULL DEFAULT '',                    -- séparés par des virgules
-            updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-        CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
         CREATE TABLE IF NOT EXISTS users (
             id             INTEGER PRIMARY KEY AUTOINCREMENT,
             username       TEXT NOT NULL UNIQUE COLLATE NOCASE,
@@ -66,58 +70,44 @@ function migrate(PDO $pdo): void
             failed_at   INTEGER NOT NULL
         );
         CREATE INDEX IF NOT EXISTS idx_login_failures_ip ON login_failures(ip);
-    ");
-    seed_if_empty($pdo);
+        CREATE TABLE IF NOT EXISTS settings (
+            key    TEXT PRIMARY KEY,
+            value  TEXT NOT NULL
+        );
+    " . PRODUCTS_TABLE);
+    load_carte_if_outdated($pdo);
 }
 
-// Carte de départ, modifiable ensuite depuis l'espace de gestion.
-function seed_if_empty(PDO $pdo): void
+// Charge la carte officielle (inc/carte.php) une seule fois par version de la carte.
+// Remplace les catégories et les produits ; le compte administrateur est conservé.
+function load_carte_if_outdated(PDO $pdo): void
 {
-    if ((int) $pdo->query('SELECT COUNT(*) FROM categories')->fetchColumn() > 0) return;
-
-    $seed = [
-        'Entrées' => [
-            ['Salade braisée', 'Poivrons et aubergines grillés, oignons rouges, vinaigrette citronnée.', 650, 20, 'Végétarien'],
-            ['Brochettes de gésiers', 'Gésiers marinés aux épices, grillés au feu de bois.', 750, 15, ''],
-            ['Accras de morue', 'Six beignets croustillants, sauce pimentée maison.', 700, 25, 'Épicé'],
-        ],
-        'Grillades & braises' => [
-            ['Poulet braisé', 'Demi-poulet mariné 24 h, braisé à la flamme, sauce oignon-moutarde.', 1450, 18, 'Maison'],
-            ['Poisson braisé', 'Bar entier grillé, marinade ail-gingembre-persil, tomates confites.', 1850, 8, ''],
-            ['Brochettes de bœuf', 'Trois brochettes de bœuf tendres, marinade au poivre de Penja.', 1600, 12, ''],
-            ["Côtes d'agneau", "Côtes d'agneau grillées, herbes fraîches et jus corsé.", 2100, 6, ''],
-            ['Assiette mixte du braiseur', 'Poulet, bœuf et saucisse grillés, pour les grosses faims.', 2400, 10, 'Maison'],
-        ],
-        'Accompagnements' => [
-            ['Alloco', 'Bananes plantains frites, dorées et fondantes.', 450, null, 'Végétarien'],
-            ['Attiéké', 'Semoule de manioc légère, oignons et tomates.', 450, null, 'Végétarien'],
-            ['Frites maison', 'Pommes de terre fraîches, double cuisson.', 400, null, 'Végétarien'],
-            ['Riz parfumé', 'Riz basmati aux épices douces.', 350, null, 'Végétarien'],
-        ],
-        'Desserts' => [
-            ['Ananas rôti', 'Ananas caramélisé à la braise, glace vanille.', 650, 10, 'Végétarien'],
-            ['Moelleux au chocolat', 'Cœur coulant, crème anglaise maison.', 700, 12, 'Végétarien'],
-        ],
-        'Boissons' => [
-            ['Bissap maison', "Infusion d'hibiscus glacée, menthe fraîche (50 cl).", 400, 30, 'Sans alcool'],
-            ['Jus de gingembre', 'Gingembre frais pressé, citron vert (50 cl).', 400, 30, 'Sans alcool'],
-            ['Eau minérale', 'Plate ou gazeuse (50 cl).', 250, null, 'Sans alcool'],
-            ['Bière pression', 'Blonde locale (25 cl).', 450, null, ''],
-        ],
-    ];
+    require_once __DIR__ . '/carte.php';
+    $current = (int) ($pdo->query("SELECT value FROM settings WHERE key = 'carte_version'")->fetchColumn() ?: 0);
+    if ($current >= CARTE_VERSION) return;
 
     $pdo->beginTransaction();
-    $addCat = $pdo->prepare('INSERT INTO categories (name, position) VALUES (?, ?)');
-    $addProd = $pdo->prepare(
-        'INSERT INTO products (category_id, name, description, price_cents, stock, tags) VALUES (?, ?, ?, ?, ?, ?)'
-    );
-    $position = 0;
-    foreach ($seed as $cat => $items) {
-        $addCat->execute([$cat, $position++]);
-        $catId = (int) $pdo->lastInsertId();
-        foreach ($items as [$name, $desc, $price, $stock, $tags]) {
-            $addProd->execute([$catId, $name, $desc, $price, $stock, $tags]);
+    try {
+        // La table des produits est recréée pour suivre le schéma actuel (prix sur demande, ordre d'affichage).
+        $pdo->exec('DROP TABLE IF EXISTS products');
+        $pdo->exec('DELETE FROM categories');
+        $pdo->exec(PRODUCTS_TABLE);
+        $addCat = $pdo->prepare('INSERT INTO categories (name, position) VALUES (?, ?)');
+        $addProd = $pdo->prepare(
+            'INSERT INTO products (category_id, name, description, price_cents, tags, position) VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        $catPosition = 0;
+        foreach (carte() as $cat => $items) {
+            $addCat->execute([$cat, $catPosition++]);
+            $catId = (int) $pdo->lastInsertId();
+            foreach (array_values($items) as $i => [$name, $desc, $price, $tags]) {
+                $addProd->execute([$catId, $name, $desc, $price, $tags, $i]);
+            }
         }
+        $pdo->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('carte_version', ?)")->execute([CARTE_VERSION]);
+        $pdo->commit();
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        throw $e;
     }
-    $pdo->commit();
 }

@@ -1,7 +1,7 @@
 (() => {
   const LOW_STOCK = 5;
   const $ = (sel, root = document) => root.querySelector(sel);
-  const euroInput = (cents) => (cents / 100).toFixed(2).replace(".", ",");
+  const euroInput = (cents) => (cents === null ? "" : (cents / 100).toFixed(2).replace(".", ","));
   const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
   const state = { categories: [], products: [] };
@@ -41,9 +41,11 @@
   }
   const fail = (err) => err.status !== 401 && toast(err.message, "error");
 
+  // Renvoie des centimes, null si le champ est vide (prix sur demande), ou undefined si la saisie est invalide.
   function parsePrice(value) {
     const v = String(value).trim().replace(/\s|€/g, "").replace(",", ".");
-    if (!/^\d+(\.\d{1,2})?$/.test(v)) return null;
+    if (v === "") return null;
+    if (!/^\d+(\.\d{1,2})?$/.test(v)) return undefined;
     return Math.round(parseFloat(v) * 100);
   }
 
@@ -199,7 +201,7 @@
       .filter((p) => !cat || String(p.categoryId) === cat)
       .filter((p) => !lowOnly || ["low", "out"].includes(stockLevel(p)))
       .filter((p) => !q || norm(`${p.name} ${p.description} ${p.tags.join(" ")}`).includes(q))
-      .sort((a, b) => order.get(a.categoryId) - order.get(b.categoryId) || a.name.localeCompare(b.name, "fr"));
+      .sort((a, b) => order.get(a.categoryId) - order.get(b.categoryId) || a.position - b.position || a.id - b.id);
   }
 
   function renderProducts() {
@@ -236,13 +238,14 @@
       class: "price-input",
       inputmode: "decimal",
       value: euroInput(p.priceCents),
+      placeholder: "Sur demande",
       "aria-label": `Prix de ${p.name}`,
       dataset: { field: "price" },
       onchange: (e) => {
         const cents = parsePrice(e.target.value);
-        if (cents === null) {
+        if (cents === undefined) {
           flash(e.target, "error");
-          return toast("Prix invalide. Exemple : 12,50", "error");
+          return toast("Prix invalide. Exemple : 12,50 (vide = prix sur demande)", "error");
         }
         patchProduct(p, { priceCents: cents }, e.target);
       },
@@ -386,7 +389,7 @@
       errBox.hidden = false;
     };
     const priceCents = parsePrice(pForm.price.value);
-    if (priceCents === null) return showErr("Prix invalide. Exemple : 12,50");
+    if (priceCents === undefined) return showErr("Prix invalide. Exemple : 12,50 (vide = prix sur demande)");
     const stockVal = Number(pForm.stock.value);
     if (pForm.trackStock.checked && (!Number.isInteger(stockVal) || stockVal < 0)) {
       return showErr("La quantité doit être un nombre entier positif.");

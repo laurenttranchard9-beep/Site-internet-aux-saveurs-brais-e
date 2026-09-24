@@ -1,0 +1,167 @@
+<?php
+// Carte officielle du restaurant (document « Menu Aux Saveurs Braisées - 2023 »).
+// Chargée automatiquement dans la base à la première ouverture du site, ensuite modifiable depuis l'espace de gestion.
+// Format : 'Catégorie' => [[nom, description, prix en centimes (null = sur demande), étiquettes], ...]
+
+const CARTE_VERSION = 2;
+
+const ACCOMPAGNEMENT_POISSONS = 'Accompagnement au choix : frites, pâtes, risotto ou légumes à la provençale.';
+
+function carte(): array
+{
+    $poisson = ACCOMPAGNEMENT_POISSONS;
+    return [
+        'Formules' => [
+            ['Formule midi : Entrée + Plat + Dessert', 'Du mardi au vendredi midi, sauf jours fériés.', 1690, ''],
+            ['Formule midi : Entrée + Plat ou Plat + Dessert', 'Du mardi au vendredi midi, sauf jours fériés.', 1490, ''],
+            ['Menu enfant : Steak / Frites', "Jusqu'à 10 ans. Sirop au choix, steak frites et 1 boule de glace.", 990, ''],
+            ['Menu enfant : Pâtes au saumon', "Jusqu'à 10 ans. Sirop au choix, pâtes au saumon et 1 boule de glace.", 990, ''],
+        ],
+        'À partager' => [
+            ['Bruschetta', 'Magret, foie gras, oignons confits.', 900, ''],
+            ['Poulet pané', '', 700, ''],
+            ["L'os à moelle", 'Supplément foie gras : 4 €.', 600, ''],
+            ['Trilogie de croquetas', 'Morue, jambon, cèpes.', 900, ''],
+            ['Ardoise de charcuterie', '', 1700, ''],
+            ['Œuf poché', '', 700, ''],
+            ['Foie gras', '', 1300, ''],
+            ['Patatas bravas', '', 500, ''],
+            ['Pan con tomate', 'Supplément Serrano : 4 €.', 500, ''],
+            ['Burrata', '', 700, ''],
+        ],
+        'Mer' => [
+            ['Couteaux', '', 700, ''],
+            ['Encornets', '', 800, ''],
+            ['Gambas', '', 1100, ''],
+        ],
+        'Salades' => [
+            ['Salade Méditerranée', 'Couteaux, Saint-Jacques, encornets, gambas.', 1600, ''],
+            ['Salade Gersoise', 'Foie gras, magret grillé, gésier confit, noix.', 1600, ''],
+            ['Salade Caesar', 'Poulet mariné, croûtons, avocat, œuf poché, parmesan.', 1450, ''],
+        ],
+        'Poissons braisés & fruits de mer' => [
+            ['Saint-Jacques à la crème', $poisson, 2550, ''],
+            ['Daurade à la braise', $poisson, 2300, ''],
+            ['Tartare de saumon', $poisson, 1700, ''],
+            ['Tagliatelle au saumon', $poisson, 1990, ''],
+            ['Seiche grillée à la plancha', $poisson, 1900, ''],
+            ['Pavé de saumon à la braise', $poisson, 2100, ''],
+            ['Brochette duo Saint-Jacques et gambas', $poisson, 2450, ''],
+        ],
+        'Viandes' => [
+            ["Souris d'agneau (200 g)", '', 2250, ''],
+            ['Entrecôte (280 g)', '', 2550, ''],
+            ['Demi-magret de canard', '', 1700, ''],
+            ['Tartare de bœuf', '', 1700, ''],
+            ["Feuille d'entrecôte (180 g)", '', 1800, ''],
+            ['Pièce du boucher', 'Selon arrivage.', 1900, ''],
+            ['Carpaccio de bœuf', '', 1700, ''],
+            ['Carpaccio de bœuf royal', 'Avec burrata.', 1900, ''],
+            ['Brochette de bœuf mariné', '', 1900, ''],
+            ['Brochette de poulet mariné', '', 1700, ''],
+            ['Côte de bœuf maturée (1 kg)', 'Pour 2 personnes.', null, ''],
+        ],
+        'Burgers braisés' => [
+            ['Burger de bœuf / Frites', '', 1500, ''],
+            ['Burger de magret / Frites', '', 1700, ''],
+            ['Burger V.G / Frites', '', 1400, ''],
+        ],
+        'Desserts' => [
+            ['Champagne gourmand', '', 1300, ''],
+            ['Café gourmand', '', 900, ''],
+            ['Thé gourmand', '', 900, ''],
+            ['Panna cotta', '', 600, ''],
+            ['Tiramisu', '', 700, ''],
+            ["Carpaccio d'ananas", '', 700, ''],
+            ['Profiteroles', '', 900, ''],
+            ['Crème brûlée', '', 600, ''],
+            ['Banoffee', '', 700, ''],
+            ['Dessert du moment', '', 850, ''],
+        ],
+        'Glaces & sorbets' => [
+            ['Café liégeois', '', 700, ''],
+            ['Chocolat liégeois', '', 700, ''],
+            ['Dame blanche', '', 700, ''],
+            ['Colonel', '', 800, ''],
+            ['Glace ou sorbet : 1 boule', 'Parfum au choix.', 290, ''],
+            ['Glace ou sorbet : 2 boules', 'Parfums au choix.', 390, ''],
+            ['Glace ou sorbet : 3 boules', 'Parfums au choix.', 590, ''],
+        ],
+        'Vins rouges' => [
+            ['Château de la Salade Saint-Henri, Cuvée 1803', 'AOP Pic Saint-Loup.', 3200, ''],
+            ['Saint-Nicolas-de-Bourgueil (75 cl)', '', 2400, ''],
+            ['Saint-Nicolas-de-Bourgueil (37,5 cl)', '', 1300, ''],
+            ['Château des Hospices Artemis', 'AOP Côtes-du-Roussillon.', 2200, ''],
+            ['Domaine Le Chapoutier Lubéron', 'AOP Côtes-du-Rhône.', 1900, ''],
+            ['Domaine La Croix-des-Marchands (75 cl)', 'AOP Gaillac.', 1800, ''],
+            ['Domaine La Croix-des-Marchands (37,5 cl)', 'AOP Gaillac.', 1300, ''],
+            ['Pichet ¼ de rouge', '', 600, ''],
+            ['Pichet ½ de rouge', '', 800, ''],
+            ['Vin rouge au verre', '', 450, ''],
+        ],
+        'Vins rosés' => [
+            ['Château Ferry Lacombe (75 cl)', 'Côtes-de-Provence.', 2300, ''],
+            ['Château Ferry Lacombe (50 cl)', 'Côtes-de-Provence.', 1400, ''],
+            ['Domaine San Pieru', 'Corse.', 1900, ''],
+            ['Vin rosé au verre', '', 450, ''],
+        ],
+        'Vins blancs' => [
+            ['Domaine La Croix-des-Marchands, blanc doux', 'AOP Gaillac.', 1800, ''],
+            ['Domaine La Croix-des-Marchands', 'AOP Gaillac.', 1900, ''],
+            ['Pichet ¼ de blanc', '', 600, ''],
+            ['Pichet ½ de blanc', '', 800, ''],
+            ['Vin blanc au verre', '', 450, ''],
+        ],
+        'Champagne' => [
+            ['Nicolas Feuillatte (coupe)', '', 600, ''],
+            ['Nicolas Feuillatte (75 cl)', '', 4500, ''],
+        ],
+        'Apéritifs' => [
+            ['Cocktail du moment', '', 750, ''],
+            ['Cocktail sans alcool', '', 500, ''],
+            ['Martini blanc / rouge (4 cl)', '', 500, ''],
+            ["Whisky Jack Daniel's (4 cl)", '', 600, ''],
+            ["Whisky Coca (Jack Daniel's)", '', 750, ''],
+            ["Whisky Coca (Ballantine's, Clan Campbell)", '', 500, ''],
+            ['Rhum Coca', '', 700, ''],
+            ['Vodka (4 cl)', '', 500, ''],
+            ['Vodka Red Bull', '', 800, ''],
+            ['Kir royal (10 cl)', '', 800, ''],
+            ['Kir (pêche, cassis)', '', 400, ''],
+            ['Muscat', '', 400, ''],
+            ['Porto rouge', '', 400, ''],
+            ['Ricard / Pastis', '', 400, ''],
+            ['Liqueur de litchi', '', 500, ''],
+            ['Gin (Bombay)', '', 600, ''],
+        ],
+        'Digestifs' => [
+            ['Armagnac', '', 700, ''],
+            ['Cognac', '', 700, ''],
+            ['Diplomatico', '', 650, ''],
+            ['Jägermeister', '', 600, ''],
+            ['Get 27', '', 500, ''],
+            ['Rhum blanc', '', 600, ''],
+            ['Manzana', '', 500, ''],
+        ],
+        'Bières pression' => [
+            ['Leffe Blonde (25 cl)', '', 400, ''],
+            ['Leffe Blonde (33 cl)', '', 500, ''],
+            ['Leffe Blonde (50 cl)', '', 700, ''],
+            ['Bud Blonde (25 cl)', '', 400, ''],
+            ['Bud Blonde (33 cl)', '', 500, ''],
+            ['Bud Blonde (50 cl)', '', 700, ''],
+        ],
+        'Boissons sans alcool' => [
+            ['Coca Cola', '', 350, ''],
+            ['Coca Cola Zéro', '', 350, ''],
+            ['Orangina', '', 350, ''],
+            ['Lipton Ice Tea', '', 350, ''],
+            ['Jus de fruits', 'Orange, pomme ou ananas.', 300, ''],
+            ['Sirop', 'Grenadine, menthe, pêche ou citron.', 170, ''],
+            ['Eau Évian / Badoit (50 cl)', '', 350, ''],
+            ['Eau Évian / Badoit (1 L)', '', 590, ''],
+            ['Café', '', 200, ''],
+            ['Thé', '', 250, ''],
+        ],
+    ];
+}

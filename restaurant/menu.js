@@ -59,7 +59,7 @@
   function renderItem(p) {
     const node = els.tpl.content.firstElementChild.cloneNode(true);
     node.querySelector(".item-name").textContent = p.name;
-    node.querySelector(".item-price").textContent = euro.format(p.priceCents / 100);
+    node.querySelector(".item-price").textContent = p.priceCents === null ? "Sur demande" : euro.format(p.priceCents / 100);
     const desc = node.querySelector(".item-desc");
     if (p.description) desc.textContent = p.description;
     else desc.remove();

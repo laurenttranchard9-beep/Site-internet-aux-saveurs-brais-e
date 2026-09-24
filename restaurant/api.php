@@ -45,8 +45,10 @@ function int_id($value): int
     return $value;
 }
 
-function price_cents($value): int
+// null = prix sur demande
+function price_cents($value): ?int
 {
+    if ($value === null) return null;
     if (!is_int($value) || $value < 0 || $value > 1000000) fail(400, 'Le prix doit être un montant positif.');
     return $value;
 }
@@ -72,9 +74,10 @@ function to_product(array $p): array
         'categoryId' => (int) $p['category_id'],
         'name' => $p['name'],
         'description' => $p['description'],
-        'priceCents' => (int) $p['price_cents'],
+        'priceCents' => $p['price_cents'] === null ? null : (int) $p['price_cents'],
         'stock' => $p['stock'] === null ? null : (int) $p['stock'],
         'visible' => (bool) $p['visible'],
+        'position' => (int) $p['position'],
         'tags' => split_tags($p['tags']),
         'updatedAt' => $p['updated_at'],
     ];
@@ -96,6 +99,13 @@ function get_product(int $id): array
     $p = $stmt->fetch();
     if (!$p) fail(404, 'Produit introuvable.');
     return $p;
+}
+
+function next_position(int $categoryId): int
+{
+    $stmt = db()->prepare('SELECT COALESCE(MAX(position), -1) + 1 FROM products WHERE category_id = ?');
+    $stmt->execute([$categoryId]);
+    return (int) $stmt->fetchColumn();
 }
 
 function all_categories(): array
@@ -154,13 +164,13 @@ function handle(string $method, string $action, array $body): array
     // Publiques
     if ($method === 'GET' && $action === 'menu') {
         $byCategory = [];
-        foreach ($pdo->query('SELECT * FROM products WHERE visible = 1 ORDER BY name COLLATE NOCASE') as $p) {
+        foreach ($pdo->query('SELECT * FROM products WHERE visible = 1 ORDER BY position, id') as $p) {
             $stock = $p['stock'] === null ? null : (int) $p['stock'];
             $byCategory[(int) $p['category_id']][] = [
                 'id' => (int) $p['id'],
                 'name' => $p['name'],
                 'description' => $p['description'],
-                'priceCents' => (int) $p['price_cents'],
+                'priceCents' => $p['price_cents'] === null ? null : (int) $p['price_cents'],
                 'tags' => split_tags($p['tags']),
                 'soldOut' => $stock === 0,
                 'remaining' => $stock !== null && $stock > 0 && $stock <= LOW_STOCK ? $stock : null,
@@ -240,8 +250,8 @@ function handle(string $method, string $action, array $body): array
                         $target = int_id($body['moveTo']);
                         if ($target === $id) fail(400, 'Choisissez une autre catégorie.');
                         get_category($target);
-                        $pdo->prepare("UPDATE products SET category_id = ?, updated_at = datetime('now') WHERE category_id = ?")
-                            ->execute([$target, $id]);
+                        $pdo->prepare("UPDATE products SET category_id = ?, position = position + ?, updated_at = datetime('now') WHERE category_id = ?")
+                            ->execute([$target, next_position($target), $id]);
                     } elseif (!empty($body['deleteProducts'])) {
                         $pdo->prepare('DELETE FROM products WHERE category_id = ?')->execute([$id]);
                     } else {
@@ -253,15 +263,16 @@ function handle(string $method, string $action, array $body): array
             return ['ok' => true];
 
         case 'GET products':
-            $rows = $pdo->query('SELECT * FROM products ORDER BY category_id, name COLLATE NOCASE')->fetchAll();
+            $rows = $pdo->query('SELECT * FROM products ORDER BY category_id, position, id')->fetchAll();
             return ['products' => array_map('to_product', $rows)];
 
         case 'POST product-create':
             $f = product_fields($body);
             $pdo->prepare(
-                'INSERT INTO products (category_id, name, description, price_cents, stock, visible, tags)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)'
-            )->execute([$f['categoryId'], $f['name'], $f['description'], $f['priceCents'], $f['stock'], $f['visible'], $f['tags']]);
+                'INSERT INTO products (category_id, name, description, price_cents, stock, visible, tags, position)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            )->execute([$f['categoryId'], $f['name'], $f['description'], $f['priceCents'], $f['stock'], $f['visible'], $f['tags'],
+                next_position($f['categoryId'])]);
             return to_product(get_product((int) $pdo->lastInsertId()));
 
         // Modification partielle : seuls les champs envoyés changent.
@@ -269,11 +280,14 @@ function handle(string $method, string $action, array $body): array
             $id = int_id($body['id'] ?? null);
             $changes = $body;
             unset($changes['id']);
-            $f = product_fields($changes, to_product(get_product($id)));
+            $current = to_product(get_product($id));
+            $f = product_fields($changes, $current);
+            // Un produit changé de catégorie se place à la fin de sa nouvelle catégorie.
+            $position = $f['categoryId'] === $current['categoryId'] ? $current['position'] : next_position($f['categoryId']);
             $pdo->prepare(
                 "UPDATE products SET category_id = ?, name = ?, description = ?, price_cents = ?, stock = ?,
-                   visible = ?, tags = ?, updated_at = datetime('now') WHERE id = ?"
-            )->execute([$f['categoryId'], $f['name'], $f['description'], $f['priceCents'], $f['stock'], $f['visible'], $f['tags'], $id]);
+                   visible = ?, tags = ?, position = ?, updated_at = datetime('now') WHERE id = ?"
+            )->execute([$f['categoryId'], $f['name'], $f['description'], $f['priceCents'], $f['stock'], $f['visible'], $f['tags'], $position, $id]);
             return to_product(get_product($id));
 
         // Ajustement relatif (+1 / -1…) : atomique, pour ne pas écraser une modification faite en même temps.
