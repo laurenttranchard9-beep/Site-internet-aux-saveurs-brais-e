@@ -129,8 +129,13 @@
           if (!e.isIntersecting) return;
           els.cats.querySelectorAll("a").forEach((a) => {
             const on = a.getAttribute("href") === `#${e.target.id}`;
+            if (on && !a.classList.contains("active")) {
+              // Fait défiler uniquement la barre des catégories (horizontalement) : scrollIntoView
+              // ferait aussi bouger la page et la ferait remonter pendant le défilement.
+              const left = a.offsetLeft - (els.cats.clientWidth - a.offsetWidth) / 2;
+              els.cats.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+            }
             a.classList.toggle("active", on);
-            if (on) a.scrollIntoView({ block: "nearest", inline: "nearest" });
           });
         });
       },
