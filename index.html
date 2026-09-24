@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wag &amp; Bubbles · Pet Grooming</title>
+  <meta name="description" content="Wag & Bubbles is a friendly neighbourhood pet grooming salon. Baths, haircuts, nail trims and spa days for dogs and cats. Book your pet's pamper session online." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%23ff6b6b'%3E%3Cellipse cx='32' cy='42' rx='14' ry='12'/%3E%3Cellipse cx='14' cy='26' rx='6' ry='8'/%3E%3Cellipse cx='26' cy='16' rx='6' ry='8'/%3E%3Cellipse cx='38' cy='16' rx='6' ry='8'/%3E%3Cellipse cx='50' cy='26' rx='6' ry='8'/%3E%3C/g%3E%3C/svg%3E" />
+</head>
+<body>
+  <!-- Reusable paw icon -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="paw" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="42" rx="14" ry="12" />
+        <ellipse cx="14" cy="26" rx="6" ry="8" />
+        <ellipse cx="26" cy="15" rx="6" ry="8" />
+        <ellipse cx="38" cy="15" rx="6" ry="8" />
+        <ellipse cx="50" cy="26" rx="6" ry="8" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main">
+      <a class="logo" href="#top" aria-label="Wag &amp; Bubbles home">
+        <svg class="logo-paw" aria-hidden="true"><use href="#paw" /></svg>
+        <span>Wag <em>&amp;</em> Bubbles</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Menu</span>
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a class="btn btn-small" href="#book">Book now</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="pill">🛁 Now booking weekends!</p>
+          <h1>Fresh fur, <span class="squiggle">happy tails.</span></h1>
+          <p class="lead">Bubbly baths, snazzy snips and plenty of treats. We pamper your best friend like they're our own — gently, patiently, and with zero drama.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-large" href="#book">
+              Book a pamper session
+              <svg class="btn-paw" aria-hidden="true"><use href="#paw" /></svg>
+            </a>
+            <a class="btn btn-ghost" href="#services">See prices</a>
+          </div>
+          <ul class="trust">
+            <li><strong>4.9★</strong> from 600+ reviews</li>
+            <li><strong>Fear-free</strong> certified groomers</li>
+          </ul>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <div class="blob"></div>
+          <!-- Illustrated pup in a bathtub -->
+          <svg class="pup" viewBox="0 0 400 380">
+            <!-- bubbles behind -->
+            <circle cx="70" cy="110" r="22" class="bub" />
+            <circle cx="330" cy="90" r="16" class="bub" />
+            <circle cx="345" cy="150" r="9" class="bub" />
+            <!-- ears -->
+            <ellipse cx="135" cy="150" rx="34" ry="62" transform="rotate(20 135 150)" fill="#b86b3c" />
+            <ellipse cx="265" cy="150" rx="34" ry="62" transform="rotate(-20 265 150)" fill="#b86b3c" />
+            <!-- head -->
+            <ellipse cx="200" cy="170" rx="90" ry="84" fill="#e7a064" />
+            <ellipse cx="200" cy="208" rx="52" ry="40" fill="#fbe3c8" />
+            <!-- eyes -->
+            <ellipse cx="165" cy="160" rx="11" ry="13" fill="#2b2233" />
+            <ellipse cx="235" cy="160" rx="11" ry="13" fill="#2b2233" />
+            <circle cx="169" cy="155" r="4" fill="#fff" />
+            <circle cx="239" cy="155" r="4" fill="#fff" />
+            <!-- cheeks -->
+            <ellipse cx="143" cy="192" rx="13" ry="8" fill="#ff8f8f" opacity=".6" />
+            <ellipse cx="257" cy="192" rx="13" ry="8" fill="#ff8f8f" opacity=".6" />
+            <!-- nose + mouth -->
+            <ellipse cx="200" cy="193" rx="16" ry="11" fill="#2b2233" />
+            <path d="M200 204 v10 M200 214 q-14 12 -26 2 M200 214 q14 12 26 2" stroke="#2b2233" stroke-width="4" fill="none" stroke-linecap="round" />
+            <path d="M190 222 q10 22 20 0 z" fill="#ff6b6b" />
+            <!-- foam hat -->
+            <g fill="#fff">
+              <circle cx="160" cy="95" r="26" />
+              <circle cx="200" cy="80" r="32" />
+              <circle cx="242" cy="95" r="26" />
+              <circle cx="222" cy="58" r="18" />
+            </g>
+            <!-- tub -->
+            <rect x="40" y="250" width="320" height="30" rx="15" fill="#fff" />
+            <path d="M52 270 h296 q-8 90 -90 90 h-116 q-82 0 -90 -90 z" fill="#4ecdc4" />
+            <rect x="92" y="352" width="18" height="24" rx="6" fill="#2b9e96" />
+            <rect x="290" y="352" width="18" height="24" rx="6" fill="#2b9e96" />
+            <!-- foam on tub -->
+            <g fill="#fff">
+              <circle cx="80" cy="252" r="20" /><circle cx="120" cy="244" r="24" />
+              <circle cx="280" cy="244" r="24" /><circle cx="322" cy="252" r="20" />
+            </g>
+            <!-- paws on edge -->
+            <ellipse cx="160" cy="256" rx="22" ry="14" fill="#e7a064" />
+            <ellipse cx="240" cy="256" rx="22" ry="14" fill="#e7a064" />
+          </svg>
+          <span class="float-bubble b1"></span>
+          <span class="float-bubble b2"></span>
+          <span class="float-bubble b3"></span>
+          <span class="float-bubble b4"></span>
+        </div>
+      </div>
+      <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 40 C 240 90 480 0 720 40 S 1200 90 1440 30 V80 H0 Z" />
+      </svg>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section services" id="services">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow">Our menu</p>
+          <h2>Pick your pamper package</h2>
+          <p>Every visit includes a warm welcome, a health check and a treat (or three).</p>
+        </header>
+
+        <div class="cards">
+          <article class="card" style="--accent: var(--teal)">
+            <div class="card-icon" aria-hidden="true">🛁</div>
+            <h3>Bath &amp; Brush</h3>
+            <p>Gentle shampoo, blow-dry, brush-out and ear clean. Perfect between cuts.</p>
+            <p class="price"><span>from</span> $45</p>
+            <a class="card-link" href="#book" data-service="Bath &amp; Brush">Book this →</a>
+          </article>
+
+          <article class="card featured" style="--accent: var(--coral)">
+            <span class="ribbon">Most loved</span>
+            <div class="card-icon" aria-hidden="true">✂️</div>
+            <h3>Full Groom</h3>
+            <p>Everything in Bath &amp; Brush plus a breed-style haircut, nail trim and a cute bandana.</p>
+            <p class="price"><span>from</span> $75</p>
+            <a class="card-link" href="#book" data-service="Full Groom">Book this →</a>
+          </article>
+
+          <article class="card" style="--accent: var(--sun)">
+            <div class="card-icon" aria-hidden="true">💅</div>
+            <h3>Pawdicure</h3>
+            <p>Nail trim, file and paw-pad balm. Quick, calm and walk-in friendly.</p>
+            <p class="price"><span>from</span> $20</p>
+            <a class="card-link" href="#book" data-service="Pawdicure">Book this →</a>
+          </article>
+
+          <article class="card" style="--accent: var(--lilac)">
+            <div class="card-icon" aria-hidden="true">🐱</div>
+            <h3>Kitty Spa</h3>
+            <p>Quiet, dog-free room with a cat-savvy groomer. Lion cuts on request.</p>
+            <p class="price"><span>from</span> $65</p>
+            <a class="card-link" href="#book" data-service="Kitty Spa">Book this →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how" id="how">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow">Easy peasy</p>
+          <h2>Three steps to a squeaky-clean pup</h2>
+        </header>
+        <ol class="steps">
+          <li>
+            <span class="step-num">1</span>
+            <h3>Book online</h3>
+            <p>Choose a service and a time that suits you. Takes under a minute.</p>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <h3>Drop off &amp; relax</h3>
+            <p>We text you photo updates while your pet enjoys the spa life.</p>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <h3>Pick up a fluffball</h3>
+            <p>Collect a fresh-smelling, tail-wagging bestie. Cuddles guaranteed.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="section reviews" id="reviews">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow">Wagging reviews</p>
+          <h2>Tails don't lie</h2>
+        </header>
+        <div class="quotes">
+          <figure class="quote tilt-l">
+            <blockquote>“Biscuit used to hide under the bed on grooming day. Now he drags me to the door!”</blockquote>
+            <figcaption><span class="avatar" style="--c: var(--sun)">B</span> Sam &amp; Biscuit <small>Cockapoo</small></figcaption>
+          </figure>
+          <figure class="quote tilt-r">
+            <blockquote>“The photo updates made my whole day. Luna came back looking like a cloud.”</blockquote>
+            <figcaption><span class="avatar" style="--c: var(--teal)">L</span> Priya &amp; Luna <small>Samoyed</small></figcaption>
+          </figure>
+          <figure class="quote tilt-l">
+            <blockquote>“Finally a groomer that gets cats. Mochi purred through her whole nail trim.”</blockquote>
+            <figcaption><span class="avatar" style="--c: var(--lilac)">M</span> Jordan &amp; Mochi <small>Ragdoll</small></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section class="section book" id="book">
+      <div class="container book-grid">
+        <div class="book-copy">
+          <p class="eyebrow">Let's get fluffy</p>
+          <h2>Book your pet's pamper session</h2>
+          <p>Tell us a little about your furry friend and pick a time. We'll confirm by text within the hour.</p>
+          <ul class="perks">
+            <li><span>First visit? Get <strong>15% off</strong> any package</span></li>
+            <li><span>Free rescheduling up to 24h before</span></li>
+            <li><span>Open Tue–Sun, 8am–6pm</span></li>
+          </ul>
+        </div>
+
+        <form class="book-form" id="book-form" novalidate>
+          <div class="form-row">
+            <label>
+              Your name
+              <input type="text" name="name" autocomplete="name" required placeholder="Alex Smith" />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="phone" autocomplete="tel" required placeholder="(555) 123-4567" />
+            </label>
+          </div>
+          <div class="form-row">
+            <label>
+              Pet's name
+              <input type="text" name="pet" required placeholder="Biscuit" />
+            </label>
+            <fieldset class="pet-type">
+              <legend>Your pet is a…</legend>
+              <label class="chip"><input type="radio" name="type" value="dog" checked /> <span>🐶 Dog</span></label>
+              <label class="chip"><input type="radio" name="type" value="cat" /> <span>🐱 Cat</span></label>
+            </fieldset>
+          </div>
+          <label>
+            Service
+            <select name="service" id="service" required>
+              <option value="">Choose a package…</option>
+              <option>Bath &amp; Brush</option>
+              <option>Full Groom</option>
+              <option>Pawdicure</option>
+              <option>Kitty Spa</option>
+            </select>
+          </label>
+          <div class="form-row">
+            <label>
+              Preferred date
+              <input type="date" name="date" id="date" required />
+            </label>
+            <label>
+              Time
+              <select name="time" required>
+                <option value="">Pick a slot…</option>
+                <option>Morning (8–11am)</option>
+                <option>Midday (11am–2pm)</option>
+                <option>Afternoon (2–6pm)</option>
+              </select>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-large btn-block">
+            Request my booking
+            <svg class="btn-paw" aria-hidden="true"><use href="#paw" /></svg>
+          </button>
+          <p class="form-error" role="alert" hidden>Oops! Please fill in the highlighted fields.</p>
+        </form>
+
+        <div class="book-success" id="book-success" hidden tabindex="-1">
+          <div class="success-paw" aria-hidden="true"><svg><use href="#paw" /></svg></div>
+          <h3>Woohoo! Request received 🎉</h3>
+          <p id="success-msg">We'll text you shortly to confirm.</p>
+          <button type="button" class="btn btn-ghost" id="book-again">Book another pet</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section faq" id="faq">
+      <div class="container narrow">
+        <header class="section-head">
+          <p class="eyebrow">Good questions</p>
+          <h2>Frequently wagged questions</h2>
+        </header>
+        <details>
+          <summary>How long does a groom take?</summary>
+          <p>Most sessions take 1.5–3 hours depending on size and coat. We'll text you when your pet is ready.</p>
+        </details>
+        <details>
+          <summary>My pet is nervous. Can you help?</summary>
+          <p>Absolutely. Our groomers are Fear-Free certified. We go slowly, take breaks and use lots of praise and treats.</p>
+        </details>
+        <details>
+          <summary>Do you need vaccination records?</summary>
+          <p>Yes — please bring proof of up-to-date rabies vaccination on your first visit (and bordetella for dogs).</p>
+        </details>
+        <details>
+          <summary>What products do you use?</summary>
+          <p>Gentle, pH-balanced, tear-free shampoos. Hypoallergenic options are free on request.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="cta-band">
+      <div class="container cta-inner">
+        <h2>Ready for the zoomies after a spa day?</h2>
+        <a class="btn btn-light btn-large" href="#book">Book now — it's quick!</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="logo" href="#top">
+          <svg class="logo-paw" aria-hidden="true"><use href="#paw" /></svg>
+          <span>Wag <em>&amp;</em> Bubbles</span>
+        </a>
+        <p>Happy pets, fresh fur, since 2016.</p>
+      </div>
+      <address>
+        123 Bark Street, Petsville<br />
+        <a href="tel:+15551234567">(555) 123-4567</a> · <a href="mailto:hello@wagandbubbles.example">hello@wagandbubbles.example</a>
+      </address>
+      <p class="hours">Tue–Sun · 8am–6pm<br />Closed Mondays (nap day)</p>
+    </div>
+    <p class="copyright container">© <span id="year">2026</span> Wag &amp; Bubbles. Made with love and dog hair.</p>
+  </footer>
+
+  <!-- Sticky mobile CTA -->
+  <a class="sticky-cta btn btn-primary" href="#book">Book a groom 🐾</a>
+
+  <script src="script.js"></script>
+</body>
+</html>
