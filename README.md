@@ -16,3 +16,7 @@ Ouvrez `index.html` dans un navigateur pour voir la page.
 ## Restaurant « Aux Saveurs Braisées »
 
 Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restaurant et son espace de gestion (prix, stocks, produits, catégories). Il fonctionne en PHP (XAMPP en local, ou n'importe quel hébergement web). Voir [`restaurant/README.md`](restaurant/README.md).
+
+## Mise en ligne
+
+Le dossier [`deploiement/`](deploiement/) contient un script qui installe les deux sites sur un serveur Amazon Linux 2023, accessibles par son adresse IP. Voir [`deploiement/README.md`](deploiement/README.md).
