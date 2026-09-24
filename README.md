@@ -10,3 +10,9 @@ Ouvrez `index.html` dans un navigateur pour voir la page.
 
 > Pour l'instant, le formulaire de réservation vérifie les champs et affiche une confirmation dans le navigateur uniquement.
 > Branchez-le à votre système de réservation ou à un service de formulaires à l'endroit marqué `TODO` dans `script.js`.
+
+---
+
+## Restaurant « Aux Saveurs Braisées »
+
+Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restaurant et son espace de gestion (prix, stocks, produits, catégories). Il tourne sur un serveur Node.js. Voir [`restaurant/README.md`](restaurant/README.md).

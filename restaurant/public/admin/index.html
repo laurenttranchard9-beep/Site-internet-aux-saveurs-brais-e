@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Gestion · Aux Saveurs Braisées</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <!-- ===== Connexion ===== -->
+  <section class="login" id="login-view" hidden>
+    <form class="login-card" id="login-form">
+      <img src="/favicon.svg" alt="" width="48" height="48" />
+      <h1>Espace gestion</h1>
+      <p class="muted">Aux Saveurs Braisées</p>
+      <label>Identifiant
+        <input name="username" autocomplete="username" required autofocus />
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" autocomplete="current-password" required />
+      </label>
+      <p class="form-error" id="login-error" role="alert" hidden></p>
+      <button class="btn primary block" type="submit">Se connecter</button>
+      <a class="back" href="/">← Retour à la carte</a>
+    </form>
+  </section>
+
+  <!-- ===== Tableau de bord ===== -->
+  <div id="app-view" hidden>
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <div class="brand"><img src="/favicon.svg" alt="" width="28" height="28" /> <span>Gestion de la carte</span></div>
+        <nav class="top-actions">
+          <a class="btn ghost small" href="/" target="_blank" rel="noopener">Voir la carte ↗</a>
+          <button class="btn ghost small" id="open-password" type="button">Mot de passe</button>
+          <button class="btn ghost small" id="logout" type="button">Déconnexion</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="stats" aria-label="Résumé">
+        <div class="stat"><span id="stat-total">0</span> produits</div>
+        <div class="stat warn"><span id="stat-low">0</span> stock faible</div>
+        <div class="stat danger"><span id="stat-out">0</span> épuisés</div>
+        <div class="stat"><span id="stat-hidden">0</span> masqués</div>
+      </section>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-products" aria-controls="panel-products" aria-selected="true">Produits &amp; stocks</button>
+        <button role="tab" id="tab-categories" aria-controls="panel-categories" aria-selected="false">Catégories</button>
+      </div>
+
+      <!-- Produits -->
+      <section id="panel-products" role="tabpanel" aria-labelledby="tab-products">
+        <div class="toolbar">
+          <input type="search" id="p-search" placeholder="Rechercher un produit…" aria-label="Rechercher un produit" />
+          <select id="p-cat" aria-label="Filtrer par catégorie"></select>
+          <label class="check"><input type="checkbox" id="p-low" /> Stock faible / épuisé</label>
+          <button class="btn primary" id="add-product" type="button">+ Ajouter un produit</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="products">
+            <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Catégorie</th>
+                <th class="num">Prix (€)</th>
+                <th class="num">Stock</th>
+                <th>Visible</th>
+                <th><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="p-rows"></tbody>
+          </table>
+          <p class="empty" id="p-empty" hidden>Aucun produit ne correspond.</p>
+        </div>
+      </section>
+
+      <!-- Catégories -->
+      <section id="panel-categories" role="tabpanel" aria-labelledby="tab-categories" hidden>
+        <form class="toolbar" id="cat-form">
+          <input name="name" placeholder="Nouvelle catégorie (ex. : Menus enfants)" maxlength="50" required aria-label="Nom de la nouvelle catégorie" />
+          <button class="btn primary" type="submit">+ Ajouter la catégorie</button>
+        </form>
+        <p class="muted hint">L'ordre ci-dessous est celui de la carte. Utilisez les flèches pour le modifier.</p>
+        <ul class="cat-list" id="cat-rows"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== Fenêtre produit ===== -->
+  <dialog id="product-dialog">
+    <form method="dialog" id="product-form" class="dialog-body">
+      <h2 id="product-title">Ajouter un produit</h2>
+      <label>Nom
+        <input name="name" required maxlength="80" />
+      </label>
+      <div class="row">
+        <label>Catégorie
+          <select name="categoryId" required></select>
+        </label>
+        <label>Prix (€)
+          <input name="price" inputmode="decimal" required placeholder="12,50" />
+        </label>
+      </div>
+      <label>Description
+        <textarea name="description" rows="3" maxlength="300"></textarea>
+      </label>
+      <label>Étiquettes <small class="muted">(séparées par des virgules : Épicé, Végétarien, Maison…)</small>
+        <input name="tags" maxlength="120" />
+      </label>
+      <div class="row">
+        <label class="check"><input type="checkbox" name="trackStock" checked /> Suivre le stock</label>
+        <label>Quantité en stock
+          <input name="stock" type="number" min="0" step="1" value="0" />
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" name="visible" checked /> Visible sur la carte</label>
+      <p class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Annuler</button>
+        <button class="btn primary" value="save">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Suppression d'une catégorie non vide ===== -->
+  <dialog id="delcat-dialog">
+    <form method="dialog" class="dialog-body" id="delcat-form">
+      <h2>Supprimer « <span id="delcat-name"></span> »</h2>
+      <p>Cette catégorie contient <strong id="delcat-count"></strong>. Que faire de ces produits ?</p>
+      <label class="check"><input type="radio" name="mode" value="move" checked /> Les déplacer vers
+        <select name="moveTo" aria-label="Catégorie de destination"></select>
+      </label>
+      <label class="check danger-text"><input type="radio" name="mode" value="delete" /> Les supprimer définitivement</label>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Annuler</button>
+        <button class="btn danger" value="confirm">Supprimer la catégorie</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Confirmation ===== -->
+  <dialog id="confirm-dialog">
+    <form method="dialog" class="dialog-body">
+      <h2 id="confirm-title">Confirmer</h2>
+      <p id="confirm-text"></p>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel">Annuler</button>
+        <button class="btn danger" value="confirm">Supprimer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===== Mot de passe ===== -->
+  <dialog id="password-dialog">
+    <form method="dialog" class="dialog-body" id="password-form">
+      <h2>Changer le mot de passe</h2>
+      <label>Mot de passe actuel
+        <input type="password" name="currentPassword" autocomplete="current-password" required />
+      </label>
+      <label>Nouveau mot de passe <small class="muted">(10 caractères minimum)</small>
+        <input type="password" name="newPassword" autocomplete="new-password" minlength="10" required />
+      </label>
+      <label>Confirmer le nouveau mot de passe
+        <input type="password" name="confirm" autocomplete="new-password" minlength="10" required />
+      </label>
+      <p class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Annuler</button>
+        <button class="btn primary" value="save">Mettre à jour</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aux Saveurs Braisées · La carte</title>
+  <meta name="description" content="La carte d'Aux Saveurs Braisées : poulet et poisson braisés, grillades au feu de bois, alloco, attiéké et boissons maison." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="menu.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header class="hero">
+    <div class="embers" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <p class="kicker">Grillades au feu de bois</p>
+      <h1>Aux Saveurs <span>Braisées</span></h1>
+      <p class="tagline">Marinades maison, braise vive et accompagnements généreux.</p>
+      <a class="admin-link" href="/admin/">Espace gestion</a>
+    </div>
+  </header>
+
+  <nav class="catbar" aria-label="Catégories du menu">
+    <div class="wrap catbar-inner">
+      <ul class="cat-list" id="cat-list"></ul>
+      <label class="search">
+        <span class="sr-only">Rechercher un plat</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        <input type="search" id="search" placeholder="Rechercher un plat…" autocomplete="off" />
+      </label>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="filters" id="filters" role="group" aria-label="Filtrer par étiquette"></div>
+    <p class="status" id="status" role="status">Chargement de la carte…</p>
+    <div id="menu"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Prix TTC, service compris. Carte mise à jour en temps réel selon les stocks du jour.</p>
+      <p class="updated" id="updated"></p>
+    </div>
+  </footer>
+
+  <template id="item-tpl">
+    <article class="item">
+      <div class="item-head">
+        <h3 class="item-name"></h3>
+        <span class="leader" aria-hidden="true"></span>
+        <span class="item-price"></span>
+      </div>
+      <p class="item-desc"></p>
+      <div class="item-meta"></div>
+    </article>
+  </template>
+
+  <script src="menu.js"></script>
+</body>
+</html>
