@@ -19,7 +19,7 @@
 
   async function load() {
     try {
-      const res = await fetch("/api/menu", { cache: "no-store" });
+      const res = await fetch("api.php?action=menu", { cache: "no-store" });
       if (!res.ok) throw new Error(res.status);
       data = await res.json();
       els.updated.textContent = `Dernière mise à jour : ${new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;

@@ -15,15 +15,16 @@
     }
   }
 
-  async function api(method, url, body) {
-    const res = await fetch(url, {
-      method,
+  // Sans corps : lecture (GET). Avec corps : modification (POST en JSON).
+  async function api(action, body) {
+    const res = await fetch(`../api.php?action=${encodeURIComponent(action)}`, {
+      method: body !== undefined ? "POST" : "GET",
       headers: body !== undefined ? { "Content-Type": "application/json" } : {},
       body: body !== undefined ? JSON.stringify(body) : undefined,
       credentials: "same-origin",
     });
     const data = await res.json().catch(() => ({}));
-    if (res.status === 401 && url !== "/api/login" && url !== "/api/me") {
+    if (res.status === 401 && !["login", "me", "setup"].includes(action)) {
       showLogin("Votre session a expiré. Merci de vous reconnecter.");
       throw new ApiError(401, data);
     }
@@ -79,6 +80,7 @@
   // ---------- Connexion ----------
   function showLogin(message) {
     $("#app-view").hidden = true;
+    $("#setup-view").hidden = true;
     $("#login-view").hidden = false;
     document.querySelectorAll("dialog[open]").forEach((d) => d.close());
     const err = $("#login-error");
@@ -87,8 +89,16 @@
     $('#login-form [name="username"]').focus();
   }
 
+  function showSetup() {
+    $("#app-view").hidden = true;
+    $("#login-view").hidden = true;
+    $("#setup-view").hidden = false;
+    $('#setup-form [name="username"]').focus();
+  }
+
   async function showApp() {
     $("#login-view").hidden = true;
+    $("#setup-view").hidden = true;
     $("#app-view").hidden = false;
     await refresh();
   }
@@ -99,7 +109,7 @@
     const btn = $('button[type="submit"]', f);
     btn.disabled = true;
     try {
-      await api("POST", "/api/login", { username: f.username.value, password: f.password.value });
+      await api("login", { username: f.username.value, password: f.password.value });
       f.reset();
       await showApp();
     } catch (err) {
@@ -112,17 +122,34 @@
     }
   });
 
+  // Premier lancement (ou réinitialisation) : création du compte administrateur
+  $("#setup-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const box = $("#setup-error");
+    const showErr = (m) => {
+      box.textContent = m;
+      box.hidden = false;
+    };
+    if (f.password.value !== f.confirm.value) return showErr("Les deux mots de passe ne correspondent pas.");
+    try {
+      await api("setup", { username: f.username.value, password: f.password.value });
+      f.reset();
+      toast("Compte créé. Bienvenue !");
+      await showApp();
+    } catch (err) {
+      showErr(err.message);
+    }
+  });
+
   $("#logout").addEventListener("click", async () => {
-    await api("POST", "/api/logout").catch(() => {});
+    await api("logout", {}).catch(() => {});
     showLogin();
   });
 
   // ---------- Chargement ----------
   async function refresh() {
-    const [categories, products] = await Promise.all([
-      api("GET", "/api/admin/categories"),
-      api("GET", "/api/admin/products"),
-    ]);
+    const [{ categories }, { products }] = await Promise.all([api("categories"), api("products")]);
     state.categories = categories;
     state.products = products;
     renderCategoryFilter();
@@ -192,7 +219,7 @@
   async function patchProduct(p, changes, input) {
     if (input) flash(input, "saving");
     try {
-      const updated = await api("PATCH", `/api/admin/products/${p.id}`, changes);
+      const updated = await api("product-update", { id: p.id, ...changes });
       replaceProduct(updated);
       const again = input && $(`#p-rows tr[data-id="${p.id}"] [data-field="${input.dataset.field}"]`);
       if (again) flash(again, "saved");
@@ -228,7 +255,7 @@
     } else {
       const adjust = async (delta) => {
         try {
-          replaceProduct(await api("POST", `/api/admin/products/${p.id}/stock`, { delta }));
+          replaceProduct(await api("product-stock", { id: p.id, delta }));
           $(`#p-rows tr[data-id="${p.id}"] button[data-delta="${delta}"]`)?.focus();
         } catch (err) {
           fail(err);
@@ -298,7 +325,7 @@
   async function deleteProduct(p) {
     if (!(await confirmDialog("Supprimer ce produit ?", `« ${p.name} » sera retiré définitivement de la carte.`))) return;
     try {
-      await api("DELETE", `/api/admin/products/${p.id}`);
+      await api("product-delete", { id: p.id });
       state.products = state.products.filter((x) => x.id !== p.id);
       renderProducts();
       bumpCategoryCount(p.categoryId, -1);
@@ -375,7 +402,7 @@
     };
     try {
       if (editing) {
-        const updated = await api("PATCH", `/api/admin/products/${editing.id}`, body);
+        const updated = await api("product-update", { id: editing.id, ...body });
         if (updated.categoryId !== editing.categoryId) {
           bumpCategoryCount(editing.categoryId, -1);
           bumpCategoryCount(updated.categoryId, 1);
@@ -383,7 +410,7 @@
         state.products = state.products.map((x) => (x.id === updated.id ? updated : x));
         toast(`« ${updated.name} » mis à jour.`);
       } else {
-        const created = await api("POST", "/api/admin/products", body);
+        const created = await api("product-create", body);
         state.products.push(created);
         bumpCategoryCount(created.categoryId, 1);
         toast(`« ${created.name} » ajouté à la carte.`);
@@ -416,7 +443,7 @@
             const name = input.value.trim();
             if (!name || name === c.name) return renderCategories();
             try {
-              const updated = await api("PUT", `/api/admin/categories/${c.id}`, { name });
+              const updated = await api("category-rename", { id: c.id, name });
               c.name = updated.name;
               toast("Catégorie renommée.");
               renderCategoryFilter();
@@ -459,7 +486,7 @@
     const cats = [...state.categories];
     [cats[index], cats[index + dir]] = [cats[index + dir], cats[index]];
     try {
-      await api("PUT", "/api/admin/categories/order", { ids: cats.map((c) => c.id) });
+      await api("category-order", { ids: cats.map((c) => c.id) });
       state.categories = cats;
       renderCategories();
       renderCategoryFilter();
@@ -474,7 +501,7 @@
     e.preventDefault();
     const input = e.target.name;
     try {
-      const c = await api("POST", "/api/admin/categories", { name: input.value });
+      const c = await api("category-create", { name: input.value });
       state.categories.push({ ...c, productCount: 0 });
       input.value = "";
       renderCategories();
@@ -486,7 +513,7 @@
   });
 
   async function deleteCategory(c) {
-    let query = "";
+    const body = { id: c.id };
     if (c.productCount === 0) {
       if (!(await confirmDialog("Supprimer cette catégorie ?", `La catégorie « ${c.name} » est vide et sera supprimée.`))) return;
     } else {
@@ -503,10 +530,11 @@
       d.showModal();
       await new Promise((r) => d.addEventListener("close", r, { once: true }));
       if (d.returnValue !== "confirm") return;
-      query = f.mode.value === "move" ? `?moveTo=${encodeURIComponent(f.moveTo.value)}` : "?deleteProducts=1";
+      if (f.mode.value === "move") body.moveTo = Number(f.moveTo.value);
+      else body.deleteProducts = true;
     }
     try {
-      await api("DELETE", `/api/admin/categories/${c.id}${query}`);
+      await api("category-delete", body);
       toast(`Catégorie « ${c.name} » supprimée.`);
       await refresh();
     } catch (err) {
@@ -532,7 +560,7 @@
       return;
     }
     try {
-      await api("POST", "/api/admin/password", {
+      await api("password", {
         currentPassword: pwForm.currentPassword.value,
         newPassword: pwForm.newPassword.value,
       });
@@ -547,7 +575,7 @@
   });
 
   // ---------- Démarrage ----------
-  api("GET", "/api/me")
+  api("me")
     .then(showApp)
-    .catch(() => showLogin());
+    .catch((err) => (err.body?.needsSetup ? showSetup() : showLogin()));
 })();

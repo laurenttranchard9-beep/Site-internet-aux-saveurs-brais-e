@@ -4,18 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <title>Gestion · Aux Saveurs Braisées</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="admin.css" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
 </head>
 <body>
+  <!-- ===== Premier lancement : création du compte ===== -->
+  <section class="login" id="setup-view" hidden>
+    <form class="login-card" id="setup-form">
+      <img src="../favicon.svg" alt="" width="48" height="48" />
+      <h1>Bienvenue !</h1>
+      <p class="muted">Créez le compte qui gérera la carte.</p>
+      <label>Identifiant
+        <input name="username" autocomplete="username" required maxlength="40" value="admin" />
+      </label>
+      <label>Mot de passe <small class="muted">(10 caractères minimum)</small>
+        <input name="password" type="password" autocomplete="new-password" minlength="10" required />
+      </label>
+      <label>Confirmer le mot de passe
+        <input name="confirm" type="password" autocomplete="new-password" minlength="10" required />
+      </label>
+      <p class="form-error" id="setup-error" role="alert" hidden></p>
+      <button class="btn primary block" type="submit">Créer mon compte</button>
+    </form>
+  </section>
+
   <!-- ===== Connexion ===== -->
   <section class="login" id="login-view" hidden>
     <form class="login-card" id="login-form">
-      <img src="/favicon.svg" alt="" width="48" height="48" />
+      <img src="../favicon.svg" alt="" width="48" height="48" />
       <h1>Espace gestion</h1>
       <p class="muted">Aux Saveurs Braisées</p>
       <label>Identifiant
@@ -26,7 +47,7 @@
       </label>
       <p class="form-error" id="login-error" role="alert" hidden></p>
       <button class="btn primary block" type="submit">Se connecter</button>
-      <a class="back" href="/">← Retour à la carte</a>
+      <a class="back" href="../">← Retour à la carte</a>
     </form>
   </section>
 
@@ -34,9 +55,9 @@
   <div id="app-view" hidden>
     <header class="topbar">
       <div class="wrap topbar-inner">
-        <div class="brand"><img src="/favicon.svg" alt="" width="28" height="28" /> <span>Gestion de la carte</span></div>
+        <div class="brand"><img src="../favicon.svg" alt="" width="28" height="28" /> <span>Gestion de la carte</span></div>
         <nav class="top-actions">
-          <a class="btn ghost small" href="/" target="_blank" rel="noopener">Voir la carte ↗</a>
+          <a class="btn ghost small" href="../" target="_blank" rel="noopener">Voir la carte ↗</a>
           <button class="btn ghost small" id="open-password" type="button">Mot de passe</button>
           <button class="btn ghost small" id="logout" type="button">Déconnexion</button>
         </nav>

@@ -15,4 +15,4 @@ Ouvrez `index.html` dans un navigateur pour voir la page.
 
 ## Restaurant « Aux Saveurs Braisées »
 
-Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restaurant et son espace de gestion (prix, stocks, produits, catégories). Il tourne sur un serveur Node.js. Voir [`restaurant/README.md`](restaurant/README.md).
+Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restaurant et son espace de gestion (prix, stocks, produits, catégories). Il fonctionne en PHP (XAMPP en local, ou n'importe quel hébergement web). Voir [`restaurant/README.md`](restaurant/README.md).
