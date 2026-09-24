@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Carte A3 3 volets · Aux Saveurs Braisées</title>
+<!--
+  Carte à imprimer : A3 paysage (420 × 297 mm), recto-verso, pli roulé en 3 volets.
+  Page 1 = extérieur (rabat | dos | couverture), page 2 = intérieur.
+  Le rabat fait 138 mm (au lieu de 141) pour se replier sans buter contre le pli.
+  Pour régénérer le PDF : ouvrir ce fichier dans Chrome > Imprimer > Enregistrer en PDF,
+  format A3 paysage, marges « Aucune », « Graphiques d'arrière-plan » cochés.
+-->
+<style>
+  @font-face { font-family: "Fraunces"; src: url(fonts/fraunces-400-italic.woff) format("woff"); font-weight: 400; font-style: italic; }
+  @font-face { font-family: "Fraunces"; src: url(fonts/fraunces-600-italic.woff) format("woff"); font-weight: 600; font-style: italic; }
+  @font-face { font-family: "Fraunces"; src: url(fonts/fraunces-400.woff) format("woff"); font-weight: 400; font-style: normal; }
+  @font-face { font-family: "Fraunces"; src: url(fonts/fraunces-600.woff) format("woff"); font-weight: 600; font-style: normal; }
+  @font-face { font-family: "Fraunces"; src: url(fonts/fraunces-800.woff) format("woff"); font-weight: 800; font-style: normal; }
+  @font-face { font-family: "Inter"; src: url(fonts/inter-400.woff) format("woff"); font-weight: 400; font-style: normal; }
+  @font-face { font-family: "Inter"; src: url(fonts/inter-500.woff) format("woff"); font-weight: 500; font-style: normal; }
+  @font-face { font-family: "Inter"; src: url(fonts/inter-600.woff) format("woff"); font-weight: 600; font-style: normal; }
+
+  @page { size: 420mm 297mm; margin: 0; }
+  :root {
+    --paper: #fbf6ef;
+    --char: #1f1a17;
+    --ink: #2a211c;
+    --muted: #7a6c61;
+    --ember: #d9480f;
+    --ember-2: #ff922b;
+    --gold: #ffc078;
+    --line: #dccfbf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #888; }
+  body { font-family: "Inter", sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .sheet {
+    width: 420mm; height: 297mm; position: relative; overflow: hidden;
+    display: grid; background: var(--paper);
+    margin: 10mm auto; box-shadow: 0 4mm 12mm rgba(0,0,0,.35);
+    break-after: page;
+  }
+  @media print { html, body { background: none; } .sheet { margin: 0; box-shadow: none; } }
+  .outside { grid-template-columns: 138mm 141mm 141mm; }
+  .inside  { grid-template-columns: 141mm 141mm 138mm; }
+
+  /* Repères de pliage (petits traits en haut et en bas) */
+  .fold { position: absolute; width: 0; border-left: 0.25mm solid #bfb2a4; height: 5mm; }
+  .fold.top { top: 0; } .fold.bottom { bottom: 0; }
+  .fold.light { border-color: rgba(255,255,255,.35); }
+
+  .panel { position: relative; padding: 22mm 14mm 16mm; display: flex; flex-direction: column; }
+
+  /* Titres */
+  .kicker { font-size: 9pt; letter-spacing: .28em; text-transform: uppercase; font-weight: 600; color: var(--ember); }
+  h2 {
+    font-family: "Fraunces", serif; font-weight: 800; font-size: 31pt; line-height: 1.05; color: var(--char);
+    display: flex; align-items: center; gap: 4mm; margin: 3mm 0 7mm;
+  }
+  h2::after { content: ""; flex: 1; height: 0.5mm; background: linear-gradient(90deg, var(--ember), transparent); }
+  .section + .section { margin-top: 16mm; }
+  .intro { font-family: "Fraunces", serif; font-style: italic; font-size: 14pt; line-height: 1.45; color: var(--muted); margin: -1mm 0 9mm; }
+
+  /* Plats */
+  .dish { padding: 4.4mm 0 4.8mm; border-bottom: 0.25mm dashed var(--line); break-inside: avoid; }
+  .dish:last-child, .dish:has(+ .ornament) { border-bottom: 0; }
+  .dish-head { display: flex; align-items: baseline; gap: 2mm; }
+  .dish-name { font-weight: 600; font-size: 14.5pt; }
+  .leader { flex: 1; border-bottom: 0.4mm dotted #c3b19c; transform: translateY(-1mm); min-width: 6mm; }
+  .price { font-family: "Fraunces", serif; font-weight: 800; font-size: 15.5pt; color: var(--ember); white-space: nowrap; }
+  .desc { font-size: 11pt; line-height: 1.45; color: var(--muted); margin-top: 1.4mm; }
+  .tags { font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--ember); margin-top: 1.4mm; }
+  .tags .veg { color: #2b8a3e; }
+
+  /* Volet central « signature » */
+  .signature .dish-name { font-family: "Fraunces", serif; font-weight: 600; font-size: 19pt; }
+  .signature .price { font-size: 19pt; }
+  .signature .desc { font-size: 12.5pt; }
+  .signature .dish { padding: 7mm 0 7.5mm; }
+  .signature h2 { font-size: 40pt; }
+  .signature h2::after { display: none; }
+
+  .flame { display: block; }
+  .ornament { display: flex; align-items: center; justify-content: center; gap: 4mm; color: var(--ember); margin-top: auto; }
+  .ornament::before, .ornament::after { content: ""; width: 22mm; height: 0.3mm; background: currentColor; opacity: .5; }
+
+  /* Couverture */
+  .cover {
+    color: #fff; text-align: center; justify-content: center; align-items: center;
+    background:
+      radial-gradient(ellipse 95% 55% at 50% 108%, rgba(232, 89, 12, .75) 0%, rgba(122, 46, 11, .55) 38%, transparent 70%),
+      radial-gradient(ellipse 70% 40% at 50% 0%, #2d2520 0%, transparent 100%),
+      var(--char);
+  }
+  .cover .kicker { color: var(--gold); }
+  .cover h1 { font-family: "Fraunces", serif; font-weight: 800; font-size: 44pt; line-height: 1.02; margin: 7mm 0 6mm; }
+  .cover h1 em { display: block; color: var(--ember-2); font-style: italic; font-weight: 600; }
+  .cover .tagline { font-family: "Fraunces", serif; font-style: italic; font-size: 15pt; color: #eadfd3; max-width: 95mm; line-height: 1.45; }
+  .cover .rule { width: 18mm; height: 0.4mm; background: var(--gold); margin: 9mm auto; opacity: .8; }
+  .cover .bottom { position: absolute; bottom: 16mm; left: 0; right: 0; font-size: 8pt; letter-spacing: .3em; text-transform: uppercase; color: #cdbfb2; }
+  .embers span { position: absolute; border-radius: 50%; background: var(--gold); }
+
+  /* Dos */
+  .back { justify-content: center; text-align: center; }
+  .back h2 { justify-content: center; }
+  .back h2::after { display: none; }
+  .info { margin: 0 auto; width: 100%; max-width: 100mm; }
+  .info dt { font-size: 9pt; letter-spacing: .24em; text-transform: uppercase; font-weight: 600; color: var(--ember); margin-top: 8mm; }
+  .info dd { font-family: "Fraunces", serif; font-size: 16pt; line-height: 1.5; margin-top: 1.5mm; }
+  .info dd.todo { color: var(--muted); font-style: italic; }
+  .legal { margin-top: 18mm; font-size: 9.5pt; line-height: 1.6; color: var(--muted); }
+
+  /* Rabat */
+  .flap { background: #f3eadd; justify-content: center; }
+  .flap .ornament { position: absolute; left: 0; right: 0; bottom: 16mm; }
+  .flap p { font-size: 12.5pt; line-height: 1.65; color: #4a3e36; }
+  .flap p + p { margin-top: 4mm; }
+  .flap blockquote { font-family: "Fraunces", serif; font-style: italic; font-size: 22pt; line-height: 1.3; color: var(--char); margin: 4mm 0 12mm; }
+  .steps { list-style: none; margin-top: 16mm; display: grid; gap: 9mm; }
+  .steps li { display: grid; grid-template-columns: 13mm 1fr; gap: 4mm; align-items: start; font-size: 12pt; line-height: 1.5; color: #4a3e36; }
+  .steps b { display: block; font-family: "Fraunces", serif; font-size: 15pt; color: var(--char); }
+  .steps .n { width: 13mm; height: 13mm; border-radius: 50%; border: 0.4mm solid var(--ember); color: var(--ember); display: grid; place-items: center; font-family: "Fraunces", serif; font-weight: 800; font-size: 15pt; }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 : EXTÉRIEUR ================= -->
+<section class="sheet outside">
+  <i class="fold top" style="left:138mm"></i><i class="fold bottom" style="left:138mm"></i>
+  <i class="fold top light" style="left:279mm"></i><i class="fold bottom light" style="left:279mm"></i>
+
+  <!-- Rabat (se replie à l'intérieur) -->
+  <div class="panel flap">
+    <p class="kicker">Notre maison</p>
+    <h2>Le feu de bois</h2>
+    <blockquote>« Tout commence la veille, par la marinade. »</blockquote>
+    <p>Nos viandes et nos poissons reposent dans leur marinade avant de rejoindre la braise vive, pour une chair tendre et des saveurs qui ont le temps de s'installer.</p>
+    <ol class="steps">
+      <li><span class="n">1</span><div><b>La marinade</b>Épices, ail, gingembre, herbes fraîches.</div></li>
+      <li><span class="n">2</span><div><b>La braise</b>Une cuisson lente et saisie à la flamme.</div></li>
+      <li><span class="n">3</span><div><b>L'assiette</b>Des accompagnements généreux, à partager.</div></li>
+    </ol>
+    <div class="ornament"><svg class="flame" width="18" height="18" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div>
+  </div>
+
+  <!-- Dos -->
+  <div class="panel back">
+    <svg class="flame" width="46" height="46" viewBox="0 0 64 64" style="margin:0 auto 5mm"><path fill="#e8590c" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/><path fill="#ffc078" d="M32 34c2 4 7 6 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z"/></svg>
+    <p class="kicker">Infos pratiques</p>
+    <h2>Nous trouver</h2>
+    <dl class="info">
+      <dt>Adresse</dt>
+      <dd class="todo">[Adresse du restaurant]</dd>
+      <dt>Réservations</dt>
+      <dd class="todo">[Numéro de téléphone]</dd>
+      <dt>Horaires</dt>
+      <dd class="todo">[Jours et horaires d'ouverture]</dd>
+    </dl>
+    <p class="legal">
+      Prix nets en euros, service compris.<br />
+      Allergènes : la liste des allergènes présents dans nos plats<br />est disponible sur simple demande auprès de notre équipe.<br />
+      L'abus d'alcool est dangereux pour la santé, à consommer avec modération.
+    </p>
+  </div>
+
+  <!-- Couverture -->
+  <div class="panel cover">
+    <div class="embers" aria-hidden="true">
+      <span style="left:22%;bottom:18%;width:1.2mm;height:1.2mm;opacity:.8"></span>
+      <span style="left:34%;bottom:21%;width:0.8mm;height:0.8mm;opacity:.6"></span>
+      <span style="left:61%;bottom:14%;width:1.4mm;height:1.4mm;opacity:.7"></span>
+      <span style="left:72%;bottom:26%;width:0.9mm;height:0.9mm;opacity:.5"></span>
+      <span style="left:12%;bottom:9%;width:0.7mm;height:0.7mm;opacity:.4"></span>
+      <span style="left:88%;bottom:11%;width:0.6mm;height:0.6mm;opacity:.35"></span>
+    </div>
+    <svg class="flame" width="82" height="82" viewBox="0 0 64 64"><path fill="#e8590c" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/><path fill="#ffc078" d="M32 34c2 4 7 6 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z"/></svg>
+    <p class="kicker" style="margin-top:9mm">Grillades au feu de bois</p>
+    <h1>Aux Saveurs<em>Braisées</em></h1>
+    <div class="rule"></div>
+    <p class="tagline">Marinades maison, braise vive et accompagnements généreux.</p>
+    <p class="bottom">La carte</p>
+  </div>
+</section>
+
+<!-- ================= PAGE 2 : INTÉRIEUR ================= -->
+<section class="sheet inside">
+  <i class="fold top" style="left:141mm"></i><i class="fold bottom" style="left:141mm"></i>
+  <i class="fold top" style="left:282mm"></i><i class="fold bottom" style="left:282mm"></i>
+
+  <!-- Volet gauche -->
+  <div class="panel">
+    <div class="section">
+      <p class="kicker">Pour commencer</p>
+      <h2>Entrées</h2>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Accras de morue</span><span class="leader"></span><span class="price">7,00 €</span></div><p class="desc">Six beignets croustillants, sauce pimentée maison.</p><p class="tags">Épicé</p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Brochettes de gésiers</span><span class="leader"></span><span class="price">7,50 €</span></div><p class="desc">Gésiers marinés aux épices, grillés au feu de bois.</p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Salade braisée</span><span class="leader"></span><span class="price">6,50 €</span></div><p class="desc">Poivrons et aubergines grillés, oignons rouges, vinaigrette citronnée.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+    </div>
+    <div class="section">
+      <p class="kicker">À côté</p>
+      <h2>Accompagnements</h2>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Alloco</span><span class="leader"></span><span class="price">4,50 €</span></div><p class="desc">Bananes plantains frites, dorées et fondantes.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Attiéké</span><span class="leader"></span><span class="price">4,50 €</span></div><p class="desc">Semoule de manioc légère, oignons et tomates.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Frites maison</span><span class="leader"></span><span class="price">4,00 €</span></div><p class="desc">Pommes de terre fraîches, double cuisson.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Riz parfumé</span><span class="leader"></span><span class="price">3,50 €</span></div><p class="desc">Riz basmati aux épices douces.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+    </div>
+  </div>
+
+  <!-- Volet central -->
+  <div class="panel signature">
+    <p class="kicker">Nos spécialités</p>
+    <h2>Grillades &amp; braises</h2>
+    <p class="intro">Marinées avec soin, cuites à la flamme, servies bien chaudes.</p>
+    <div class="dish"><div class="dish-head"><span class="dish-name">Poulet braisé</span><span class="leader"></span><span class="price">14,50 €</span></div><p class="desc">Demi-poulet mariné 24 h, braisé à la flamme, sauce oignon-moutarde.</p><p class="tags">Maison</p></div>
+    <div class="dish"><div class="dish-head"><span class="dish-name">Poisson braisé</span><span class="leader"></span><span class="price">18,50 €</span></div><p class="desc">Bar entier grillé, marinade ail-gingembre-persil, tomates confites.</p></div>
+    <div class="dish"><div class="dish-head"><span class="dish-name">Brochettes de bœuf</span><span class="leader"></span><span class="price">16,00 €</span></div><p class="desc">Trois brochettes de bœuf tendres, marinade au poivre de Penja.</p></div>
+    <div class="dish"><div class="dish-head"><span class="dish-name">Côtes d'agneau</span><span class="leader"></span><span class="price">21,00 €</span></div><p class="desc">Côtes d'agneau grillées, herbes fraîches et jus corsé.</p></div>
+    <div class="dish"><div class="dish-head"><span class="dish-name">Assiette mixte du braiseur</span><span class="leader"></span><span class="price">24,00 €</span></div><p class="desc">Poulet, bœuf et saucisse grillés, pour les grosses faims.</p><p class="tags">Maison</p></div>
+    <div class="ornament"><svg class="flame" width="20" height="20" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div>
+  </div>
+
+  <!-- Volet droit (dos du rabat) -->
+  <div class="panel">
+    <div class="section">
+      <p class="kicker">Pour finir</p>
+      <h2>Desserts</h2>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Ananas rôti</span><span class="leader"></span><span class="price">6,50 €</span></div><p class="desc">Ananas caramélisé à la braise, glace vanille.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Moelleux au chocolat</span><span class="leader"></span><span class="price">7,00 €</span></div><p class="desc">Cœur coulant, crème anglaise maison.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
+    </div>
+    <div class="section">
+      <p class="kicker">Pour se rafraîchir</p>
+      <h2>Boissons</h2>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Bissap maison</span><span class="leader"></span><span class="price">4,00 €</span></div><p class="desc">Infusion d'hibiscus glacée, menthe fraîche (50 cl).</p><p class="tags">Sans alcool</p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Jus de gingembre</span><span class="leader"></span><span class="price">4,00 €</span></div><p class="desc">Gingembre frais pressé, citron vert (50 cl).</p><p class="tags">Sans alcool</p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Eau minérale</span><span class="leader"></span><span class="price">2,50 €</span></div><p class="desc">Plate ou gazeuse (50 cl).</p><p class="tags">Sans alcool</p></div>
+      <div class="dish"><div class="dish-head"><span class="dish-name">Bière pression</span><span class="leader"></span><span class="price">4,50 €</span></div><p class="desc">Blonde locale (25 cl).</p></div>
+    </div>
+    <div class="ornament"><svg class="flame" width="18" height="18" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div>
+  </div>
+</section>
+
+</body>
+</html>

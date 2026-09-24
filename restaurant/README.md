@@ -65,3 +65,7 @@ Toutes les données (produits, prix, stocks, catégories, compte) sont dans le f
 ```bash
 php tests/api_test.php
 ```
+
+## Carte imprimée
+
+Le dossier `impression/` contient la carte papier : **`carte-a3-3-volets.pdf`** (A3 paysage, recto-verso, pliée en 3 volets). Le fichier `carte-a3-3-volets.html` est sa source : si vous changez un plat ou un prix, modifiez-le puis ouvrez-le dans Chrome, *Imprimer → Enregistrer au format PDF* (A3 paysage, marges « Aucune », « Graphiques d'arrière-plan » coché).
