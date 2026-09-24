@@ -1,69 +1,72 @@
 # Mise en ligne sur Amazon Linux 2023 (avec une adresse IP)
 
-Les deux sites sont installés sur le même serveur, dans deux sous-dossiers :
+Un seul serveur héberge les trois sites, dans des sous-dossiers de son adresse IP :
 
-- `http://ADRESSE-IP/restaurant/` : la carte du restaurant (et `…/restaurant/admin/` pour la gestion)
-- `http://ADRESSE-IP/toilettage/` : le salon de toilettage
-- `http://ADRESSE-IP/` : une page d'accueil avec un lien vers chacun
+| Site | Adresse | Administration |
+|---|---|---|
+| Aux Saveurs Braisées | `http://ADRESSE-IP/restaurant/` | `http://ADRESSE-IP/restaurant/admin/` |
+| La Fleur d'Or | `http://ADRESSE-IP/fleur-dor/` | `http://ADRESSE-IP/fleur-dor/admin/` |
+| Salon de toilettage | `http://ADRESSE-IP/toilettage/` | |
+
+`http://ADRESSE-IP/` affiche une page avec un lien vers chacun.
+
+Le script récupère les sites directement sur GitHub :
+
+- `Site-internet-aux-saveurs-brais-e`, branche `claude/pet-grooming-landing-page-po26m7` (restaurant et salon) ;
+- `Fleur-d-or`, branche `claude/practical-mendel-dpj572`.
+
+Pour changer de branche, modifiez les variables en haut du script.
 
 ## 1. Créer le serveur (console AWS, service EC2)
 
 1. **Lancer une instance** :
    - Image : **Amazon Linux 2023**
-   - Type : **t3.micro** (suffisant pour ces deux sites)
-   - Paire de clés : **créez-en une** au format `.pem` et gardez précieusement le fichier téléchargé
-   - Réseau, groupe de sécurité : autorisez **SSH (port 22) depuis « Mon IP »** et **HTTP (port 80) depuis « N'importe où »**
-2. **Adresse IP Elastic** : menu *Réseau et sécurité → Adresses IP Elastic → Allouer*, puis *Associer* à l'instance. Sans elle, l'adresse IP change à chaque redémarrage du serveur.
+   - Type : **t3.micro**
+   - Paire de clés : créez-en une (fichier `.pem`) et gardez-la précieusement
+   - Groupe de sécurité : autorisez **SSH (22)** et **HTTP (80) depuis « N'importe où »**. Pour SSH, « N'importe où » permet d'utiliser le terminal dans le navigateur (étape 2) ; la connexion reste protégée par la clé.
+2. **Adresse IP Elastic** : menu *Réseau et sécurité → Adresses IP Elastic → Allouer*, puis *Associer* à l'instance. Sans elle, l'adresse IP change à chaque redémarrage.
 
-## 2. Envoyer le projet sur le serveur (depuis Windows)
+## 2. Installer les sites
 
-Téléchargez le ZIP de la branche sur GitHub (*Code → Download ZIP*), puis dans **PowerShell** :
+Ouvrez un terminal sur le serveur. Le plus simple : dans la console EC2, sélectionnez l'instance, **Se connecter → EC2 Instance Connect → Se connecter**. Un terminal s'ouvre dans le navigateur.
 
-```powershell
-# Remplacez le chemin de la clé, celui du ZIP et l'adresse IP
-scp -i $HOME\Downloads\ma-cle.pem $HOME\Downloads\Site-internet-aux-saveurs-brais-e-claude-pet-grooming-landing-page-po26m7.zip ec2-user@ADRESSE-IP:~/site.zip
-```
-
-Si Windows répond « UNPROTECTED PRIVATE KEY FILE », restreignez les droits de la clé puis recommencez :
-
-```powershell
-icacls $HOME\Downloads\ma-cle.pem /inheritance:r
-icacls $HOME\Downloads\ma-cle.pem /grant:r "$($env:USERNAME):(R)"
-```
-
-## 3. Lancer l'installation
-
-```powershell
-ssh -i $HOME\Downloads\ma-cle.pem ec2-user@ADRESSE-IP
-```
-
-Puis, une fois connecté au serveur :
+Collez cette commande :
 
 ```bash
-sudo dnf install -y unzip
-rm -rf site && unzip -q site.zip -d site
-sudo bash site/*/deploiement/installer-amazon-linux.sh
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer-amazon-linux.sh | sudo bash
 ```
 
-Le script installe Apache et PHP, copie les sites, protège la base de données, puis vérifie que tout répond. Il affiche à la fin les adresses des sites.
+Le script installe Apache et PHP, copie les trois sites, protège les données, puis **demande les mots de passe** :
 
-**Ouvrez tout de suite `http://ADRESSE-IP/restaurant/admin/`** pour créer votre compte : tant que ce n'est pas fait, la première personne qui ouvre cette page peut le créer.
+- l'identifiant et le mot de passe de l'espace de gestion d'Aux Saveurs Braisées ;
+- le mot de passe du panneau de La Fleur d'Or.
+
+Les caractères ne s'affichent pas pendant la saisie, c'est normal. Il faut 10 caractères au moins.
+
+Il vérifie ensuite que tout répond (une ligne « OK » par point) et affiche les adresses des sites.
 
 ## Mettre à jour les sites
 
-Envoyez le nouveau ZIP (étape 2), puis relancez les commandes de l'étape 3. La base de données du restaurant (produits, prix, stocks, compte) est conservée.
+Relancez **la même commande**. Le script récupère la dernière version sur GitHub et conserve toutes les données :
 
-## Sauvegarder la base du restaurant
+- Aux Saveurs Braisées : produits, prix, stocks, catégories et compte ;
+- La Fleur d'Or : carte modifiée dans le panneau, sauvegardes et mot de passe (la page est régénérée avec la carte actuelle).
+
+## Sauvegarder les données
 
 ```bash
-sudo cp /var/www/html/restaurant/data/restaurant-*.sqlite ~/sauvegarde-$(date +%F).sqlite
+sudo tar czf ~/sauvegarde-$(date +%F).tar.gz /var/www/html/restaurant/data /var/www/html/fleur-dor/donnees
 ```
 
-Puis, depuis Windows : `scp -i $HOME\Downloads\ma-cle.pem ec2-user@ADRESSE-IP:~/sauvegarde-*.sqlite $HOME\Documents\`
+Puis, depuis Windows (PowerShell) :
+
+```powershell
+scp -i $HOME\Downloads\ma-cle.pem ec2-user@ADRESSE-IP:~/sauvegarde-*.tar.gz $HOME\Documents\
+```
 
 ## À savoir
 
-- **Pas de HTTPS sans nom de domaine** : les certificats gratuits (Let's Encrypt) demandent un nom de domaine. En HTTP, le mot de passe de gestion n'est pas chiffré sur le réseau : évitez de vous connecter depuis un Wi-Fi public, et changez le mot de passe une fois le HTTPS en place.
-- **Avec un nom de domaine plus tard**, on passera à une configuration par domaine (`VirtualHost`) avec HTTPS.
+- **Pas de HTTPS sans nom de domaine** : les certificats gratuits (Let's Encrypt) demandent un nom de domaine. En HTTP, les mots de passe ne sont pas chiffrés sur le réseau : évitez de vous connecter depuis un Wi-Fi public, et changez-les une fois le HTTPS en place.
+- **Avec des noms de domaine plus tard**, on passera à une configuration par domaine (`VirtualHost`) avec HTTPS.
 - **Mises à jour de sécurité** du serveur : `sudo dnf upgrade -y` de temps en temps.
 - En cas de problème : `sudo tail -n 30 /var/log/httpd/error_log`.

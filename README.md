@@ -19,4 +19,4 @@ Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restauran
 
 ## Mise en ligne
 
-Le dossier [`deploiement/`](deploiement/) contient un script qui installe les deux sites sur un serveur Amazon Linux 2023, accessibles par son adresse IP. Voir [`deploiement/README.md`](deploiement/README.md).
+Le dossier [`deploiement/`](deploiement/) contient un script qui installe ces deux sites, ainsi que [La Fleur d'Or](https://github.com/laurenttranchard9-beep/Fleur-d-or), sur un serveur Amazon Linux 2023, accessibles par son adresse IP. Voir [`deploiement/README.md`](deploiement/README.md).
