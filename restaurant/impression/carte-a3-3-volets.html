@@ -5,7 +5,7 @@
 <title>Carte A3 3 volets · Aux Saveurs Braisées</title>
 <!--
   Carte à imprimer : A3 paysage (420 × 297 mm), recto-verso, pli roulé en 3 volets.
-  Page 1 = extérieur (rabat | dos | couverture), page 2 = intérieur.
+  Page 1 = extérieur (rabat : vins | dos : bar | couverture), page 2 = intérieur (cuisine).
   Le rabat fait 138 mm (au lieu de 141) pour se replier sans buter contre le pli.
   Pour régénérer le PDF : ouvrir ce fichier dans Chrome > Imprimer > Enregistrer en PDF,
   format A3 paysage, marges « Aucune », « Graphiques d'arrière-plan » cochés.
@@ -22,107 +22,101 @@
 
   @page { size: 420mm 297mm; margin: 0; }
   :root {
-    --paper: #fbf6ef;
-    --char: #1f1a17;
-    --ink: #2a211c;
-    --muted: #7a6c61;
-    --ember: #d9480f;
-    --ember-2: #ff922b;
-    --gold: #ffc078;
-    --line: #dccfbf;
+    --paper: #fbf6ef; --paper-2: #f3eadd; --char: #1f1a17; --ink: #2a211c; --muted: #7a6c61;
+    --ember: #d9480f; --ember-2: #ff922b; --gold: #ffc078; --line: #dccfbf;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { background: #888; }
   body { font-family: "Inter", sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-  .sheet {
-    width: 420mm; height: 297mm; position: relative; overflow: hidden;
-    display: grid; background: var(--paper);
-    margin: 10mm auto; box-shadow: 0 4mm 12mm rgba(0,0,0,.35);
-    break-after: page;
-  }
+  .sheet { width: 420mm; height: 297mm; position: relative; overflow: hidden; display: grid; background: var(--paper);
+    margin: 10mm auto; box-shadow: 0 4mm 12mm rgba(0,0,0,.35); break-after: page; }
   @media print { html, body { background: none; } .sheet { margin: 0; box-shadow: none; } }
   .outside { grid-template-columns: 138mm 141mm 141mm; }
   .inside  { grid-template-columns: 141mm 141mm 138mm; }
 
-  /* Repères de pliage (petits traits en haut et en bas) */
+  /* Repères de pliage */
   .fold { position: absolute; width: 0; border-left: 0.25mm solid #bfb2a4; height: 5mm; }
   .fold.top { top: 0; } .fold.bottom { bottom: 0; }
   .fold.light { border-color: rgba(255,255,255,.35); }
 
-  .panel { position: relative; padding: 22mm 14mm 16mm; display: flex; flex-direction: column; }
+  .panel { position: relative; padding: 15mm 12mm 12mm; display: flex; flex-direction: column; }
 
   /* Titres */
-  .kicker { font-size: 9pt; letter-spacing: .28em; text-transform: uppercase; font-weight: 600; color: var(--ember); }
-  h2 {
-    font-family: "Fraunces", serif; font-weight: 800; font-size: 31pt; line-height: 1.05; color: var(--char);
-    display: flex; align-items: center; gap: 4mm; margin: 3mm 0 7mm;
-  }
-  h2::after { content: ""; flex: 1; height: 0.5mm; background: linear-gradient(90deg, var(--ember), transparent); }
-  .section + .section { margin-top: 16mm; }
-  .intro { font-family: "Fraunces", serif; font-style: italic; font-size: 14pt; line-height: 1.45; color: var(--muted); margin: -1mm 0 9mm; }
+  .kicker { font-size: 7.5pt; letter-spacing: .26em; text-transform: uppercase; font-weight: 600; color: var(--ember); }
+  h2 { font-family: "Fraunces", serif; font-weight: 800; font-size: 20pt; line-height: 1.05; color: var(--char);
+    display: flex; align-items: center; gap: 3mm; margin: 1.2mm 0 2.5mm; }
+  h2::after { content: ""; flex: 1; height: 0.45mm; background: linear-gradient(90deg, var(--ember), transparent); }
+  h3 { font-family: "Fraunces", serif; font-weight: 600; font-style: italic; font-size: 13pt; color: var(--ember);
+    margin: 4.5mm 0 1mm; display: flex; align-items: center; gap: 3mm; }
+  h3::after { content: ""; flex: 1; height: 0.25mm; background: var(--line); }
+  .sec + .sec { margin-top: 6.5mm; }
 
-  /* Plats */
-  .dish { padding: 4.4mm 0 4.8mm; border-bottom: 0.25mm dashed var(--line); break-inside: avoid; }
-  .dish:last-child, .dish:has(+ .ornament) { border-bottom: 0; }
-  .dish-head { display: flex; align-items: baseline; gap: 2mm; }
-  .dish-name { font-weight: 600; font-size: 14.5pt; }
-  .leader { flex: 1; border-bottom: 0.4mm dotted #c3b19c; transform: translateY(-1mm); min-width: 6mm; }
-  .price { font-family: "Fraunces", serif; font-weight: 800; font-size: 15.5pt; color: var(--ember); white-space: nowrap; }
-  .desc { font-size: 11pt; line-height: 1.45; color: var(--muted); margin-top: 1.4mm; }
-  .tags { font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--ember); margin-top: 1.4mm; }
-  .tags .veg { color: #2b8a3e; }
+  /* Lignes de la carte */
+  .item { padding: 1.35mm 0; }
+  .line { display: flex; align-items: baseline; gap: 1.8mm; }
+  .name { font-weight: 600; font-size: 10.5pt; }
+  .dots { flex: 1; border-bottom: 0.35mm dotted #c3b19c; transform: translateY(-0.9mm); min-width: 5mm; }
+  .price { font-family: "Fraunces", serif; font-weight: 800; font-size: 11.5pt; color: var(--ember); white-space: nowrap; }
+  .sub { font-size: 8.5pt; line-height: 1.35; color: var(--muted); margin-top: 0.4mm; }
+  .note { font-family: "Fraunces", serif; font-style: italic; font-size: 9.5pt; color: var(--muted); margin-top: 2mm; padding-left: 3mm; border-left: 0.5mm solid var(--ember); }
 
-  /* Volet central « signature » */
-  .signature .dish-name { font-family: "Fraunces", serif; font-weight: 600; font-size: 19pt; }
-  .signature .price { font-size: 19pt; }
-  .signature .desc { font-size: 12.5pt; }
-  .signature .dish { padding: 7mm 0 7.5mm; }
-  .signature h2 { font-size: 40pt; }
-  .signature h2::after { display: none; }
+  /* Volet central : un peu plus grand */
+  .big .item { padding: 1.9mm 0; }
+  .big .name { font-family: "Fraunces", serif; font-weight: 600; font-size: 12pt; }
+  .big .price { font-size: 12.5pt; }
+  .big h2 { font-size: 23pt; }
 
-  .flame { display: block; }
-  .ornament { display: flex; align-items: center; justify-content: center; gap: 4mm; color: var(--ember); margin-top: auto; }
-  .ornament::before, .ornament::after { content: ""; width: 22mm; height: 0.3mm; background: currentColor; opacity: .5; }
+  /* Formules */
+  .box { border: 0.4mm solid var(--ember); border-radius: 3mm; padding: 2.8mm 4mm 2mm; background: #fff; }
+  .box + .box { margin-top: 2.5mm; }
+  .box-title { font-family: "Fraunces", serif; font-weight: 800; font-size: 12.5pt; color: var(--char); }
+  .box-title span { font-family: "Inter", sans-serif; font-weight: 500; font-size: 8pt; color: var(--muted); margin-left: 1.5mm; }
+  .box .item { padding: 0.9mm 0; }
+  .box > .sub { margin-bottom: 0.6mm; }
+
+  /* Glaces : boules */
+  .scoops { margin-top: 2mm; }
+  .scoop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; margin-top: 1.2mm; }
+  .scoop-grid span { text-align: center; border: 0.3mm solid var(--line); border-radius: 2mm; padding: 1.6mm 0; font-size: 9pt; font-weight: 600; background: #fff; }
+  .scoop-grid b { display: block; font-family: "Fraunces", serif; font-weight: 800; color: var(--ember); font-size: 11pt; }
+
+  /* Bières */
+  .beers { font-size: 10pt; margin-top: 1mm; }
+  .bh, .br { display: grid; grid-template-columns: 1fr 18mm 18mm 18mm; align-items: baseline; padding: 0.9mm 0; }
+  .bh span { text-align: right; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .br span { font-weight: 600; }
+  .br b { text-align: right; font-family: "Fraunces", serif; font-weight: 800; color: var(--ember); font-size: 11pt; }
+  .br + .br { border-top: 0.25mm dashed var(--line); }
+
+  /* Extérieur : boissons plus compactes */
+  .drinks .item { padding: 0.95mm 0; }
+  .drinks .name { font-size: 9.8pt; }
+  .drinks .price { font-size: 10.5pt; }
+  .drinks .sub { font-size: 8pt; }
+  .flap { background: var(--paper-2); }
+
+  .ornament { display: flex; align-items: center; justify-content: center; gap: 4mm; color: var(--ember); margin-top: auto; padding-top: 4mm; }
+  .ornament::before, .ornament::after { content: ""; width: 20mm; height: 0.3mm; background: currentColor; opacity: .5; }
+
+  /* Mentions et crédit */
+  .legal { margin-top: auto; padding-top: 4mm; font-size: 7.5pt; line-height: 1.5; color: var(--muted); text-align: center; }
+  .credit { margin-top: 2.5mm; font-size: 7.5pt; letter-spacing: .03em; color: var(--muted); text-align: center; }
+  .credit b { font-weight: 600; color: var(--ink); }
 
   /* Couverture */
-  .cover {
-    color: #fff; text-align: center; justify-content: center; align-items: center;
+  .cover { color: #fff; text-align: center; justify-content: center; align-items: center;
     background:
       radial-gradient(ellipse 95% 55% at 50% 108%, rgba(232, 89, 12, .75) 0%, rgba(122, 46, 11, .55) 38%, transparent 70%),
       radial-gradient(ellipse 70% 40% at 50% 0%, #2d2520 0%, transparent 100%),
-      var(--char);
-  }
-  .cover .kicker { color: var(--gold); }
+      var(--char); }
+  .cover .kicker { color: var(--gold); font-size: 8.5pt; }
   .cover h1 { font-family: "Fraunces", serif; font-weight: 800; font-size: 44pt; line-height: 1.02; margin: 7mm 0 6mm; }
   .cover h1 em { display: block; color: var(--ember-2); font-style: italic; font-weight: 600; }
-  .cover .tagline { font-family: "Fraunces", serif; font-style: italic; font-size: 15pt; color: #eadfd3; max-width: 95mm; line-height: 1.45; }
+  .cover .tagline { font-family: "Fraunces", serif; font-style: italic; font-size: 15pt; color: #eadfd3; max-width: 100mm; line-height: 1.45; }
   .cover .rule { width: 18mm; height: 0.4mm; background: var(--gold); margin: 9mm auto; opacity: .8; }
   .cover .bottom { position: absolute; bottom: 16mm; left: 0; right: 0; font-size: 8pt; letter-spacing: .3em; text-transform: uppercase; color: #cdbfb2; }
   .embers span { position: absolute; border-radius: 50%; background: var(--gold); }
-
-  /* Dos */
-  .back { justify-content: center; text-align: center; }
-  .back h2 { justify-content: center; }
-  .back h2::after { display: none; }
-  .info { margin: 0 auto; width: 100%; max-width: 100mm; }
-  .info dt { font-size: 9pt; letter-spacing: .24em; text-transform: uppercase; font-weight: 600; color: var(--ember); margin-top: 8mm; }
-  .info dd { font-family: "Fraunces", serif; font-size: 16pt; line-height: 1.5; margin-top: 1.5mm; }
-  .info dd.todo { color: var(--muted); font-style: italic; }
-  .legal { margin-top: 18mm; font-size: 9.5pt; line-height: 1.6; color: var(--muted); }
-  .credit { position: absolute; left: 0; right: 0; bottom: 12mm; font-size: 8pt; letter-spacing: .04em; color: var(--muted); }
-  .credit b { font-weight: 600; color: var(--ink); }
-
-  /* Rabat */
-  .flap { background: #f3eadd; justify-content: center; }
-  .flap .ornament { position: absolute; left: 0; right: 0; bottom: 16mm; }
-  .flap p { font-size: 12.5pt; line-height: 1.65; color: #4a3e36; }
-  .flap p + p { margin-top: 4mm; }
-  .flap blockquote { font-family: "Fraunces", serif; font-style: italic; font-size: 22pt; line-height: 1.3; color: var(--char); margin: 4mm 0 12mm; }
-  .steps { list-style: none; margin-top: 16mm; display: grid; gap: 9mm; }
-  .steps li { display: grid; grid-template-columns: 13mm 1fr; gap: 4mm; align-items: start; font-size: 12pt; line-height: 1.5; color: #4a3e36; }
-  .steps b { display: block; font-family: "Fraunces", serif; font-size: 15pt; color: var(--char); }
-  .steps .n { width: 13mm; height: 13mm; border-radius: 50%; border: 0.4mm solid var(--ember); color: var(--ember); display: grid; place-items: center; font-family: "Fraunces", serif; font-weight: 800; font-size: 15pt; }
 </style>
 </head>
 <body>
@@ -132,36 +126,18 @@
   <i class="fold top" style="left:138mm"></i><i class="fold bottom" style="left:138mm"></i>
   <i class="fold top light" style="left:279mm"></i><i class="fold bottom light" style="left:279mm"></i>
 
-  <!-- Rabat (se replie à l'intérieur) -->
-  <div class="panel flap">
-    <p class="kicker">Notre maison</p>
-    <h2>Le feu de bois</h2>
-    <blockquote>« Tout commence la veille, par la marinade. »</blockquote>
-    <p>Nos viandes et nos poissons reposent dans leur marinade avant de rejoindre la braise vive, pour une chair tendre et des saveurs qui ont le temps de s'installer.</p>
-    <ol class="steps">
-      <li><span class="n">1</span><div><b>La marinade</b>Épices, ail, gingembre, herbes fraîches.</div></li>
-      <li><span class="n">2</span><div><b>La braise</b>Une cuisson lente et saisie à la flamme.</div></li>
-      <li><span class="n">3</span><div><b>L'assiette</b>Des accompagnements généreux, à partager.</div></li>
-    </ol>
-    <div class="ornament"><svg class="flame" width="18" height="18" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div>
+  <!-- Rabat (se replie à l'intérieur) : les vins -->
+  <div class="panel flap drinks">
+    <p class="kicker">Carte des boissons</p><h2 class="h-wine">Nos vins</h2><h3>Rouges</h3><div class="item "><div class="line"><span class="name">Château de la Salade Saint-Henri</span><span class="dots"></span><span class="price">32,00 €</span></div><p class="sub">Cuvée 1803 · AOP Pic Saint-Loup</p></div><div class="item "><div class="line"><span class="name">Saint-Nicolas-de-Bourgueil</span><span class="dots"></span><span class="price">24,00 €</span></div><p class="sub">75 cl · demi-bouteille 37,5 cl : 13,00 €</p></div><div class="item "><div class="line"><span class="name">Château des Hospices Artemis</span><span class="dots"></span><span class="price">22,00 €</span></div><p class="sub">AOP Côtes-du-Roussillon</p></div><div class="item "><div class="line"><span class="name">Domaine Le Chapoutier Lubéron</span><span class="dots"></span><span class="price">19,00 €</span></div><p class="sub">AOP Côtes-du-Rhône</p></div><div class="item "><div class="line"><span class="name">Domaine La Croix-des-Marchands</span><span class="dots"></span><span class="price">18,00 €</span></div><p class="sub">AOP Gaillac · 75 cl · demi-bouteille 37,5 cl : 13,00 €</p></div><div class="item "><div class="line"><span class="name">Pichet ¼ · ½ de rouge</span><span class="dots"></span><span class="price">6,00 € · 8,00 €</span></div></div><div class="item "><div class="line"><span class="name">Au verre</span><span class="dots"></span><span class="price">4,50 €</span></div></div><h3>Rosés</h3><div class="item "><div class="line"><span class="name">Château Ferry Lacombe</span><span class="dots"></span><span class="price">23,00 €</span></div><p class="sub">Côtes-de-Provence · 75 cl · 50 cl : 14,00 €</p></div><div class="item "><div class="line"><span class="name">Domaine San Pieru</span><span class="dots"></span><span class="price">19,00 €</span></div><p class="sub">Corse</p></div><div class="item "><div class="line"><span class="name">Au verre</span><span class="dots"></span><span class="price">4,50 €</span></div></div><h3>Blancs</h3><div class="item "><div class="line"><span class="name">Domaine La Croix-des-Marchands, blanc doux</span><span class="dots"></span><span class="price">18,00 €</span></div><p class="sub">AOP Gaillac</p></div><div class="item "><div class="line"><span class="name">Domaine La Croix-des-Marchands</span><span class="dots"></span><span class="price">19,00 €</span></div><p class="sub">AOP Gaillac</p></div><div class="item "><div class="line"><span class="name">Pichet ¼ · ½ de blanc</span><span class="dots"></span><span class="price">6,00 € · 8,00 €</span></div></div><div class="item "><div class="line"><span class="name">Au verre</span><span class="dots"></span><span class="price">4,50 €</span></div></div><h3>Champagne</h3><div class="item "><div class="line"><span class="name">Nicolas Feuillatte, la coupe</span><span class="dots"></span><span class="price">6,00 €</span></div></div><div class="item "><div class="line"><span class="name">Nicolas Feuillatte, la bouteille (75 cl)</span><span class="dots"></span><span class="price">45,00 €</span></div></div><h3>Digestifs</h3><div class="item "><div class="line"><span class="name">Armagnac</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Cognac</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Diplomatico</span><span class="dots"></span><span class="price">6,50 €</span></div></div><div class="item "><div class="line"><span class="name">Jägermeister</span><span class="dots"></span><span class="price">6,00 €</span></div></div><div class="item "><div class="line"><span class="name">Get 27</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Rhum blanc</span><span class="dots"></span><span class="price">6,00 €</span></div></div><div class="item "><div class="line"><span class="name">Manzana</span><span class="dots"></span><span class="price">5,00 €</span></div></div>
   </div>
 
-  <!-- Dos -->
-  <div class="panel back">
-    <svg class="flame" width="46" height="46" viewBox="0 0 64 64" style="margin:0 auto 5mm"><path fill="#e8590c" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/><path fill="#ffc078" d="M32 34c2 4 7 6 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z"/></svg>
-    <p class="kicker">Infos pratiques</p>
-    <h2>Nous trouver</h2>
-    <dl class="info">
-      <dt>Adresse</dt>
-      <dd class="todo">[Adresse du restaurant]</dd>
-      <dt>Réservations</dt>
-      <dd class="todo">[Numéro de téléphone]</dd>
-      <dt>Horaires</dt>
-      <dd class="todo">[Jours et horaires d'ouverture]</dd>
-    </dl>
+  <!-- Dos : le bar -->
+  <div class="panel drinks">
+    <p class="kicker">Au bar</p><h2 class="h-bar">Apéritifs</h2><div class="item "><div class="line"><span class="name">Cocktail du moment</span><span class="dots"></span><span class="price">7,50 €</span></div></div><div class="item "><div class="line"><span class="name">Cocktail sans alcool</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Martini blanc / rouge (4 cl)</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Whisky Jack Daniel&#x27;s (4 cl)</span><span class="dots"></span><span class="price">6,00 €</span></div></div><div class="item "><div class="line"><span class="name">Whisky Coca (Jack Daniel&#x27;s)</span><span class="dots"></span><span class="price">7,50 €</span></div></div><div class="item "><div class="line"><span class="name">Whisky Coca (Ballantine&#x27;s, Clan Campbell)</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Rhum Coca</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Vodka (4 cl)</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Vodka Red Bull</span><span class="dots"></span><span class="price">8,00 €</span></div></div><div class="item "><div class="line"><span class="name">Kir royal (10 cl)</span><span class="dots"></span><span class="price">8,00 €</span></div></div><div class="item "><div class="line"><span class="name">Kir (pêche, cassis)</span><span class="dots"></span><span class="price">4,00 €</span></div></div><div class="item "><div class="line"><span class="name">Muscat</span><span class="dots"></span><span class="price">4,00 €</span></div></div><div class="item "><div class="line"><span class="name">Porto rouge</span><span class="dots"></span><span class="price">4,00 €</span></div></div><div class="item "><div class="line"><span class="name">Ricard / Pastis</span><span class="dots"></span><span class="price">4,00 €</span></div></div><div class="item "><div class="line"><span class="name">Liqueur de litchi</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Gin (Bombay)</span><span class="dots"></span><span class="price">6,00 €</span></div></div><h3>Bières pression</h3><div class="beers"><div class="bh"><span></span><span>25 cl</span><span>33 cl</span><span>50 cl</span></div>
+<div class="br"><span>Leffe Blonde</span><b>4,00 €</b><b>5,00 €</b><b>7,00 €</b></div>
+<div class="br"><span>Bud Blonde</span><b>4,00 €</b><b>5,00 €</b><b>7,00 €</b></div></div><h3>Sans alcool</h3><div class="item "><div class="line"><span class="name">Coca Cola / Coca Cola Zéro</span><span class="dots"></span><span class="price">3,50 €</span></div></div><div class="item "><div class="line"><span class="name">Orangina</span><span class="dots"></span><span class="price">3,50 €</span></div></div><div class="item "><div class="line"><span class="name">Lipton Ice Tea</span><span class="dots"></span><span class="price">3,50 €</span></div></div><div class="item "><div class="line"><span class="name">Jus de fruits (orange, pomme, ananas)</span><span class="dots"></span><span class="price">3,00 €</span></div></div><div class="item "><div class="line"><span class="name">Sirops (grenadine, menthe, pêche, citron)</span><span class="dots"></span><span class="price">1,70 €</span></div></div><div class="item "><div class="line"><span class="name">Eau Évian / Badoit (50 cl)</span><span class="dots"></span><span class="price">3,50 €</span></div></div><div class="item "><div class="line"><span class="name">Eau Évian / Badoit (1 L)</span><span class="dots"></span><span class="price">5,90 €</span></div></div><div class="item "><div class="line"><span class="name">Café</span><span class="dots"></span><span class="price">2,00 €</span></div></div><div class="item "><div class="line"><span class="name">Thé</span><span class="dots"></span><span class="price">2,50 €</span></div></div>
     <p class="legal">
-      Prix nets en euros, service compris.<br />
-      Allergènes : la liste des allergènes présents dans nos plats<br />est disponible sur simple demande auprès de notre équipe.<br />
+      Prix nets en euros, service compris. Liste des allergènes disponible sur demande.<br />
       L'abus d'alcool est dangereux pour la santé, à consommer avec modération.
     </p>
     <p class="credit">Création : <b>Laurent TRANCHARD</b> · Contact : Laurenttranchard9@gmail.com</p>
@@ -178,10 +154,10 @@
       <span style="left:88%;bottom:11%;width:0.6mm;height:0.6mm;opacity:.35"></span>
     </div>
     <svg class="flame" width="82" height="82" viewBox="0 0 64 64"><path fill="#e8590c" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/><path fill="#ffc078" d="M32 34c2 4 7 6 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z"/></svg>
-    <p class="kicker" style="margin-top:9mm">Grillades au feu de bois</p>
+    <p class="kicker" style="margin-top:9mm">Cuisine à la braise</p>
     <h1>Aux Saveurs<em>Braisées</em></h1>
     <div class="rule"></div>
-    <p class="tagline">Marinades maison, braise vive et accompagnements généreux.</p>
+    <p class="tagline">Viandes, poissons et fruits de mer à la braise, et de quoi partager.</p>
     <p class="bottom">La carte</p>
   </div>
 </section>
@@ -191,56 +167,23 @@
   <i class="fold top" style="left:141mm"></i><i class="fold bottom" style="left:141mm"></i>
   <i class="fold top" style="left:282mm"></i><i class="fold bottom" style="left:282mm"></i>
 
-  <!-- Volet gauche -->
-  <div class="panel">
-    <div class="section">
-      <p class="kicker">Pour commencer</p>
-      <h2>Entrées</h2>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Accras de morue</span><span class="leader"></span><span class="price">7,00 €</span></div><p class="desc">Six beignets croustillants, sauce pimentée maison.</p><p class="tags">Épicé</p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Brochettes de gésiers</span><span class="leader"></span><span class="price">7,50 €</span></div><p class="desc">Gésiers marinés aux épices, grillés au feu de bois.</p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Salade braisée</span><span class="leader"></span><span class="price">6,50 €</span></div><p class="desc">Poivrons et aubergines grillés, oignons rouges, vinaigrette citronnée.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-    </div>
-    <div class="section">
-      <p class="kicker">À côté</p>
-      <h2>Accompagnements</h2>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Alloco</span><span class="leader"></span><span class="price">4,50 €</span></div><p class="desc">Bananes plantains frites, dorées et fondantes.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Attiéké</span><span class="leader"></span><span class="price">4,50 €</span></div><p class="desc">Semoule de manioc légère, oignons et tomates.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Frites maison</span><span class="leader"></span><span class="price">4,00 €</span></div><p class="desc">Pommes de terre fraîches, double cuisson.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Riz parfumé</span><span class="leader"></span><span class="price">3,50 €</span></div><p class="desc">Riz basmati aux épices douces.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-    </div>
+  <div class="panel"><section class="sec formules">
+  <p class="kicker">Le midi &amp; les petits</p><h2>Formules</h2>
+  <div class="box">
+    <p class="box-title">Formule midi</p>
+    <p class="sub">Du mardi au vendredi midi, sauf jours fériés</p>
+    <div class="item "><div class="line"><span class="name">Entrée + Plat + Dessert</span><span class="dots"></span><span class="price">16,90 €</span></div></div>
+    <div class="item "><div class="line"><span class="name">Entrée + Plat ou Plat + Dessert</span><span class="dots"></span><span class="price">14,90 €</span></div></div>
   </div>
-
-  <!-- Volet central -->
-  <div class="panel signature">
-    <p class="kicker">Nos spécialités</p>
-    <h2>Grillades &amp; braises</h2>
-    <p class="intro">Marinées avec soin, cuites à la flamme, servies bien chaudes.</p>
-    <div class="dish"><div class="dish-head"><span class="dish-name">Poulet braisé</span><span class="leader"></span><span class="price">14,50 €</span></div><p class="desc">Demi-poulet mariné 24 h, braisé à la flamme, sauce oignon-moutarde.</p><p class="tags">Maison</p></div>
-    <div class="dish"><div class="dish-head"><span class="dish-name">Poisson braisé</span><span class="leader"></span><span class="price">18,50 €</span></div><p class="desc">Bar entier grillé, marinade ail-gingembre-persil, tomates confites.</p></div>
-    <div class="dish"><div class="dish-head"><span class="dish-name">Brochettes de bœuf</span><span class="leader"></span><span class="price">16,00 €</span></div><p class="desc">Trois brochettes de bœuf tendres, marinade au poivre de Penja.</p></div>
-    <div class="dish"><div class="dish-head"><span class="dish-name">Côtes d'agneau</span><span class="leader"></span><span class="price">21,00 €</span></div><p class="desc">Côtes d'agneau grillées, herbes fraîches et jus corsé.</p></div>
-    <div class="dish"><div class="dish-head"><span class="dish-name">Assiette mixte du braiseur</span><span class="leader"></span><span class="price">24,00 €</span></div><p class="desc">Poulet, bœuf et saucisse grillés, pour les grosses faims.</p><p class="tags">Maison</p></div>
-    <div class="ornament"><svg class="flame" width="20" height="20" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div>
+  <div class="box">
+    <p class="box-title">Menu enfant <span>jusqu'à 10 ans</span></p>
+    <p class="sub">Sirop au choix + plat + 1 boule de glace</p>
+    <div class="item "><div class="line"><span class="name">Steak / Frites</span><span class="dots"></span><span class="price">9,90 €</span></div></div>
+    <div class="item "><div class="line"><span class="name">Pâtes au saumon</span><span class="dots"></span><span class="price">9,90 €</span></div></div>
   </div>
-
-  <!-- Volet droit (dos du rabat) -->
-  <div class="panel">
-    <div class="section">
-      <p class="kicker">Pour finir</p>
-      <h2>Desserts</h2>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Ananas rôti</span><span class="leader"></span><span class="price">6,50 €</span></div><p class="desc">Ananas caramélisé à la braise, glace vanille.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Moelleux au chocolat</span><span class="leader"></span><span class="price">7,00 €</span></div><p class="desc">Cœur coulant, crème anglaise maison.</p><p class="tags"><span class="veg">Végétarien</span></p></div>
-    </div>
-    <div class="section">
-      <p class="kicker">Pour se rafraîchir</p>
-      <h2>Boissons</h2>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Bissap maison</span><span class="leader"></span><span class="price">4,00 €</span></div><p class="desc">Infusion d'hibiscus glacée, menthe fraîche (50 cl).</p><p class="tags">Sans alcool</p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Jus de gingembre</span><span class="leader"></span><span class="price">4,00 €</span></div><p class="desc">Gingembre frais pressé, citron vert (50 cl).</p><p class="tags">Sans alcool</p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Eau minérale</span><span class="leader"></span><span class="price">2,50 €</span></div><p class="desc">Plate ou gazeuse (50 cl).</p><p class="tags">Sans alcool</p></div>
-      <div class="dish"><div class="dish-head"><span class="dish-name">Bière pression</span><span class="leader"></span><span class="price">4,50 €</span></div><p class="desc">Blonde locale (25 cl).</p></div>
-    </div>
-    <div class="ornament"><svg class="flame" width="18" height="18" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div>
-  </div>
+</section><section class="sec "><p class="kicker">Pour commencer</p><h2>À partager</h2><div class="item "><div class="line"><span class="name">Bruschetta</span><span class="dots"></span><span class="price">9,00 €</span></div><p class="sub">Magret, foie gras, oignons confits</p></div><div class="item "><div class="line"><span class="name">Poulet pané</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">L&#x27;os à moelle</span><span class="dots"></span><span class="price">6,00 €</span></div><p class="sub">Supplément foie gras 4 €</p></div><div class="item "><div class="line"><span class="name">Trilogie de croquetas</span><span class="dots"></span><span class="price">9,00 €</span></div><p class="sub">Morue, jambon, cèpes</p></div><div class="item "><div class="line"><span class="name">Ardoise de charcuterie</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Œuf poché</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Foie gras</span><span class="dots"></span><span class="price">13,00 €</span></div></div><div class="item "><div class="line"><span class="name">Patatas bravas</span><span class="dots"></span><span class="price">5,00 €</span></div></div><div class="item "><div class="line"><span class="name">Pan con tomate</span><span class="dots"></span><span class="price">5,00 €</span></div><p class="sub">Supplément Serrano 4 €</p></div><div class="item "><div class="line"><span class="name">Burrata</span><span class="dots"></span><span class="price">7,00 €</span></div></div></section><section class="sec "><h2>Mer</h2><div class="item "><div class="line"><span class="name">Couteaux</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Encornets</span><span class="dots"></span><span class="price">8,00 €</span></div></div><div class="item "><div class="line"><span class="name">Gambas</span><span class="dots"></span><span class="price">11,00 €</span></div></div></section><div class="ornament"><svg width="16" height="16" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div></div>
+  <div class="panel"><section class="sec big"><p class="kicker">À la braise</p><h2>Poissons &amp; fruits de mer</h2><div class="item "><div class="line"><span class="name">Saint-Jacques à la crème</span><span class="dots"></span><span class="price">25,50 €</span></div></div><div class="item "><div class="line"><span class="name">Daurade à la braise</span><span class="dots"></span><span class="price">23,00 €</span></div></div><div class="item "><div class="line"><span class="name">Tartare de saumon</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Tagliatelle au saumon</span><span class="dots"></span><span class="price">19,90 €</span></div></div><div class="item "><div class="line"><span class="name">Seiche grillée à la plancha</span><span class="dots"></span><span class="price">19,00 €</span></div></div><div class="item "><div class="line"><span class="name">Pavé de saumon à la braise</span><span class="dots"></span><span class="price">21,00 €</span></div></div><div class="item "><div class="line"><span class="name">Brochette duo Saint-Jacques et gambas</span><span class="dots"></span><span class="price">24,50 €</span></div></div><p class="note">Accompagnement au choix : frites, pâtes, risotto ou légumes à la provençale.</p></section><section class="sec big"><p class="kicker">À la braise</p><h2>Viandes</h2><div class="item "><div class="line"><span class="name">Souris d&#x27;agneau (200 g)</span><span class="dots"></span><span class="price">22,50 €</span></div></div><div class="item "><div class="line"><span class="name">Entrecôte (280 g)</span><span class="dots"></span><span class="price">25,50 €</span></div></div><div class="item "><div class="line"><span class="name">Demi-magret de canard</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Tartare de bœuf</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Feuille d&#x27;entrecôte (180 g)</span><span class="dots"></span><span class="price">18,00 €</span></div></div><div class="item "><div class="line"><span class="name">Pièce du boucher</span><span class="dots"></span><span class="price">19,00 €</span></div><p class="sub">Selon arrivage</p></div><div class="item "><div class="line"><span class="name">Carpaccio de bœuf</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Carpaccio de bœuf royal</span><span class="dots"></span><span class="price">19,00 €</span></div><p class="sub">Avec burrata</p></div><div class="item "><div class="line"><span class="name">Brochette de bœuf mariné</span><span class="dots"></span><span class="price">19,00 €</span></div></div><div class="item "><div class="line"><span class="name">Brochette de poulet mariné</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Côte de bœuf maturée (1 kg)</span><span class="dots"></span><span class="price">Sur demande</span></div><p class="sub">Pour 2 personnes</p></div></section><div class="ornament"><svg width="16" height="16" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div></div>
+  <div class="panel"><section class="sec "><p class="kicker">Fraîcheur</p><h2>Salades</h2><div class="item "><div class="line"><span class="name">Salade Méditerranée</span><span class="dots"></span><span class="price">16,00 €</span></div><p class="sub">Couteaux, Saint-Jacques, encornets, gambas</p></div><div class="item "><div class="line"><span class="name">Salade Gersoise</span><span class="dots"></span><span class="price">16,00 €</span></div><p class="sub">Foie gras, magret grillé, gésier confit, noix</p></div><div class="item "><div class="line"><span class="name">Salade Caesar</span><span class="dots"></span><span class="price">14,50 €</span></div><p class="sub">Poulet mariné, croûtons, avocat, œuf poché, parmesan</p></div></section><section class="sec "><h2>Burgers braisés</h2><div class="item "><div class="line"><span class="name">Burger de bœuf / Frites</span><span class="dots"></span><span class="price">15,00 €</span></div></div><div class="item "><div class="line"><span class="name">Burger de magret / Frites</span><span class="dots"></span><span class="price">17,00 €</span></div></div><div class="item "><div class="line"><span class="name">Burger V.G / Frites</span><span class="dots"></span><span class="price">14,00 €</span></div></div></section><section class="sec "><p class="kicker">Pour finir</p><h2>Desserts</h2><div class="item "><div class="line"><span class="name">Champagne gourmand</span><span class="dots"></span><span class="price">13,00 €</span></div></div><div class="item "><div class="line"><span class="name">Café gourmand</span><span class="dots"></span><span class="price">9,00 €</span></div></div><div class="item "><div class="line"><span class="name">Thé gourmand</span><span class="dots"></span><span class="price">9,00 €</span></div></div><div class="item "><div class="line"><span class="name">Panna cotta</span><span class="dots"></span><span class="price">6,00 €</span></div></div><div class="item "><div class="line"><span class="name">Tiramisu</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Carpaccio d&#x27;ananas</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Profiteroles</span><span class="dots"></span><span class="price">9,00 €</span></div></div><div class="item "><div class="line"><span class="name">Crème brûlée</span><span class="dots"></span><span class="price">6,00 €</span></div></div><div class="item "><div class="line"><span class="name">Banoffee</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Dessert du moment</span><span class="dots"></span><span class="price">8,50 €</span></div></div></section><section class="sec "><h2>Glaces &amp; sorbets</h2><div class="item "><div class="line"><span class="name">Café liégeois</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Chocolat liégeois</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Dame blanche</span><span class="dots"></span><span class="price">7,00 €</span></div></div><div class="item "><div class="line"><span class="name">Colonel</span><span class="dots"></span><span class="price">8,00 €</span></div></div><div class="scoops"><p class="sub">Parfum au choix</p><div class="scoop-grid"><span>1 boule<b>2,90 €</b></span><span>2 boules<b>3,90 €</b></span><span>3 boules<b>5,90 €</b></span></div></div></section><div class="ornament"><svg width="16" height="16" viewBox="0 0 64 64"><path fill="currentColor" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/></svg></div></div>
 </section>
 
 </body>
