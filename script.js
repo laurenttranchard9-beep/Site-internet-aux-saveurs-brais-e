@@ -73,16 +73,16 @@
     errorMsg.hidden = true;
 
     const data = new FormData(form);
-    const date = new Date(`${data.get("date")}T12:00:00`).toLocaleDateString(undefined, {
+    const date = new Date(`${data.get("date")}T12:00:00`).toLocaleDateString("fr-FR", {
       weekday: "long",
       month: "long",
       day: "numeric",
     });
     document.getElementById("success-msg").textContent =
-      `${data.get("pet")}'s ${data.get("service")} on ${date} (${data.get("time").split(" ")[0].toLowerCase()}) is pencilled in. ` +
-      `We'll text ${data.get("name").split(" ")[0]} at ${data.get("phone")} to confirm.`;
+      `${data.get("service")} pour ${data.get("pet")} le ${date}, ${data.get("time")} : c'est noté ! ` +
+      `On envoie un SMS à ${data.get("name").split(" ")[0]} au ${data.get("phone")} pour confirmer.`;
 
-    // TODO: send `data` to your booking backend / email service here.
+    // TODO : envoyer `data` vers votre système de réservation / service d'e-mail ici.
     form.hidden = true;
     success.hidden = false;
     success.focus();

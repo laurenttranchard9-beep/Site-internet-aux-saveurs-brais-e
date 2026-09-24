@@ -1,12 +1,12 @@
-# Wag & Bubbles: pet grooming landing page
+# Bulles & Moustaches : page d'accueil d'un salon de toilettage
 
-A static, playful landing page for a pet grooming salon. It has no build step and no dependencies.
+Une page d'accueil statique et ludique pour un salon de toilettage pour chiens et chats. Aucune étape de build, aucune dépendance.
 
-- `index.html`: hero, services & pricing, how it works, reviews, booking form, FAQ, final CTA, footer
-- `styles.css`: responsive layout, playful theme (Fredoka + Nunito), reduced-motion support
-- `script.js`: mobile menu, service-to-form preselect, form validation & success state, scroll reveals, sticky mobile CTA
+- `index.html` : en-tête, prestations et tarifs, étapes, avis, formulaire de réservation, FAQ, appel à l'action final, pied de page
+- `styles.css` : mise en page responsive, thème ludique (Fredoka + Nunito), prise en charge du mouvement réduit
+- `script.js` : menu mobile, présélection de la prestation, validation du formulaire et message de confirmation, apparitions au défilement, bouton de réservation fixe sur mobile
 
-Open `index.html` in a browser to preview.
+Ouvrez `index.html` dans un navigateur pour voir la page.
 
-> The booking form currently validates and shows a confirmation on the client only.
-> Hook it up to your booking backend or a form service at the `TODO` in `script.js`.
+> Pour l'instant, le formulaire de réservation vérifie les champs et affiche une confirmation dans le navigateur uniquement.
+> Branchez-le à votre système de réservation ou à un service de formulaires à l'endroit marqué `TODO` dans `script.js`.
