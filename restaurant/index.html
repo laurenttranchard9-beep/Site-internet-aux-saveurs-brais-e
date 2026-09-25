@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <title>Aux Saveurs Braisées · La carte</title>
   <meta name="description" content="La carte d'Aux Saveurs Braisées : viandes et poissons à la braise, fruits de mer, planches à partager, salades, burgers, desserts et carte des vins." />
@@ -11,8 +11,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="menu.css" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script src="intro.js"></script>
 </head>
 <body>
+  <!-- Animation d'ouverture : fonctionne sans JavaScript (CSS seul) ; intro.js permet de la passer d'un clic
+       et ne la rejoue pas pendant la même visite. -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro-logo">
+      <svg class="intro-flamme" viewBox="0 0 64 64"><path fill="#e8590c" d="M32 4c4 10 16 16 16 32a16 16 0 0 1-32 0c0-8 4-13 8-17 0 6 3 9 6 10-2-9 0-17 2-25z"/><path fill="#ffc078" d="M32 34c2 4 7 6 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z"/></svg>
+      <div class="intro-nom">
+        <span class="intro-ligne l1"><span class="c">A</span><span class="c">u</span><span class="c">x</span><span class="c">&nbsp;</span><span class="c">S</span><span class="c">a</span><span class="c">v</span><span class="c">e</span><span class="c">u</span><span class="c">r</span><span class="c">s</span></span>
+        <span class="intro-ligne l2"><span class="c">B</span><span class="c">r</span><span class="c">a</span><span class="c">i</span><span class="c">s</span><span class="c">é</span><span class="c">e</span><span class="c">s</span></span>
+      </div>
+      <span class="intro-vertical">Restaurant</span>
+    </div>
+    <p class="intro-credit">Créateur : <b>Laurent TRANCHARD</b><span class="sep"> · </span><span class="contact">contact : laurenttranchard9@gmail.com</span></p>
+  </div>
+
   <header class="hero">
     <div class="embers" aria-hidden="true"></div>
     <div class="wrap hero-inner">

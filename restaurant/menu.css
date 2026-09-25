@@ -138,3 +138,84 @@ body {
   .embers { animation: none; }
   html { scroll-behavior: auto; }
 }
+
+/* ============ Animation d'ouverture ============ */
+/* Chronologie : lettres (0,25 → 1,5 s), flamme et mentions (1 → 1,6 s), rideau qui se lève (2,7 → 3,6 s). */
+.intro {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
+  background: radial-gradient(ellipse 90% 60% at 50% 115%, rgba(122, 46, 11, .55), transparent 70%), var(--char);
+  color: #fff; overflow: hidden; cursor: pointer;
+  animation: intro-rideau .9s cubic-bezier(.76, 0, .24, 1) 2.7s forwards;
+}
+.intro-logo { position: relative; display: flex; flex-direction: column; align-items: center; padding: 0 1.4em; animation: intro-logo-sortie .7s cubic-bezier(.5, 0, .75, 0) 2.45s forwards; }
+.intro-flamme { width: clamp(38px, 9vw, 60px); height: auto; margin-bottom: clamp(10px, 2.5vh, 22px); opacity: 0; transform: scale(.4) translateY(10px);
+  transform-origin: 50% 90%; animation: intro-flamme-in .7s cubic-bezier(.2, 1.4, .4, 1) 1s forwards, intro-vacille 1.6s ease-in-out 1.7s infinite; }
+.intro-nom { font-family: var(--font-display); font-weight: 800; line-height: .92; text-align: center; letter-spacing: -.01em; }
+.intro-ligne { display: block; overflow: hidden; padding: .06em .04em .1em; }
+.intro-ligne.l1 { font-size: clamp(2.1rem, 9.5vw, 5.2rem); }
+.intro-ligne.l2 { font-size: clamp(3.3rem, 17vw, 9rem); font-style: italic; color: var(--ember-2); margin-top: -.08em; }
+.intro-ligne .c { display: inline-block; transform: translateY(110%) rotate(6deg); opacity: 0; animation: intro-lettre .75s cubic-bezier(.2, .9, .25, 1) forwards; }
+.intro-vertical {
+  position: absolute; right: 0; bottom: .55em; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--font-body); font-weight: 700; font-size: clamp(.58rem, 2.2vw, .85rem); letter-spacing: .32em; text-transform: uppercase;
+  color: var(--gold); opacity: 0; animation: intro-apparait .6s ease 1.2s forwards;
+}
+.intro-credit {
+  position: absolute; left: 16px; right: 16px; bottom: calc(22px + env(safe-area-inset-bottom)); margin: 0; text-align: center;
+  font-family: var(--font-body); font-size: clamp(.66rem, 2.6vw, .78rem); line-height: 1.5; color: #b9aca0; letter-spacing: .02em;
+  opacity: 0; animation: intro-fondu .6s ease 1.35s forwards;
+}
+.intro-credit b { color: #fff; font-weight: 600; }
+@media (max-width: 560px) { .intro-credit .sep { display: none; } .intro-credit .contact { display: block; } }
+.intro-ligne.l1 .c:nth-child(1) { animation-delay: 0.250s; }
+.intro-ligne.l1 .c:nth-child(2) { animation-delay: 0.295s; }
+.intro-ligne.l1 .c:nth-child(3) { animation-delay: 0.340s; }
+.intro-ligne.l1 .c:nth-child(4) { animation-delay: 0.385s; }
+.intro-ligne.l1 .c:nth-child(5) { animation-delay: 0.430s; }
+.intro-ligne.l1 .c:nth-child(6) { animation-delay: 0.475s; }
+.intro-ligne.l1 .c:nth-child(7) { animation-delay: 0.520s; }
+.intro-ligne.l1 .c:nth-child(8) { animation-delay: 0.565s; }
+.intro-ligne.l1 .c:nth-child(9) { animation-delay: 0.610s; }
+.intro-ligne.l1 .c:nth-child(10) { animation-delay: 0.655s; }
+.intro-ligne.l1 .c:nth-child(11) { animation-delay: 0.700s; }
+.intro-ligne.l2 .c:nth-child(1) { animation-delay: 0.600s; }
+.intro-ligne.l2 .c:nth-child(2) { animation-delay: 0.655s; }
+.intro-ligne.l2 .c:nth-child(3) { animation-delay: 0.710s; }
+.intro-ligne.l2 .c:nth-child(4) { animation-delay: 0.765s; }
+.intro-ligne.l2 .c:nth-child(5) { animation-delay: 0.820s; }
+.intro-ligne.l2 .c:nth-child(6) { animation-delay: 0.875s; }
+.intro-ligne.l2 .c:nth-child(7) { animation-delay: 0.930s; }
+.intro-ligne.l2 .c:nth-child(8) { animation-delay: 0.985s; }
+
+@keyframes intro-lettre { to { transform: none; opacity: 1; } }
+@keyframes intro-apparait { to { opacity: 1; } }
+@keyframes intro-fondu { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes intro-flamme-in { to { opacity: 1; transform: none; } }
+@keyframes intro-vacille { 0%, 100% { transform: scale(1) rotate(0); } 35% { transform: scale(1.06, .96) rotate(-2deg); } 70% { transform: scale(.97, 1.04) rotate(2deg); } }
+@keyframes intro-logo-sortie { to { opacity: 0; transform: translateY(-24px) scale(.97); } }
+@keyframes intro-rideau { 0% { transform: none; } 99% { transform: translateY(-100%); visibility: visible; } 100% { transform: translateY(-100%); visibility: hidden; } }
+/* Copies des animations sous un autre nom : changer seulement la durée ne relancerait pas l'animation en cours */
+@keyframes intro-rideau-vite { 0% { transform: none; } 99% { transform: translateY(-100%); visibility: visible; } 100% { transform: translateY(-100%); visibility: hidden; } }
+@keyframes intro-logo-vite { to { opacity: 0; transform: translateY(-24px) scale(.97); } }
+@keyframes intro-page-vite { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes intro-page { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+/* Pendant l'animation : pas de défilement, puis le contenu de l'en-tête monte quand le rideau se lève */
+html.intro-en-cours, html.intro-en-cours body { overflow: hidden; }
+html.intro-en-cours .hero-inner { animation: intro-page .9s cubic-bezier(.2, .8, .2, 1) 3.05s both; }
+/* Passée d'un clic ou d'une touche : le rideau se lève tout de suite */
+html.intro-passee .intro { animation: intro-rideau-vite .7s cubic-bezier(.76, 0, .24, 1) forwards; }
+html.intro-passee .intro-logo { animation: intro-logo-vite .35s ease forwards; }
+html.intro-passee .hero-inner { animation: intro-page-vite .8s cubic-bezier(.2, .8, .2, 1) .3s both; }
+/* Déjà vue pendant cette visite : on ne la rejoue pas */
+html.intro-deja-vue .intro { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro { animation: intro-fondu-sortie .5s ease 1.6s forwards; }
+  .intro *, .intro-ligne .c { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .intro-vertical { transform: rotate(180deg) !important; }
+  html.intro-en-cours .hero-inner, html.intro-passee .hero-inner { animation: none; }
+  html.intro-passee .intro { animation: intro-fondu-sortie-vite .3s ease forwards; }
+}
+@keyframes intro-fondu-sortie-vite { 99% { opacity: 0; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes intro-fondu-sortie { 99% { opacity: 0; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
