@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Carte A3 3 volets · La Fleur d'Or</title>
+<!--
+  Fichier généré par generer.py à partir de modele.html : modifier plutôt ces deux fichiers.
+  A3 paysage (420 × 297 mm), recto-verso, pli roulé en 3 volets.
+  Page 1 = extérieur (rabat : formules | dos : desserts, bar, infos | couverture), page 2 = intérieur (cuisine et sushis).
+  Plis à 138 et 279 mm sur l'extérieur, à 141 et 282 mm sur l'intérieur (le rabat fait 138 mm).
+-->
+<style>
+  @font-face { font-family: "Archivo Etroit"; src: url(polices/archivo-etroit-800.woff2) format("woff2"); font-weight: 800; }
+  @font-face { font-family: "Archivo Etroit"; src: url(polices/archivo-etroit-700.woff2) format("woff2"); font-weight: 700; }
+  @font-face { font-family: "Archivo Texte"; src: url(polices/archivo-texte-400.woff2) format("woff2"); font-weight: 400; }
+  @font-face { font-family: "Archivo Texte"; src: url(polices/archivo-texte-600.woff2) format("woff2"); font-weight: 600; }
+  @font-face { font-family: "Noto Serif TC"; src: url(polices/noto-serif-tc-jinhua.woff2) format("woff2"); font-weight: 900; }
+
+  @page { size: 420mm 297mm; margin: 0; }
+  :root {
+    --brique: #ac4429; --brique-sombre: #8c3520; --ardoise: #23272b; --craie: #fff6ec;
+    --or: #f2b53a; --papier: #fbf8f2; --encre: #1e1a17; --encre-2: #5d5650; --piment: #e8553a; --filet: #ddd3c6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #777; }
+  body { font-family: "Archivo Texte", sans-serif; color: var(--encre); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .feuille { width: 420mm; height: 297mm; position: relative; overflow: hidden; background: var(--papier);
+    margin: 10mm auto; box-shadow: 0 4mm 12mm rgba(0,0,0,.35); break-after: page; }
+  @media print { html, body { background: none; } .feuille { margin: 0; box-shadow: none; } }
+
+  /* Repères de pliage */
+  .pli { position: absolute; width: 0; height: 5mm; border-left: 0.25mm solid #b9ab9b; z-index: 2; }
+  .pli.haut { top: 0; } .pli.bas { bottom: 0; }
+  .pli.clair { border-color: rgba(255,255,255,.4); }
+
+  /* Texte en colonnes : chaque colonne correspond à un volet, les plis tombent dans les gouttières */
+  .flux { position: absolute; top: 0; bottom: 0; padding: 11mm 12mm 9mm; column-gap: 24mm; column-fill: auto; }
+  .interieur .flux { left: 0; width: 420mm; column-count: 3; }
+  .exterieur .flux { left: 0; width: 279mm; column-count: 2; }
+
+  /* Grandes parties (bandeaux de brique) */
+  .quartier { break-after: avoid; background: var(--brique); color: var(--craie); font-family: "Archivo Etroit"; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .02em; font-size: 12pt; line-height: 1; padding: 1.9mm 3mm 1.7mm; margin: 0 0 2mm; }
+  .quartier span { display: block; font-family: "Archivo Texte"; font-weight: 400; text-transform: none; font-size: 7.5pt; letter-spacing: 0; margin-top: .8mm; color: #f7d9c9; }
+  .quartier:not(:first-child) { margin-top: 2.8mm; }
+
+  /* Sections */
+  .section { margin-bottom: 1.7mm; }
+  h3 { break-after: avoid; font-family: "Archivo Etroit"; font-weight: 800; text-transform: uppercase; font-size: 10.5pt; letter-spacing: .02em;
+    line-height: 1.05; color: var(--encre); border-bottom: 0.45mm solid var(--brique); padding-bottom: .5mm; margin-bottom: .6mm;
+    display: flex; align-items: baseline; gap: 1.6mm; }
+  h3 .note { font-family: "Archivo Texte"; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 7.4pt; color: var(--brique); margin-left: auto; }
+  h3 .piment { width: 3.4mm; height: 3.4mm; }
+  h4 { break-after: avoid; font-family: "Archivo Etroit"; font-weight: 700; font-size: 8.4pt; color: var(--brique); text-transform: uppercase;
+    letter-spacing: .06em; margin: 1mm 0 .2mm; }
+  .note-groupe { font-size: 7.1pt; color: var(--encre-2); line-height: 1.3; margin-bottom: .4mm; break-after: avoid; }
+
+  /* Lignes de la carte */
+  .plat { display: flex; align-items: baseline; gap: 1.2mm; padding: .3mm 0; break-inside: avoid; font-size: 8.1pt; line-height: 1.2; }
+  .nom { font-weight: 400; }
+  .desc { color: var(--encre-2); font-size: 7.3pt; }
+  .points { flex: 1; min-width: 3mm; border-bottom: 0.3mm dotted #c2b3a1; transform: translateY(-.7mm); }
+  .prix { font-family: "Archivo Etroit"; font-weight: 700; font-size: 9pt; color: var(--brique); white-space: nowrap; font-feature-settings: "tnum" 1; }
+  .prix-multi { display: flex; }
+  .prix-multi .cellule { width: 19mm; text-align: right; }
+  .prix-multi .fmt { font-family: "Archivo Texte"; font-weight: 400; font-size: 6.8pt; color: var(--encre-2); }
+  .piment { width: 2.8mm; height: 2.8mm; color: var(--piment); display: inline-block; vertical-align: -0.35mm; margin-left: .8mm; }
+  .plats.deux { display: grid; grid-template-columns: 1fr 1fr; column-gap: 5mm; }
+
+  /* Formules */
+  .formules-titre { font-size: 9.5pt; border-bottom-width: 0.3mm; margin-top: 1.2mm; }
+  .formule { break-inside: avoid; border-left: 0.8mm solid var(--or); padding: .6mm 0 .7mm 2.6mm; margin: 1.1mm 0 1.4mm; }
+  .formule-tete { display: flex; align-items: baseline; gap: 1.5mm; }
+  .formule-nom { font-family: "Archivo Etroit"; font-weight: 800; font-size: 10pt; text-transform: uppercase; letter-spacing: .02em; }
+  .formule .prix { font-size: 11pt; }
+  .condition { font-size: 7.1pt; color: var(--brique); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .service { font-size: 7.8pt; line-height: 1.3; }
+  .service b { font-family: "Archivo Etroit"; font-weight: 700; text-transform: uppercase; font-size: 7.4pt; letter-spacing: .05em; color: var(--encre-2); margin-right: .8mm; }
+
+  .legal { margin-top: 3.5mm; padding-top: 2.5mm; border-top: 0.2mm solid #3b4147; font-size: 6.6pt; color: #bfb8ae; line-height: 1.35; }
+  .credit { margin-top: 1mm; font-size: 6.6pt; color: #bfb8ae; }
+  .credit b { color: var(--craie); font-weight: 600; }
+
+  /* Couverture */
+  .couverture { position: absolute; left: 279mm; top: 0; width: 141mm; height: 297mm; color: var(--craie); text-align: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16mm 12mm;
+    background-color: var(--brique);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='12'%3E%3Cg stroke='%238c3520' stroke-width='.8' fill='none' opacity='.7'%3E%3Cpath d='M0 .4H44M0 6.4H44M22 .4v6M0 6.4v6M44 6.4v6'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 22mm 6mm; }
+  .couverture { justify-content: flex-start; padding-top: 24mm; }
+  .enseigne { display: flex; gap: 2.4mm; }
+  .enseigne span { width: 17mm; height: 17mm; border-radius: 50%; background: var(--or); color: var(--ardoise); display: grid; place-items: center;
+    font-family: "Noto Serif TC", serif; font-weight: 900; font-size: 25pt; line-height: 1; padding-bottom: .6mm; }
+  .couverture h1 { font-family: "Archivo Etroit"; font-weight: 800; text-transform: uppercase; font-size: 50pt; line-height: .9; margin: 12mm 0 6mm; letter-spacing: .01em; }
+  .couverture h1 em { font-style: normal; color: var(--or); }
+  .cuisines { font-family: "Archivo Etroit"; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; font-size: 10pt; }
+  .filet-or { width: 16mm; height: 0.6mm; background: var(--or); margin: 8mm auto; }
+  .accroche { font-size: 11pt; line-height: 1.45; max-width: 92mm; color: #fbe6d8; }
+  .pied { position: absolute; left: 0; right: 0; bottom: 0; background: var(--ardoise); color: var(--craie); text-align: left;
+    padding: 7mm 12mm 8mm; font-size: 8pt; line-height: 1.4; }
+  .pied h2 { font-family: "Archivo Etroit"; font-weight: 700; font-size: 7.6pt; text-transform: uppercase; letter-spacing: .12em; color: var(--or); margin: 3.2mm 0 1mm; }
+  .pied h2:first-child { margin-top: 0; }
+  .pied-grille { display: grid; grid-template-columns: 1.2fr 1fr; gap: 6mm; }
+  .tel { font-family: "Archivo Etroit"; font-weight: 800; font-size: 17pt; color: var(--or); line-height: 1.05; letter-spacing: .02em; }
+  .horaires { border-collapse: collapse; width: 100%; }
+  .horaires th { text-align: left; font-family: "Archivo Etroit"; font-weight: 700; font-size: 6.8pt; color: #bfb8ae; text-transform: uppercase; letter-spacing: .06em; padding-bottom: .5mm; }
+  .horaires td { padding: .45mm 2mm .45mm 0; border-top: 0.2mm solid #3b4147; white-space: nowrap; }
+  .horaires .ferme { color: #8f8a84; }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 : EXTÉRIEUR ================= -->
+<section class="feuille exterieur">
+  <i class="pli haut" style="left:138mm"></i><i class="pli bas" style="left:138mm"></i>
+  <i class="pli haut clair" style="left:279mm"></i><i class="pli bas" style="left:279mm"></i>
+  <div class="flux">{{EXTERIEUR}}</div>
+  <div class="couverture">
+    <div class="enseigne" lang="zh-Hant"><span>金</span><span>花</span><span>餐</span><span>廳</span></div>
+    <h1>La Fleur<br>d’<em>Or</em></h1>
+    <p class="cuisines">Chinoise · Thaïlandaise · Japonaise</p>
+    <div class="filet-or"></div>
+    <p class="accroche">Trois cuisines sous un même toit, au cœur de Grenade.</p>
+    <div class="pied">
+      <div class="pied-grille">
+        <div>
+          <h2>Horaires</h2>
+          <table class="horaires">
+            <tr><th></th><th>Midi</th><th>Soir</th></tr>
+            <tr><td>Lundi</td><td class="ferme" colspan="2">Fermé</td></tr>
+            <tr><td>Mardi au samedi</td><td>12h – 14h</td><td>18h – 22h</td></tr>
+            <tr><td>Dimanche</td><td class="ferme">Fermé</td><td>18h – 22h</td></tr>
+          </table>
+        </div>
+        <div>
+          <h2>Sur place et à emporter</h2>
+          <p class="tel">05 61 82 43 56</p>
+          <p>14 bis, avenue du Président Kennedy<br>31330 Grenade</p>
+        </div>
+      </div>
+      <h2>Paiement</h2>
+      <p>Espèces · Cartes CB, Visa, Visa Electron, Mastercard, Maestro<br>Titres-restaurant : Chèque Déjeuner, Chèque Restaurant, Chèque de Table, Ticket Restaurant</p>
+      <p class="legal">Prix nets en euros, service compris. Liste des allergènes disponible sur demande.
+      L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+      <p class="credit">Création : <b>Laurent TRANCHARD</b> · contact : laurenttranchard9@gmail.com</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE 2 : INTÉRIEUR ================= -->
+<section class="feuille interieur">
+  <i class="pli haut" style="left:141mm"></i><i class="pli bas" style="left:141mm"></i>
+  <i class="pli haut" style="left:282mm"></i><i class="pli bas" style="left:282mm"></i>
+  <div class="flux">{{INTERIEUR}}</div>
+</section>
+
+</body>
+</html>

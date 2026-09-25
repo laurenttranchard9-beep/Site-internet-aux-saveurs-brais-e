@@ -1,0 +1,2592 @@
+{
+  "version": 1,
+  "formules": [
+    {
+      "id": "formules-chine-thai",
+      "titre": "Cuisine chinoise et thaïlandaise",
+      "menus": [
+        {
+          "nom": "Menu Express",
+          "prix": 14.0,
+          "condition": "Midi uniquement, hors week-end et jours fériés",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Au menu",
+              "type": "ensemble",
+              "choix": [
+                "Riz nature",
+                "Bœuf luc-lac"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Menu",
+          "prix": 16.9,
+          "condition": "Midi uniquement, hors week-end et jours fériés",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Entrée",
+              "type": "choix",
+              "choix": [
+                "Nems ou salade de nems",
+                "Soupe de nouilles au poulet"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "choix",
+              "choix": [
+                "Bœuf curry aux légumes",
+                "Seiches sauce piquante",
+                "Porc au caramel"
+              ]
+            },
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Riz nature, ou riz cantonais (+1,50 €)"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "choix",
+              "choix": [
+                "Coupe de fruits",
+                "Nougatine"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Menu",
+          "prix": 21.5,
+          "condition": "",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Entrée",
+              "type": "choix",
+              "choix": [
+                "Nems (4 pièces)",
+                "Nems en salade (4 pièces)",
+                "Soupe de nouilles au poulet",
+                "Beignets de calamars"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "choix",
+              "choix": [
+                "Bœuf aux pousses de bambou et champignons noirs",
+                "Seiches au curry",
+                "Poulet grillé à la citronnelle",
+                "Porc à la sauce aigre-douce"
+              ]
+            },
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Riz nature ou riz cantonais"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "choix",
+              "choix": [
+                "2 boules de glace",
+                "Banane au caramel et glace vanille",
+                "Nougat mou et nougat dur",
+                "Beignets de pomme, banane ou ananas"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Menu",
+          "prix": 26.9,
+          "condition": "",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Entrée",
+              "type": "choix",
+              "choix": [
+                "Soupe de nouilles au canard laqué",
+                "Mélange vapeur (15 min d’attente)",
+                "Salade thaï",
+                "Assiette maison 5 variétés : nems, samossas, raviolis frits, beignets de crevettes et rouleaux de printemps"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "choix",
+              "choix": [
+                "Canard laqué",
+                "Bœuf sauce saté",
+                "Crevettes grillées à la citronnelle",
+                "Marmite de bœuf à la sauce thaï",
+                "Brochette de poulet et crevettes"
+              ]
+            },
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Riz cantonais ou nouilles au soja"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "choix",
+              "choix": [
+                "Ananas frais",
+                "Mélange de sucreries",
+                "Beignets de pomme, ananas ou banane flambée",
+                "Coupe Himalaya (litchis, glace vanille, coco avec chantilly)"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Fondue 2 personnes",
+          "prix": 60.0,
+          "condition": "Uniquement sur commande",
+          "photo": "fondue",
+          "photo_alt": "Table de fondue chinoise : bouillon, bouchées et sauces",
+          "texte": "Pour deux personnes, préparée uniquement sur commande : appelez à l’avance pour la réserver.",
+          "services": []
+        }
+      ]
+    },
+    {
+      "id": "formules-japon",
+      "titre": "Bar à sushis",
+      "menus": [
+        {
+          "nom": "Menu Express japonais",
+          "prix": 17.9,
+          "condition": "Midi uniquement, hors week-end et jours fériés",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Entrée",
+              "type": "simple",
+              "choix": [
+                "Salade ou soupe miso"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "ensemble",
+              "choix": [
+                "8 pièces california",
+                "4 pièces sushi",
+                "3 pièces sashimi",
+                "Riz nature"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Sushi 12 pièces",
+          "prix": 24.5,
+          "condition": "",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Soupe miso ou salade"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "ensemble",
+              "choix": [
+                "3 sushi saumon",
+                "3 sushi thon",
+                "3 sushi crevettes",
+                "3 sushi daurade"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "simple",
+              "choix": [
+                "Salade de fruits"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Menu Sashimi 21 pièces",
+          "prix": 27.5,
+          "condition": "Midi et soir",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Soupe miso ou salade"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "ensemble",
+              "choix": [
+                "7 sashimi saumon",
+                "7 sashimi thon",
+                "7 sashimi daurade",
+                "Riz nature"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "simple",
+              "choix": [
+                "Salade de fruits"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Menu Maki 32 pièces",
+          "prix": 26.5,
+          "condition": "Midi et soir",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Soupe miso ou salade"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "ensemble",
+              "choix": [
+                "8 california saumon",
+                "8 california surimi",
+                "8 maki concombre",
+                "8 maki avocat"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "simple",
+              "choix": [
+                "Salade de fruits"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Menu Mix 20 pièces",
+          "prix": 27.9,
+          "condition": "Midi et soir",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Soupe miso ou salade"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "ensemble",
+              "choix": [
+                "4 pièces california",
+                "4 pièces maki",
+                "6 pièces sushi",
+                "6 pièces sashimi",
+                "Riz nature"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "simple",
+              "choix": [
+                "Salade de fruits ou ananas frais"
+              ]
+            }
+          ]
+        },
+        {
+          "nom": "Assortiment 44 pièces",
+          "prix": 55.9,
+          "condition": "Midi et soir",
+          "photo": "",
+          "photo_alt": "",
+          "texte": "",
+          "services": [
+            {
+              "titre": "Avec",
+              "type": "simple",
+              "choix": [
+                "Soupe miso et salade"
+              ]
+            },
+            {
+              "titre": "Plat",
+              "type": "ensemble",
+              "choix": [
+                "8 california saumon",
+                "8 roll cheese",
+                "8 maki thon",
+                "8 maki saumon",
+                "2 sushi thon",
+                "2 sushi saumon",
+                "2 sushi crevettes",
+                "3 sashimi saumon",
+                "3 sashimi thon",
+                "Riz nature ou sauté"
+              ]
+            },
+            {
+              "titre": "Dessert",
+              "type": "simple",
+              "choix": [
+                "Ananas frais ou salade de fruits"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "quartiers": [
+    {
+      "id": "cuisine",
+      "titre": "Cuisine chinoise et thaïlandaise",
+      "boissons": false,
+      "sections": [
+        {
+          "id": "entrees",
+          "titre": "Entrées",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "Notre assiette maison",
+              "note": "2 nems, 1 samossa, 2 raviolis frits, 2 beignets de crevettes, 1 rouleau de printemps",
+              "plats": [
+                {
+                  "nom": "Assiette maison pour 1 personne (8 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Assiette maison pour 2 personnes (16 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 19.5,
+                  "formats": []
+                }
+              ]
+            },
+            {
+              "titre": "Frits et roulés",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Nems (4 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Nems au poulet et crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Beignets de crevettes (7 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Beignets de calamars",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Beignets de poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Raviolis frits (5 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Samossas (4 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Crabe farci (1 pièce)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Rouleaux de printemps (2 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.5,
+                  "formats": []
+                }
+              ]
+            },
+            {
+              "titre": "Salades",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Salade thaï pimentée",
+                  "desc": "ananas frais, crevettes, crabe, piments",
+                  "piment": true,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade au crabe et au surimi",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade de crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade d’asperges au crabe",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade de poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade de bœuf aux nems",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade de nems",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Lap thaï au bœuf",
+                  "desc": "",
+                  "piment": true,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Grande salade bœuf-nems",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Grande salade de poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Grande salade de nems",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "vapeur",
+          "titre": "Spécialités à la vapeur",
+          "note": "15 min d’attente",
+          "prefixe": "",
+          "piment": false,
+          "photo": "bouchees-vapeur",
+          "photo_alt": "Bouchées vapeur aux crevettes, garnies de petits pois",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Bouchées au porc (5 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Bouchées aux crevettes (5 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Raviolis aux crevettes (5 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Mélange vapeur (6 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "soupes",
+          "titre": "Potages et soupes",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Potage pékinois au poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Potage pékinois au crabe",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Potage pékinois aux asperges et au crabe",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe vermicelle transparent au poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe vermicelle transparent au crabe",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe de nouilles au poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe de nouilles au crabe",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe de nouilles au canard laqué",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe raviolis aux crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Grande soupe pho",
+                  "desc": "bœuf",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Grande soupe Phnom Penh",
+                  "desc": "porc haché et crevettes",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Grande soupe raviolis crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "thai",
+          "titre": "Spécialités thaïlandaises",
+          "note": "",
+          "prefixe": "Spécialité thaïlandaise",
+          "piment": true,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Bœuf",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Filet de panga",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Noix de Saint-Jacques",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 13.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Seiches",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Fruits de mer",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 13.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Porc",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Canard",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fruits-de-mer",
+          "titre": "Fruits de mer",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Nid du dragon",
+                  "desc": "fruits de mer et légumes sur un nid de pommes de terre frites",
+                  "piment": false,
+                  "prix": 13.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Fruits de mer à la sauce piquante",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 13.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Fruits de mer à la sauce aigre-douce",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 13.5,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "boeuf",
+          "titre": "Bœuf",
+          "note": "Origine France",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Bœuf aux oignons",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf sauce piquante",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf luc-lac",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf ananas",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf au curry",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf aux trois champignons",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf aux pousses de bambou et champignons noirs",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poulet-porc",
+          "titre": "Poulet ou porc",
+          "note": "Au choix, poulet ou porc",
+          "prefixe": "Poulet ou porc",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "À l’ananas",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Aux trois champignons",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Au curry",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Au caramel",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Sauce piquante",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Sauce aigre-douce",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Au gingembre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "canard",
+          "titre": "Canard",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "canard-laque",
+          "photo_alt": "Canard laqué tranché sur lit de salade",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Canard laqué",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Canard à l’ananas",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Canard aux champignons noirs",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Canard aux champignons parfumés",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "crevettes",
+          "titre": "Crevettes",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "crevettes",
+          "photo_alt": "Crevettes sautées en sauce, légumes verts",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Crevettes au curry",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes à la sauce piquante",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes à la sauce aigre-douce",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poissons",
+          "titre": "Poissons et seiches",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Filet de panga au curry",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Filet de panga à la sauce piquante",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Filet de panga à la sauce aigre-douce",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Filet de panga grillé à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Filet de panga grillé aux légumes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Seiches au curry",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Seiches à la sauce piquante",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Seiches à la sauce aigre-douce",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Seiches grillées au sel et poivre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "plaque",
+          "titre": "Sur plaque chauffante",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Fruits de mer grillés au sel et poivre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 13.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes grillées au sel et poivre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes grillées à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes grillées au poivre vert et gingembre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Cuisses de grenouille grillées à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Cuisses de grenouille grillées au poivre vert et au gingembre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Cuisses de grenouille sel et poivre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Gambas grillées du chef",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 14.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Canard grillé à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf grillé au saté",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Bœuf grillé à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Poulet grillé à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Porc grillé à la citronnelle",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "brochettes",
+          "titre": "Brochettes",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "brochettes",
+          "photo_alt": "Brochettes grillées et laquées",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Brochettes de canard",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Brochettes de bœuf",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Brochettes de poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Brochettes de crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "riz-pates",
+          "titre": "Riz et pâtes",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Riz nature",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Riz cantonais",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Riz cantonais aux crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Riz cantonais thaï épicé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Riz cantonais thaï épicé aux crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Légumes chop suey",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Nouilles sautées aux germes de soja",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Nouilles sautées aux légumes et au porc",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Nouilles sautées aux légumes et au poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Nouilles sautées aux légumes et au bœuf",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 11.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Nouilles aux crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Mixao",
+                  "desc": "pâtes croustillantes avec poulet, porc et légumes",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Pâtes thaï au poulet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Pâtes thaï aux crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 12.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sushi",
+      "titre": "Bar à sushis",
+      "boissons": false,
+      "sections": [
+        {
+          "id": "salades-japonaises",
+          "titre": "Salades et soupe miso",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Salade de chou",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade de saumon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Salade d’algues wakamé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Soupe miso",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Riz vinaigré",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sushi-2",
+          "titre": "Sushi",
+          "note": "2 pièces",
+          "prefixe": "Sushi (2 pièces)",
+          "piment": false,
+          "photo": "sushi-plateau",
+          "photo_alt": "Assortiment de sushi et nigiri sur ardoise noire",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Saumon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Daurade",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon et avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "maki",
+          "titre": "Maki",
+          "note": "6 pièces",
+          "prefixe": "Maki (6 pièces)",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Saumon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon mayonnaise",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Concombre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Crevettes",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "california",
+          "titre": "California",
+          "note": "6 pièces",
+          "prefixe": "California (6 pièces)",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Foie gras",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon cheese",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon spicy",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon frit avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon frit avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.0,
+                  "formats": []
+                },
+                {
+                  "nom": "Surimi avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Tempura ebi",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Rainbow surimi avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Roll slim saumon cheese",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 8.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Dragon saumon avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.5,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "crunchy",
+          "titre": "Crunchy",
+          "note": "8 pièces",
+          "prefixe": "Crunchy (8 pièces)",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Saumon concombre avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.6,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon concombre avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Surimi concombre avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Poulet concombre avocat",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon wakamé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon wakamé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 10.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Poulet wakamé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.7,
+                  "formats": []
+                },
+                {
+                  "nom": "Surimi wakamé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 9.7,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sashimi",
+          "titre": "Sashimi",
+          "note": "11 pièces",
+          "prefixe": "Sashimi (11 pièces)",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Saumon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 14.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 14.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Thon mi-cuit",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 17.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Saumon mi-cuit",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 16.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chirashi",
+          "titre": "Chirashi",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Chirashi saumon avocat riz vinaigré",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 16.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Chirashi thon avocat riz vinaigré",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 17.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Chirashi mix (thon et saumon)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 19.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Tartare saumon avocat vinaigré",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 16.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Brochettes de bœuf et fromage (2 pièces)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "douceurs",
+      "titre": "Desserts et glaces",
+      "boissons": false,
+      "sections": [
+        {
+          "id": "desserts",
+          "titre": "Desserts",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Assortiment de beignets",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Beignets de pomme, banane ou ananas",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Beignets flambés",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Banane au caramel et glace vanille",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Mélange de sucreries",
+                  "desc": "assortiment de confits",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Ananas frais",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Mangue fraîche",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Litchis au sirop",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Coupe de fruits",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Boule de neige à la noix de coco",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Gâteaux soja",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Dessert thaïlandais",
+                  "desc": "riz gluant, lait de coco, mangue",
+                  "piment": false,
+                  "prix": 9.5,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "glaces",
+          "titre": "Glaces",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "Coupes et givrés",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Colonel chinois",
+                  "desc": "glace citron vert et saké",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Orange ou citron givré",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Coco givré ou mystère",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Coupe Himalaya",
+                  "desc": "litchis, glace vanille et coco, chantilly",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Tropicana",
+                  "desc": "beignet de banane, glace chocolat et vanille, chantilly",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                }
+              ]
+            },
+            {
+              "titre": "À la boule",
+              "note": "Parfums : vanille, chocolat, café, pistache, fraise, noix de coco, passion, citron, citron vert, caramel, rhum-raisin, menthe",
+              "plats": [
+                {
+                  "nom": "Glace 1 boule",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Glace 2 boules",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 6.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Glace 2 boules avec chantilly",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.5,
+                  "formats": []
+                },
+                {
+                  "nom": "Glace 3 boules",
+                  "desc": "chantilly +1 €",
+                  "piment": false,
+                  "prix": 7.5,
+                  "formats": []
+                }
+              ]
+            },
+            {
+              "titre": "Mochi",
+              "note": "Parfums : mangue, litchi, thé vert, sésame, coco",
+              "plats": [
+                {
+                  "nom": "Mochi glacé",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 7.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bar",
+      "titre": "Le bar",
+      "boissons": true,
+      "sections": [
+        {
+          "id": "aperitifs",
+          "titre": "Apéritifs",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Cocktail maison (10 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Martini blanc ou rouge (5 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Whisky",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Kir (10 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Muscat (5 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Porto",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Ricard (5 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Whisky-coca",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.5,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "boissons",
+          "titre": "Boissons",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "Sans alcool",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Eau minérale (50 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Eau minérale (100 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Coca, Orangina, Ice Tea ou Coca Zero (25 ou 33 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Jus de fruits (20 cl)",
+                  "desc": "orange, pomme, ananas, litchi, mangue, exotique",
+                  "piment": false,
+                  "prix": 3.9,
+                  "formats": []
+                }
+              ]
+            },
+            {
+              "titre": "Bières",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Heineken (33 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Tsingtao, bière chinoise (33 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Singha, bière thaïlandaise (33 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Asahi, bière japonaise (33 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Kirin Ichiban, bière japonaise (33 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                }
+              ]
+            },
+            {
+              "titre": "Chaud",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Café",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 1.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Thé au jasmin",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 3.5,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "digestifs",
+          "titre": "Digestifs",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Saké",
+                  "desc": "alcool de riz parfumé aux pétales de rose",
+                  "piment": false,
+                  "prix": 4.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Cognac ou Armagnac",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                },
+                {
+                  "nom": "Get 27 ou vodka",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 5.9,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "vins",
+          "titre": "Vins",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "Rouge",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Corbières",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": null
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 19.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Gaillac",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 13.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 21.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Madiran",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 14.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 22.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Saint-Mont",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 14.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 23.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Saint-Nicolas",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 14.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 23.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Pichet, vin de pays de l’Aude 11 %",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "1/4",
+                      "prix": 5.5
+                    },
+                    {
+                      "libelle": "1/2",
+                      "prix": 7.5
+                    }
+                  ]
+                },
+                {
+                  "nom": "Vin au verre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "",
+                      "prix": null
+                    },
+                    {
+                      "libelle": "le verre",
+                      "prix": 3.9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "titre": "Rosé",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Gaillac",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 13.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 21.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Listel gris de gris",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": null
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 21.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Côtes de Provence",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 13.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 21.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Pichet",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "1/4",
+                      "prix": 5.5
+                    },
+                    {
+                      "libelle": "1/2",
+                      "prix": 7.5
+                    }
+                  ]
+                },
+                {
+                  "nom": "Vin au verre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "",
+                      "prix": null
+                    },
+                    {
+                      "libelle": "le verre",
+                      "prix": 3.9
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "titre": "Blanc",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Blanc sec",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 13.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 21.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Blanc doux",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": 13.0
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 21.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Côtes de Gascogne (sec)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "37,5 cl",
+                      "prix": null
+                    },
+                    {
+                      "libelle": "75 cl",
+                      "prix": 20.0
+                    }
+                  ]
+                },
+                {
+                  "nom": "Vin au verre",
+                  "desc": "",
+                  "piment": false,
+                  "prix": null,
+                  "formats": [
+                    {
+                      "libelle": "",
+                      "prix": null
+                    },
+                    {
+                      "libelle": "le verre",
+                      "prix": 3.9
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "champagne",
+          "titre": "Champagne",
+          "note": "",
+          "prefixe": "",
+          "piment": false,
+          "photo": "",
+          "photo_alt": "",
+          "groupes": [
+            {
+              "titre": "",
+              "note": "",
+              "plats": [
+                {
+                  "nom": "Maison Gyéjacquot (75 cl)",
+                  "desc": "",
+                  "piment": false,
+                  "prix": 45.0,
+                  "formats": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
