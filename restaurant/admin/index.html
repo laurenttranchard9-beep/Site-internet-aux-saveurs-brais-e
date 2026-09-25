@@ -75,6 +75,7 @@
       <div class="tabs" role="tablist">
         <button role="tab" id="tab-products" aria-controls="panel-products" aria-selected="true">Produits &amp; stocks</button>
         <button role="tab" id="tab-categories" aria-controls="panel-categories" aria-selected="false">Catégories</button>
+        <button role="tab" id="tab-stats" aria-controls="panel-stats" aria-selected="false">Statistiques</button>
       </div>
 
       <!-- Produits -->
@@ -113,7 +114,33 @@
         <p class="muted hint">L'ordre ci-dessous est celui de la carte. Utilisez les flèches pour le modifier.</p>
         <ul class="cat-list" id="cat-rows"></ul>
       </section>
+      <!-- Statistiques de visite (visiteurs ayant accepté le cookie) -->
+      <section id="panel-stats" role="tabpanel" aria-labelledby="tab-stats" hidden>
+        <div class="stats-tete">
+          <svg class="stats-cookie" viewBox="0 0 120 120" aria-hidden="true">
+            <defs><mask id="croque-admin"><rect width="120" height="120" fill="#fff"/><circle cx="100" cy="26" r="17" fill="#000"/><circle cx="80" cy="14" r="10" fill="#000"/><circle cx="110" cy="46" r="10" fill="#000"/></mask></defs>
+            <g mask="url(#croque-admin)">
+              <circle cx="58" cy="62" r="50" fill="#b9793f"/><circle cx="58" cy="62" r="45" fill="#d69a5c"/>
+              <circle cx="42" cy="42" r="6" fill="#4a2a18"/><circle cx="66" cy="50" r="5" fill="#4a2a18"/><circle cx="36" cy="72" r="7" fill="#4a2a18"/>
+              <circle cx="62" cy="82" r="6" fill="#4a2a18"/><circle cx="84" cy="70" r="5" fill="#4a2a18"/><circle cx="50" cy="98" r="4" fill="#4a2a18"/>
+              <circle cx="24" cy="56" r="3" fill="#4a2a18"/><circle cx="78" cy="94" r="3.5" fill="#4a2a18"/>
+            </g>
+            <circle cx="104" cy="62" r="2.4" fill="#d69a5c"/><circle cx="110" cy="70" r="1.6" fill="#b9793f"/>
+          </svg>
+          <div>
+            <h2>Qui regarde la carte ?</h2>
+            <p class="muted">Quand et sur quel appareil la carte est consultée. Seuls les visiteurs qui acceptent le cookie sont comptés, sans adresse IP ni donnée personnelle.</p>
+          </div>
+        </div>
+        <div class="stats-periodes" role="group" aria-label="Période">
+          <button type="button" class="chip" data-jours="7">7 jours</button>
+          <button type="button" class="chip" data-jours="30" aria-pressed="true">30 jours</button>
+          <button type="button" class="chip" data-jours="365">12 mois</button>
+        </div>
+        <div id="stats-contenu"></div>
+      </section>
     </main>
+    <div class="info-bulle" id="info-bulle" role="tooltip" hidden></div>
   </div>
 
   <!-- ===== Fenêtre produit ===== -->

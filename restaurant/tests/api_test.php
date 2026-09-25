@@ -132,6 +132,32 @@ check('produits déplacés avant suppression', $moved['productCount'] === $drink
 call('category-delete', ['id' => $c['id'], 'deleteProducts' => true]);
 check('catégorie et produits supprimés', !in_array($c['id'], array_column(call('products')[1]['products'], 'categoryId'), true));
 
+// --- Statistiques de visite ---
+function visite(array $body, string $ua): int
+{
+    global $port;
+    $ctx = stream_context_create(['http' => ['method' => 'POST', 'ignore_errors' => true,
+        'header' => "Content-Type: application/json\r\nUser-Agent: $ua", 'content' => json_encode($body)]]);
+    file_get_contents("http://127.0.0.1:$port/api.php?action=visite", false, $ctx);
+    return (int) explode(' ', $http_response_header[0])[1];
+}
+$iphone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
+$android = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0 Mobile Safari/537.36';
+$pc = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
+check('visite refusée sans identifiant valide', visite(['visiteur' => 'pas-un-id'], $iphone) === 400);
+visite(['visiteur' => str_repeat('a', 32), 'largeur' => 390, 'origine' => 'https://www.google.com/'], $iphone);
+visite(['visiteur' => str_repeat('a', 32), 'largeur' => 390], $iphone); // même personne : pas comptée deux fois
+visite(['visiteur' => str_repeat('b', 32), 'largeur' => 412], $android);
+visite(['visiteur' => str_repeat('c', 32), 'largeur' => 1920], $pc);
+check('statistiques réservées à la gestion', call('stats', null, false)[0] === 401);
+$st = call('stats')[1];
+$noms = fn($l) => array_column($l, 'visites', 'nom');
+check('visites comptées une fois par personne', $st['visites'] === 3 && $st['visiteurs'] === 3);
+check('appareils reconnus', $noms($st['appareils']) == ['Smartphone' => 2, 'Ordinateur' => 1]);
+check('systèmes et navigateurs reconnus', ($noms($st['systemes'])['iOS'] ?? 0) === 1 && ($noms($st['navigateurs'])['Samsung Internet'] ?? 0) === 1);
+check('provenance reconnue', ($noms($st['origines'])['Google'] ?? 0) === 1 && ($noms($st['origines'])['Accès direct'] ?? 0) === 2);
+check('visites par jour et par heure', count($st['parJour']) === 30 && array_sum(array_column($st['parJour'], 'visites')) === 3 && array_sum($st['heures']) === 3);
+
 // --- Mot de passe ---
 $oldCookie = $cookie;
 check('mot de passe actuel vérifié', call('password', ['currentPassword' => 'faux', 'newPassword' => 'nouveau-mdp-123'])[0] === 400);

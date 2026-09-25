@@ -60,8 +60,35 @@
       <p>Prix nets en euros, service compris. Liste des allergènes disponible sur demande.</p>
       <p>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
       <p class="updated" id="updated"></p>
+      <p><button type="button" class="lien-cookies" id="gerer-cookies">Gérer les cookies</button></p>
     </div>
   </footer>
+
+  <!-- Consentement aux cookies de mesure d'audience (voir consentement.js) -->
+  <div class="cookies" id="cookies" role="dialog" tabindex="-1" aria-labelledby="cookies-titre" aria-describedby="cookies-texte" hidden>
+    <div class="cookies-carte">
+      <svg class="cookie-img" viewBox="0 0 120 120" aria-hidden="true">
+        <defs><mask id="croque"><rect width="120" height="120" fill="#fff"/><circle cx="100" cy="26" r="17" fill="#000"/><circle cx="80" cy="14" r="10" fill="#000"/><circle cx="110" cy="46" r="10" fill="#000"/></mask></defs>
+        <g mask="url(#croque)">
+          <circle cx="58" cy="62" r="50" fill="#b9793f"/>
+          <circle cx="58" cy="62" r="45" fill="#d69a5c"/>
+          <circle cx="42" cy="42" r="6" fill="#4a2a18"/><circle cx="66" cy="50" r="5" fill="#4a2a18"/><circle cx="36" cy="72" r="7" fill="#4a2a18"/>
+          <circle cx="62" cy="82" r="6" fill="#4a2a18"/><circle cx="84" cy="70" r="5" fill="#4a2a18"/><circle cx="50" cy="98" r="4" fill="#4a2a18"/>
+          <circle cx="24" cy="56" r="3" fill="#4a2a18"/><circle cx="78" cy="94" r="3.5" fill="#4a2a18"/>
+          <circle cx="44" cy="40" r="2" fill="#7a4a2a"/><circle cx="34" cy="70" r="2.2" fill="#7a4a2a"/>
+        </g>
+        <circle cx="104" cy="62" r="2.4" fill="#d69a5c"/><circle cx="110" cy="70" r="1.6" fill="#b9793f"/><circle cx="90" cy="40" r="1.4" fill="#b9793f"/>
+      </svg>
+      <div class="cookies-corps">
+        <h2 id="cookies-titre">Un petit cookie ?</h2>
+        <p id="cookies-texte">Avec votre accord, nous déposons un cookie de mesure d'audience : il nous dit, de façon anonyme, quand et sur quel type d'appareil notre carte est consultée. Pas de publicité, rien n'est revendu, et il expire au bout de 13 mois.</p>
+        <div class="cookies-boutons">
+          <button type="button" class="cookies-btn" id="cookies-refuser">Refuser</button>
+          <button type="button" class="cookies-btn" id="cookies-accepter">Accepter</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <template id="item-tpl">
     <article class="item">
@@ -76,5 +103,6 @@
   </template>
 
   <script src="menu.js"></script>
+  <script src="consentement.js"></script>
 </body>
 </html>

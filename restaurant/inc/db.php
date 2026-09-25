@@ -75,6 +75,8 @@ function migrate(PDO $pdo): void
             value  TEXT NOT NULL
         );
     " . PRODUCTS_TABLE);
+    require_once __DIR__ . '/stats.php';
+    stats_migrer($pdo);
     load_carte_if_outdated($pdo);
 }
 

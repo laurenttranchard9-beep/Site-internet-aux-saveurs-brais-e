@@ -183,6 +183,7 @@ function handle(string $method, string $action, array $body): array
         }
         return ['categories' => $categories];
     }
+    if ($method === 'POST' && $action === 'visite') return enregistrer_visite($body);
     if ($method === 'GET' && $action === 'me') {
         $user = current_user();
         if (!$user) fail(401, 'Non connecté.', ['needsSetup' => needs_setup()]);
@@ -261,6 +262,10 @@ function handle(string $method, string $action, array $body): array
                 $pdo->prepare('DELETE FROM categories WHERE id = ?')->execute([$id]);
             });
             return ['ok' => true];
+
+        case 'GET stats':
+            $jours = $_GET['jours'] ?? '30';
+            return statistiques(is_string($jours) && ctype_digit($jours) ? (int) $jours : 30);
 
         case 'GET products':
             $rows = $pdo->query('SELECT * FROM products ORDER BY category_id, position, id')->fetchAll();

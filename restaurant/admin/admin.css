@@ -178,3 +178,51 @@ dialog::backdrop { background: rgba(31, 26, 23, .55); }
   .top-actions { width: 100%; }
   .top-actions .btn { flex: 1; }
 }
+
+/* ============ Statistiques ============ */
+.stats-tete { display: flex; gap: 16px; align-items: center; margin: 4px 0 14px; }
+.stats-tete h2 { margin: 0 0 2px; font-family: var(--font-display); font-size: 1.4rem; }
+.stats-tete p { margin: 0; font-size: .9rem; max-width: 60ch; }
+.stats-cookie { flex: 0 0 64px; width: 64px; height: 64px; transition: transform .6s cubic-bezier(.2, 1.2, .4, 1); }
+.stats-cookie:hover { transform: rotate(200deg); }
+.stats-periodes { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.chip { font: inherit; font-weight: 600; font-size: .88rem; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--char); border-color: var(--char); color: #fff; }
+.tuiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.tuile { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.tuile .valeur { display: block; font-family: var(--font-display); font-size: 2rem; line-height: 1.1; color: var(--ink); }
+.tuile .libelle { color: var(--muted); font-size: .88rem; font-weight: 500; }
+.graphes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.graphe { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px 12px; min-width: 0; }
+.graphe.large { grid-column: 1 / -1; }
+.graphe h3 { margin: 0 0 2px; font-size: 1rem; }
+.graphe .sous-titre { margin: 0 0 12px; color: var(--muted); font-size: .82rem; }
+/* Barres verticales (jours, heures) */
+.colonnes { display: flex; align-items: flex-end; gap: 2px; height: 150px; border-bottom: 1px solid var(--line); position: relative; }
+.colonne { flex: 1 1 0; min-width: 0; height: 100%; display: flex; align-items: flex-end; cursor: default; }
+.colonne span { display: block; width: 100%; background: var(--ember); border-radius: 4px 4px 0 0; min-height: 0; }
+.colonne:hover span, .colonne:focus span { background: var(--ember-dark); }
+.colonne:focus { outline: none; }
+.axe-x { display: flex; gap: 2px; margin-top: 4px; font-size: .7rem; color: var(--muted); }
+.axe-x span { flex: 1 1 0; min-width: 0; text-align: center; white-space: nowrap; overflow: visible; }
+.colonnes .ligne-max { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--line); font-size: .68rem; color: var(--muted); }
+.colonnes .ligne-max b { position: absolute; right: 0; top: -1.2em; font-weight: 500; background: var(--card); padding-left: 4px; }
+/* Barres horizontales (appareils, systèmes…) */
+.barres { display: grid; gap: 8px; }
+.barre { display: grid; grid-template-columns: minmax(90px, 32%) 1fr auto; align-items: center; gap: 10px; font-size: .88rem; }
+.barre .nom { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.barre .piste { height: 14px; border-radius: 0 4px 4px 0; background: #f1ebe4; overflow: hidden; }
+.barre .piste span { display: block; height: 100%; background: var(--ember); border-radius: 0 4px 4px 0; }
+.barre .chiffre { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 6.5em; text-align: right; }
+.barre .chiffre b { color: var(--ink); }
+.stats-vide { text-align: center; padding: 40px 16px; color: var(--muted); background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); }
+.stats-vide svg { width: 72px; height: 72px; margin: 0 auto 10px; display: block; opacity: .9; }
+.info-bulle { position: fixed; z-index: 200; pointer-events: none; background: var(--char); color: #fff; font-size: .82rem; padding: 6px 10px; border-radius: 8px;
+  box-shadow: 0 8px 20px -8px rgba(0,0,0,.5); transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; }
+@media (max-width: 820px) {
+  .tuiles { grid-template-columns: repeat(2, 1fr); }
+  .graphes { grid-template-columns: 1fr; }
+  .stats-tete { align-items: flex-start; }
+}
+.tabs { overflow-x: auto; scrollbar-width: none; }
+.tabs button { white-space: nowrap; }

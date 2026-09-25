@@ -41,6 +41,18 @@ Vérifiez que le dossier `data/` est **accessible en écriture** (c'est le cas p
 
 Seule une personne qui a accès aux fichiers du site peut faire cette manipulation.
 
+## Statistiques de visite et cookies
+
+L'onglet **Statistiques** de l'espace de gestion montre quand et sur quel appareil la carte est consultée : visites par jour (ou par mois), heures et jours de la semaine, smartphone / tablette / ordinateur, systèmes, navigateurs et provenance (Google, Facebook…), sur 7 jours, 30 jours ou 12 mois.
+
+Conformément aux règles de la CNIL, un bandeau demande l'accord du visiteur avant tout cookie de mesure :
+
+- **Accepter** dépose un identifiant aléatoire (`asb_visiteur`, 13 mois) et compte la visite ; **Refuser** ne compte rien. Les deux boutons sont à égalité.
+- Le choix est gardé 6 mois (`asb_cookies`), et le lien « Gérer les cookies » en bas de la carte permet d'en changer.
+- Aucune adresse IP n'est enregistrée ; une même personne compte une visite par tranche de 30 minutes ; les visites de plus de 25 mois sont supprimées.
+
+Les chiffres ne portent donc que sur les visiteurs qui acceptent le cookie.
+
 ## Stocks
 
 - Un produit a soit une **quantité suivie** (nombre de portions), soit un **stock illimité** (case « Suivre le stock » décochée), pratique pour les accompagnements ou les boissons.

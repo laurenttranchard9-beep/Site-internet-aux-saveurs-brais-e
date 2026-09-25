@@ -16,8 +16,8 @@
   }
 
   // Sans corps : lecture (GET). Avec corps : modification (POST en JSON).
-  async function api(action, body) {
-    const res = await fetch(`../api.php?action=${encodeURIComponent(action)}`, {
+  async function api(action, body, params = {}) {
+    const res = await fetch(`../api.php?${new URLSearchParams({ action, ...params })}`, {
       method: body !== undefined ? "POST" : "GET",
       headers: body !== undefined ? { "Content-Type": "application/json" } : {},
       body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -576,6 +576,142 @@
       }
     }
   });
+
+  // ---------- Statistiques ----------
+  const bulle = $("#info-bulle");
+  const nombre = new Intl.NumberFormat("fr-FR");
+  const pct = (n, total) => (total ? Math.round((n / total) * 100) : 0);
+  let joursStats = 30;
+
+  function montrerBulle(cible, texte) {
+    const r = cible.getBoundingClientRect();
+    bulle.textContent = texte;
+    bulle.hidden = false;
+    bulle.style.left = `${Math.min(Math.max(r.left + r.width / 2, 70), innerWidth - 70)}px`;
+    bulle.style.top = `${r.top + (cible.firstChild?.getBoundingClientRect().top - r.top || 0)}px`;
+  }
+  const cacherBulle = () => (bulle.hidden = true);
+  addEventListener("scroll", cacherBulle, { passive: true });
+
+  // Colonnes verticales : une par jour, mois ou heure. Le détail s'affiche au survol ou au toucher.
+  function colonnes(points, etiquetteTous = 1) {
+    const max = Math.max(1, ...points.map((p) => p.valeur));
+    const zone = el("div", { class: "colonnes" });
+    zone.append(el("div", { class: "ligne-max" }, el("b", {}, nombre.format(max))));
+    zone.lastChild.style.bottom = "100%";
+    for (const p of points) {
+      const barre = el("span");
+      barre.style.height = p.valeur ? `max(2px, ${(p.valeur / max) * 100}%)` : "0";
+      const col = el("div", { class: "colonne", tabindex: "0", "aria-label": `${p.detail} : ${p.valeur} visite${p.valeur > 1 ? "s" : ""}` }, barre);
+      const texte = `${p.detail} · ${nombre.format(p.valeur)} visite${p.valeur > 1 ? "s" : ""}`;
+      col.addEventListener("mouseenter", () => montrerBulle(col, texte));
+      col.addEventListener("focus", () => montrerBulle(col, texte));
+      col.addEventListener("touchstart", () => montrerBulle(col, texte), { passive: true });
+      col.addEventListener("mouseleave", cacherBulle);
+      col.addEventListener("blur", cacherBulle);
+      zone.append(col);
+    }
+    const axe = el("div", { class: "axe-x", "aria-hidden": "true" },
+      ...points.map((p, i) => el("span", {}, i % etiquetteTous === 0 ? p.court : "")));
+    return el("div", {}, zone, axe);
+  }
+
+  // Barres horizontales : nom, longueur proportionnelle, nombre et pourcentage.
+  function barres(lignes, total) {
+    if (!lignes.length) return el("p", { class: "muted" }, "—");
+    const max = Math.max(...lignes.map((l) => l.visites));
+    return el("div", { class: "barres" }, ...lignes.slice(0, 8).map((l) => {
+      const remplissage = el("span");
+      remplissage.style.width = `${(l.visites / max) * 100}%`;
+      return el("div", { class: "barre" },
+        el("span", { class: "nom", title: l.nom }, l.nom),
+        el("span", { class: "piste", "aria-hidden": "true" }, remplissage),
+        el("span", { class: "chiffre" }, el("b", {}, `${pct(l.visites, total)} %`), ` · ${nombre.format(l.visites)}`));
+    }));
+  }
+
+  const graphe = (titre, sousTitre, contenu, large = false) =>
+    el("section", { class: large ? "graphe large" : "graphe" }, el("h3", {}, titre), el("p", { class: "sous-titre" }, sousTitre), contenu);
+
+  function parJourOuMois(d) {
+    const dateLongue = (j) => new Date(`${j}T12:00:00`).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+    if (d.jours <= 60) {
+      return {
+        titre: "Visites par jour",
+        points: d.parJour.map((p) => ({
+          valeur: p.visites, detail: dateLongue(p.jour), court: String(Number(p.jour.slice(8))),
+        })),
+        pas: d.jours > 14 ? 5 : 1,
+      };
+    }
+    const mois = new Map();
+    for (const p of d.parJour) mois.set(p.jour.slice(0, 7), (mois.get(p.jour.slice(0, 7)) || 0) + p.visites);
+    return {
+      titre: "Visites par mois",
+      points: [...mois].map(([m, v]) => {
+        const date = new Date(`${m}-15T12:00:00`);
+        return { valeur: v, detail: date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+          court: date.toLocaleDateString("fr-FR", { month: "short" }).replace(".", "") };
+      }),
+      pas: 1,
+    };
+  }
+
+  function rendreStats(d) {
+    const zone = $("#stats-contenu");
+    if (!d.visites) {
+      const cookie = $(".stats-cookie").cloneNode(true);
+      cookie.removeAttribute("class");
+      cookie.querySelector("mask").id = "croque-vide";
+      cookie.querySelector("g").setAttribute("mask", "url(#croque-vide)");
+      zone.replaceChildren(el("div", { class: "stats-vide" }, cookie,
+        el("p", {}, "Pas encore de visite sur cette période."),
+        el("p", {}, "Les visites s'affichent ici dès que des visiteurs acceptent le cookie sur la carte.")));
+      return;
+    }
+    const smartphones = d.appareils.find((a) => a.nom === "Smartphone")?.visites || 0;
+    const heureMax = d.heures.indexOf(Math.max(...d.heures));
+    const jourMax = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"][d.semaine.indexOf(Math.max(...d.semaine))];
+    const tuile = (valeur, libelle) => el("div", { class: "tuile" }, el("span", { class: "valeur" }, valeur), el("span", { class: "libelle" }, libelle));
+    const serie = parJourOuMois(d);
+    const jours = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+    const joursLongs = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+    zone.replaceChildren(
+      el("div", { class: "tuiles" },
+        tuile(nombre.format(d.visites), `visite${d.visites > 1 ? "s" : ""}`),
+        tuile(nombre.format(d.visiteurs), `visiteur${d.visiteurs > 1 ? "s" : ""} différent${d.visiteurs > 1 ? "s" : ""}`),
+        tuile(`${pct(smartphones, d.visites)} %`, "sur smartphone"),
+        tuile(`${heureMax} h`, `heure la plus fréquentée · surtout le ${jourMax}`)),
+      el("div", { class: "graphes" },
+        graphe(serie.titre, "Nombre de visites, heure de Paris", colonnes(serie.points, serie.pas), true),
+        graphe("Appareils", "Smartphone, tablette ou ordinateur", barres(d.appareils, d.visites)),
+        graphe("Heures de visite", "À quelle heure la carte est consultée",
+          colonnes(d.heures.map((v, h) => ({ valeur: v, detail: `${h} h – ${h + 1} h`, court: `${h}` })), 3)),
+        graphe("Jours de la semaine", "Visites cumulées par jour",
+          colonnes(d.semaine.map((v, i) => ({ valeur: v, detail: joursLongs[i], court: jours[i] })))),
+        graphe("Systèmes", "Android, iPhone (iOS), Windows…", barres(d.systemes, d.visites)),
+        graphe("Navigateurs", "Chrome, Safari, Firefox…", barres(d.navigateurs, d.visites)),
+        graphe("Provenance", "D'où arrivent les visiteurs", barres(d.origines, d.visites))));
+  }
+
+  async function chargerStats() {
+    $("#stats-contenu").replaceChildren(el("p", { class: "muted" }, "Chargement…"));
+    try {
+      rendreStats(await api("stats", undefined, { jours: joursStats }));
+    } catch (err) {
+      fail(err);
+    }
+  }
+
+  document.querySelectorAll(".stats-periodes .chip").forEach((b) =>
+    b.addEventListener("click", () => {
+      joursStats = Number(b.dataset.jours);
+      document.querySelectorAll(".stats-periodes .chip").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      chargerStats();
+    })
+  );
+  $("#tab-stats").addEventListener("click", chargerStats);
 
   // ---------- Démarrage ----------
   api("me")
