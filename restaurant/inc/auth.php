@@ -100,7 +100,7 @@ function login(array $body): array
     $stmt->execute([trim($username)]);
     $user = $stmt->fetch();
     // Vérifie toujours un hash, même si l'identifiant n'existe pas, pour ne pas le révéler par le temps de réponse.
-    $hash = $user['password_hash'] ?? password_hash(random_bytes(16), PASSWORD_DEFAULT);
+    $hash = $user['password_hash'] ?? password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
     if (!password_verify($password, $hash) || !$user) {
         $pdo->prepare('INSERT INTO login_failures (ip, failed_at) VALUES (?, ?)')->execute([$ip, time()]);
         fail(401, 'Identifiant ou mot de passe incorrect.');

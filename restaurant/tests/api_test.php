@@ -6,7 +6,15 @@ $root = dirname(__DIR__);
 $tmp = sys_get_temp_dir() . '/asb-test-' . bin2hex(random_bytes(4));
 mkdir($tmp);
 $dbFile = "$tmp/test.sqlite";
-$port = 8765;
+// Port libre choisi par le système : deux lancements rapprochés ne partagent jamais le même serveur.
+function port_libre(): int
+{
+    $s = stream_socket_server('tcp://127.0.0.1:0');
+    $port = (int) substr(strrchr(stream_socket_get_name($s, false), ':'), 1);
+    fclose($s);
+    return $port;
+}
+$port = port_libre();
 putenv("ASB_DB_FILE=$dbFile");
 $server = proc_open(
     [PHP_BINARY, '-S', "127.0.0.1:$port", '-t', $root],
@@ -15,6 +23,7 @@ $server = proc_open(
 );
 register_shutdown_function(function () use ($server, $tmp) {
     proc_terminate($server);
+    proc_close($server); // attend l'arrêt réel du serveur
     array_map('unlink', glob("$tmp/*"));
     rmdir($tmp);
 });
@@ -197,7 +206,7 @@ $pdo->prepare('INSERT INTO users (username, password_hash, password_changed_at) 
     ->execute(['patron', password_hash('ancien-mdp-123', PASSWORD_DEFAULT)]);
 $pdo = null;
 putenv("ASB_DB_FILE=$old");
-$port2 = 8766;
+$port2 = port_libre();
 $server2 = proc_open([PHP_BINARY, '-S', "127.0.0.1:$port2", '-t', $root], [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']], $pipes2);
 for ($i = 0; $i < 50 && !@fsockopen('127.0.0.1', $port2); $i++) usleep(100000);
 $port = $port2;
@@ -214,6 +223,7 @@ for ($i = 0; $i < 50 && !@fsockopen('127.0.0.1', $port2); $i++) usleep(100000);
 usleep(200000);
 check('la carte n\'est chargée qu\'une fois (modifications conservées)', in_array('Plat test', array_column(items(call('menu', null, false)[1]), 'name'), true));
 proc_terminate($server2);
+proc_close($server2);
 
 echo $failed ? "\n$failed test(s) en échec\n" : "\nTous les tests passent\n";
 exit($failed ? 1 : 0);
