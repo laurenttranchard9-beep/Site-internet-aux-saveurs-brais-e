@@ -52,47 +52,97 @@ resoudre() {
     getent ahostsv4 "$1" | awk '{print $1}' | sort -u || true
 }
 
+ACME=${ACME:-/var/www/letsencrypt}
+LE_LIVE=${LE_LIVE:-/etc/letsencrypt/live}
+
 # Hôte virtuel par défaut (le fichier 00-… est chargé en premier) : l'adresse IP continue
-# d'afficher la page d'accueil et les sous-dossiers.
+# d'afficher la page d'accueil et les sous-dossiers. Le dossier ACME sert aux vérifications de Let's Encrypt.
 ecrire_hote_par_defaut() {
+    mkdir -p "$ACME/.well-known/acme-challenge"
     cat > "$CONF_DIR/00-par-defaut.conf" <<CONF
 <VirtualHost *:80>
     DocumentRoot "$WEB"
 </VirtualHost>
+
+# Fichiers de vérification Let's Encrypt, communs à tous les domaines
+<Directory "$ACME">
+    AllowOverride None
+    Require all granted
+</Directory>
 CONF
 }
 
+# Hôte virtuel du domaine. Sans certificat : le site en HTTP. Avec certificat : HTTP redirige vers HTTPS.
 ecrire_hote_du_site() { # site, domaine, alias (vide ou www.domaine)
-    local alias_ligne=""
-    [ -n "$3" ] && alias_ligne="    ServerAlias $3"
-    cat > "$CONF_DIR/site-$2.conf" <<CONF
-# $2 -> site « $1 » (ajouté par ajouter-domaine.sh)
-<VirtualHost *:80>
-    ServerName $2
-$alias_ligne
-    DocumentRoot "$WEB/$1"
-    <Directory "$WEB/$1">
+    local site=$1 domaine=$2 alias_ligne="" cert="$LE_LIVE/$2"
+    [ -n "$3" ] && alias_ligne="ServerAlias $3"
+    local repertoire="    DocumentRoot \"$WEB/$site\"
+    <Directory \"$WEB/$site\">
         AllowOverride All
         Require all granted
     </Directory>
-    ErrorLog /var/log/httpd/$2-error.log
-    CustomLog /var/log/httpd/$2-access.log combined
-</VirtualHost>
-CONF
+    ErrorLog /var/log/httpd/$domaine-error.log
+    CustomLog /var/log/httpd/$domaine-access.log combined"
+    local acme="    Alias /.well-known/acme-challenge/ $ACME/.well-known/acme-challenge/"
+    {
+        echo "# $domaine -> site « $site » (ajouté par ajouter-domaine.sh)"
+        echo "<VirtualHost *:80>"
+        echo "    ServerName $domaine"
+        [ -n "$alias_ligne" ] && echo "    $alias_ligne"
+        echo "$acme"
+        if [ -s "$cert/fullchain.pem" ]; then
+            echo "    RewriteEngine On"
+            echo "    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/"
+            echo "    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]"
+        else
+            echo "$repertoire"
+        fi
+        echo "</VirtualHost>"
+        if [ -s "$cert/fullchain.pem" ]; then
+            echo
+            echo "<VirtualHost *:443>"
+            echo "    ServerName $domaine"
+            [ -n "$alias_ligne" ] && echo "    $alias_ligne"
+            echo "$repertoire"
+            echo "    SSLEngine on"
+            echo "    SSLCertificateFile $cert/fullchain.pem"
+            echo "    SSLCertificateKeyFile $cert/privkey.pem"
+            echo "</VirtualHost>"
+        fi
+    } > "$CONF_DIR/site-$domaine.conf"
 }
 
+# Module HTTPS d'Apache. Sur Amazon Linux, son fichier ssl.conf réclame un certificat « localhost »
+# qui n'est créé qu'au démarrage suivant d'Apache : on le crée tout de suite pour que la configuration reste valide.
+preparer_https() {
+    rpm -q mod_ssl >/dev/null 2>&1 || dnf install -y -q mod_ssl
+    local crt=/etc/pki/tls/certs/localhost.crt key=/etc/pki/tls/private/localhost.key
+    if [ ! -s "$crt" ] || [ ! -s "$key" ]; then
+        openssl req -x509 -nodes -newkey rsa:2048 -days 3650 -subj "/CN=localhost" \
+            -keyout "$key" -out "$crt" 2>/dev/null
+        chmod 600 "$key"
+    fi
+}
+
+# Certbot seul, sans module pour Apache : aucune compilation nécessaire.
 installer_certbot() {
-    if ! command -v certbot >/dev/null 2>&1; then
+    if [ ! -x /opt/certbot/bin/certbot ]; then
         echo "   Installation de Certbot (première fois seulement)…"
-        dnf install -y -q mod_ssl python3 augeas-libs cronie
+        dnf install -y -q python3 cronie
+        rm -rf /opt/certbot
         python3 -m venv /opt/certbot
         /opt/certbot/bin/pip install -q --upgrade pip
-        /opt/certbot/bin/pip install -q certbot certbot-apache
-        ln -sf /opt/certbot/bin/certbot /usr/bin/certbot
+        /opt/certbot/bin/pip install -q certbot
     fi
+    ln -sf /opt/certbot/bin/certbot /usr/bin/certbot
     # Renouvellement automatique (les certificats durent 90 jours).
     systemctl enable -q --now crond
     echo "0 3 * * * root /usr/bin/certbot renew -q --deploy-hook 'systemctl reload httpd'" > /etc/cron.d/certbot
+}
+
+recharger_apache() {
+    apachectl configtest
+    systemctl reload httpd
 }
 
 main() {
@@ -116,21 +166,25 @@ main() {
         www="www.$domaine"
         echo "   $domaine et $www pointent bien vers ce serveur."
     else
-        echo "   $domaine pointe bien vers ce serveur ($www n'est pas configuré : seule l'adresse sans www sera servie)."
+        echo "   $domaine pointe bien vers ce serveur (www.$domaine n'est pas configuré : seule l'adresse sans www sera servie)."
     fi
 
     echo "==> 2/4 Configuration d'Apache"
+    preparer_https
     ecrire_hote_par_defaut
     ecrire_hote_du_site "$site" "$domaine" "$www"
-    apachectl configtest
-    systemctl reload httpd
+    recharger_apache
 
     echo "==> 3/4 Certificat HTTPS"
     installer_certbot
-    local args=(--apache --non-interactive --agree-tos --redirect -d "$domaine")
+    local args=(certonly --webroot -w "$ACME" --non-interactive --agree-tos --keep-until-expiring
+                --cert-name "$domaine" -d "$domaine")
     [ -n "$www" ] && args+=(-d "$www")
     if [ -n "$email" ]; then args+=(-m "$email"); else args+=(--register-unsafely-without-email); fi
     certbot "${args[@]}"
+    # Le certificat existe : HTTPS activé, HTTP redirigé vers HTTPS.
+    ecrire_hote_du_site "$site" "$domaine" "$www"
+    recharger_apache
 
     echo "==> 4/4 Vérification"
     local code
