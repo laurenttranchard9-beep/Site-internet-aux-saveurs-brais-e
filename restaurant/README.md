@@ -53,6 +53,10 @@ Conformément aux règles de la CNIL, un bandeau demande l'accord du visiteur av
 
 Les chiffres ne portent donc que sur les visiteurs qui acceptent le cookie.
 
+## Mentions légales
+
+La page `mentions-legales.html` (lien en bas de la carte et dans le bandeau cookies) indique l'éditeur (SARL SAMNANG), l'hébergeur (Amazon Web Services), le concepteur du site et l'usage des cookies. Modifiez-la directement si ces informations changent.
+
 ## Stocks
 
 - Un produit a soit une **quantité suivie** (nombre de portions), soit un **stock illimité** (case « Suivre le stock » décochée), pratique pour les accompagnements ou les boissons.
