@@ -53,6 +53,7 @@ function analyser_navigateur(string $ua, ?int $largeur): array
 function origine_visite($referrer): string
 {
     if (!is_string($referrer) || $referrer === '') return '';
+    if ($referrer === 'qr') return 'QR code (tables)';
     $hote = strtolower((string) parse_url($referrer, PHP_URL_HOST));
     if ($hote === '' || $hote === strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''))) return '';
     $hote = preg_replace('/^(www|m|l|lm)\./', '', $hote);

@@ -30,7 +30,8 @@
         visiteur: identifiant(),
         largeur: Math.round(screen.width) || null,
         tactile: navigator.maxTouchPoints > 1,
-        origine: document.referrer,
+        // Arrivée par le QR code des tables (adresse …/?src=qr) : comptée à part dans « Provenance »
+        origine: new URLSearchParams(location.search).get("src") === "qr" ? "qr" : document.referrer,
       }),
       keepalive: true,
     }).catch(() => {});

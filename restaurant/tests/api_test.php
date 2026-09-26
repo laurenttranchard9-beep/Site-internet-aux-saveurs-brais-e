@@ -158,14 +158,16 @@ visite(['visiteur' => str_repeat('a', 32), 'largeur' => 390, 'origine' => 'https
 visite(['visiteur' => str_repeat('a', 32), 'largeur' => 390], $iphone); // même personne : pas comptée deux fois
 visite(['visiteur' => str_repeat('b', 32), 'largeur' => 412], $android);
 visite(['visiteur' => str_repeat('c', 32), 'largeur' => 1920], $pc);
+visite(['visiteur' => str_repeat('d', 32), 'largeur' => 390, 'origine' => 'qr'], $iphone);
 check('statistiques réservées à la gestion', call('stats', null, false)[0] === 401);
 $st = call('stats')[1];
 $noms = fn($l) => array_column($l, 'visites', 'nom');
-check('visites comptées une fois par personne', $st['visites'] === 3 && $st['visiteurs'] === 3);
-check('appareils reconnus', $noms($st['appareils']) == ['Smartphone' => 2, 'Ordinateur' => 1]);
-check('systèmes et navigateurs reconnus', ($noms($st['systemes'])['iOS'] ?? 0) === 1 && ($noms($st['navigateurs'])['Samsung Internet'] ?? 0) === 1);
-check('provenance reconnue', ($noms($st['origines'])['Google'] ?? 0) === 1 && ($noms($st['origines'])['Accès direct'] ?? 0) === 2);
-check('visites par jour et par heure', count($st['parJour']) === 30 && array_sum(array_column($st['parJour'], 'visites')) === 3 && array_sum($st['heures']) === 3);
+check('visites comptées une fois par personne', $st['visites'] === 4 && $st['visiteurs'] === 4);
+check('appareils reconnus', $noms($st['appareils']) == ['Smartphone' => 3, 'Ordinateur' => 1]);
+check('systèmes et navigateurs reconnus', ($noms($st['systemes'])['iOS'] ?? 0) === 2 && ($noms($st['navigateurs'])['Samsung Internet'] ?? 0) === 1);
+check('provenance reconnue', ($noms($st['origines'])['Google'] ?? 0) === 1 && ($noms($st['origines'])['Accès direct'] ?? 0) === 2
+    && ($noms($st['origines'])['QR code (tables)'] ?? 0) === 1);
+check('visites par jour et par heure', count($st['parJour']) === 30 && array_sum(array_column($st['parJour'], 'visites')) === 4 && array_sum($st['heures']) === 4);
 
 // --- Mot de passe ---
 $oldCookie = $cookie;
