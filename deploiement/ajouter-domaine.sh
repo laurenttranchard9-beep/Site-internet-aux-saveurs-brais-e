@@ -188,7 +188,25 @@ preparer_https() {
 }
 
 # Certbot seul, sans module pour Apache : aucune compilation nécessaire.
+# Certbot installé autrement (paquet apt ou snap, avec son propre renouvellement automatique), s'il y en a un.
+certbot_existant() {
+    local c
+    for c in /snap/bin/certbot /usr/bin/certbot; do
+        [ -x "$c" ] || continue
+        [ "$(readlink -f "$c")" = /opt/certbot/bin/certbot ] && continue
+        echo "$c"
+        return
+    done
+}
+
 installer_certbot() {
+    CERTBOT=$(certbot_existant)
+    if [ -n "$CERTBOT" ]; then
+        # Il sert peut-être à d'autres sites : on ne le remplace pas et on ne touche pas à son renouvellement.
+        echo "   Certbot déjà installé sur ce serveur ($CERTBOT) : utilisé tel quel."
+        return
+    fi
+    CERTBOT=/usr/bin/certbot
     if [ ! -x /opt/certbot/bin/certbot ]; then
         echo "   Installation de Certbot (première fois seulement)…"
         if [ "$SYSTEME" = debian ]; then
@@ -282,7 +300,7 @@ main() {
                 --cert-name "$domaine" -d "$domaine")
     [ -n "$www" ] && args+=(-d "$www")
     if [ -n "$email" ]; then args+=(-m "$email"); else args+=(--register-unsafely-without-email); fi
-    certbot "${args[@]}"
+    "$CERTBOT" "${args[@]}"
     fi
     # Le certificat existe : HTTPS activé, HTTP redirigé vers HTTPS.
     ecrire_hote_du_site "$site" "$domaine" "$www"
