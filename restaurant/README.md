@@ -55,7 +55,7 @@ Les chiffres ne portent donc que sur les visiteurs qui acceptent le cookie.
 
 ## Mentions légales
 
-La page `mentions-legales.html` (lien en bas de la carte et dans le bandeau cookies) indique l'éditeur (SARL SAMNANG), l'hébergeur (Amazon Web Services), le concepteur du site et l'usage des cookies. Modifiez-la directement si ces informations changent.
+La page `mentions-legales.html` (lien en bas de la carte et dans le bandeau cookies) indique l'éditeur (SARL SAMNANG), l'hébergeur (OVH), le concepteur du site et l'usage des cookies. Modifiez-la directement si ces informations changent.
 
 ## Stocks
 
