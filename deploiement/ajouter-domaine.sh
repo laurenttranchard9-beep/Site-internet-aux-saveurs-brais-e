@@ -90,20 +90,44 @@ LE_LIVE=${LE_LIVE:-/etc/letsencrypt/live}
 # d'afficher la page d'accueil et les sous-dossiers. Le dossier ACME sert aux vérifications de Let's Encrypt.
 ecrire_hote_par_defaut() {
     mkdir -p "$ACME/.well-known/acme-challenge"
-    cat > "$CONF_DIR/00-par-defaut.conf" <<CONF
-<VirtualHost *:80>
-    DocumentRoot "$WEB"
-</VirtualHost>
-
-# Fichiers de vérification Let's Encrypt, communs à tous les domaines
-<Directory "$ACME">
-    AllowOverride None
-    Require all granted
-</Directory>
-CONF
+    {
+        # Serveur partagé avec d'autres sites (configurés à la main) : on ne change pas le site par défaut.
+        if ! autres_sites_presents; then
+            echo "<VirtualHost *:80>"
+            echo "    DocumentRoot \"$WEB\""
+            echo "</VirtualHost>"
+            echo
+        fi
+        echo "# Fichiers de vérification Let's Encrypt, communs à tous les domaines"
+        echo "<Directory \"$ACME\">"
+        echo "    AllowOverride None"
+        echo "    Require all granted"
+        echo "</Directory>"
+    } > "$CONF_DIR/00-par-defaut.conf"
     activer_conf 00-par-defaut
-    # Sur Ubuntu et Debian, le site d'origine fait doublon avec celui-ci.
-    if [ "$SYSTEME" = debian ]; then a2dissite -q 000-default >/dev/null 2>&1 || true; fi
+    # Sur Ubuntu et Debian, le site d'origine fait doublon avec celui-ci, sauf s'il a été personnalisé.
+    if [ "$SYSTEME" = debian ] && ! autres_sites_presents; then a2dissite -q 000-default >/dev/null 2>&1 || true; fi
+}
+
+# Vrai si Apache sert déjà d'autres sites que ceux de ces scripts (fichiers site-*.conf et 00-par-defaut.conf),
+# ou si le site d'origine d'Ubuntu (000-default) a été modifié.
+autres_sites_presents() {
+    local f
+    for f in "$CONF_DIR"/*.conf; do
+        [ -f "$f" ] || continue
+        case ${f##*/} in
+            site-*.conf|00-par-defaut.conf|default-ssl.conf) continue ;;
+            000-default.conf)
+                if grep -qiE '^[[:space:]]*(ServerName|ServerAlias)' "$f" \
+                    || ! grep -qE '^[[:space:]]*DocumentRoot[[:space:]]+"?/var/www/html"?[[:space:]]*$' "$f"; then
+                    return 0
+                fi ;;
+            *)
+                # Sur Ubuntu, seuls les sites activés comptent.
+                if [ "$SYSTEME" = redhat ] || [ -e "/etc/apache2/sites-enabled/${f##*/}" ]; then return 0; fi ;;
+        esac
+    done
+    return 1
 }
 
 # Hôte virtuel du domaine. Sans certificat : le site en HTTP. Avec certificat : HTTP redirige vers HTTPS.
@@ -192,7 +216,12 @@ service_actif() {
 
 recharger_apache() {
     apachectl configtest
-    if [ -d /run/systemd/system ]; then systemctl reload "$APACHE"; else service "$APACHE" reload >/dev/null; fi
+    # reload-or-restart : démarre aussi Apache s'il était arrêté.
+    if [ -d /run/systemd/system ]; then
+        systemctl reload-or-restart "$APACHE"
+    else
+        service "$APACHE" reload >/dev/null 2>&1 || service "$APACHE" start >/dev/null
+    fi
 }
 
 # Certificat déjà présent sur ce serveur (repris de l'ancien) et encore valable au moins 7 jours.

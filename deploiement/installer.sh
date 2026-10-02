@@ -179,6 +179,11 @@ en_tant_que_web() {
 }
 
 page_accueil() {
+    # Une page d'accueil qui n'est pas la nôtre (autre site déjà installé ici) n'est jamais remplacée.
+    if [ -f "$WEB/index.html" ] && ! grep -qE '<title>Nos sites</title>|Apache2 (Ubuntu|Debian) Default Page' "$WEB/index.html"; then
+        echo "   $WEB/index.html appartient à un autre site : conservé."
+        return
+    fi
     {
     cat <<'HTML'
 <!DOCTYPE html>
