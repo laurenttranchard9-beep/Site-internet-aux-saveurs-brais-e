@@ -30,11 +30,21 @@ function start_session(): void
     session_start();
 }
 
+// Empreinte du site : plusieurs sites installés sur un même serveur partagent le dossier des sessions PHP.
+// Une session ouverte sur l'un ne doit rien valoir sur l'autre, même si quelqu'un recopie son cookie.
+function site_session(): string
+{
+    $dossier = dirname(db_file());
+    return hash('sha256', realpath($dossier) ?: $dossier);
+}
+
 function current_user(): ?array
 {
     start_session();
     $s = $_SESSION['auth'] ?? null;
     if (!$s) return null;
+    // Session d'un autre site (ou d'avant cette vérification) : ignorée, sans la détruire pour son site.
+    if (($s['site'] ?? null) !== site_session()) return null;
     if (time() - $s['login_at'] > SESSION_TTL) {
         logout();
         return null;
@@ -62,6 +72,7 @@ function open_session_for(array $user): void
     start_session();
     session_regenerate_id(true);
     $_SESSION['auth'] = [
+        'site' => site_session(),
         'user_id' => (int) $user['id'],
         'login_at' => time(),
         'pw_version' => (int) $user['password_changed_at'],

@@ -100,7 +100,14 @@
       const grid = document.createElement("div");
       grid.className = "items";
       grid.append(...items.map(renderItem));
-      section.append(h2, grid);
+      section.append(h2);
+      if (c.note) {
+        const note = document.createElement("p");
+        note.className = "cat-note";
+        note.textContent = c.note;
+        section.append(note);
+      }
+      section.append(grid);
       sections.push(section);
 
       const li = document.createElement("li");

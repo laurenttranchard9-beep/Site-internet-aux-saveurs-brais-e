@@ -428,6 +428,32 @@
   $("#add-product").addEventListener("click", () => openProductDialog());
 
   // ---------- Catégories ----------
+  // Remplace un texte par un champ de saisie : Entrée ou clic ailleurs enregistre, Échap annule.
+  function editInline(zone, { value, maxlength, label, placeholder = "" }, save) {
+    const input = el("input", { value, maxlength: String(maxlength), "aria-label": label, placeholder });
+    let done = false;
+    const finish = async (keep) => {
+      if (done) return;
+      done = true;
+      const v = input.value.trim();
+      if (keep && v !== value) {
+        try {
+          await save(v);
+        } catch (err) {
+          fail(err);
+        }
+      }
+      renderCategories();
+    };
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") finish(true);
+      if (e.key === "Escape") finish(false);
+    });
+    input.addEventListener("blur", () => finish(true));
+    zone.replaceChildren(input);
+    input.select();
+  }
+
   function renderCategories() {
     const list = $("#cat-rows");
     if (!state.categories.length) {
@@ -436,37 +462,23 @@
     }
     list.replaceChildren(
       ...state.categories.map((c, i) => {
-        const nameCell = el("div", { class: "cat-name" }, c.name);
-        const rename = () => {
-          const input = el("input", { value: c.name, maxlength: "50", "aria-label": `Nouveau nom pour ${c.name}` });
-          let done = false;
-          const save = async () => {
-            if (done) return;
-            done = true;
-            const name = input.value.trim();
-            if (!name || name === c.name) return renderCategories();
-            try {
-              const updated = await api("category-rename", { id: c.id, name });
-              c.name = updated.name;
-              toast("Catégorie renommée.");
-              renderCategoryFilter();
-              renderProducts();
-            } catch (err) {
-              fail(err);
-            }
-            renderCategories();
-          };
-          input.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") save();
-            if (e.key === "Escape") {
-              done = true;
-              renderCategories();
-            }
+        const title = el("span", { class: "cat-title" }, c.name);
+        const note = el("span", { class: "cat-note" }, c.note || "");
+        const rename = () =>
+          editInline(title, { value: c.name, maxlength: 50, label: `Nouveau nom pour ${c.name}` }, async (name) => {
+            if (!name) return;
+            const updated = await api("category-update", { id: c.id, name });
+            c.name = updated.name;
+            toast("Catégorie renommée.");
+            renderCategoryFilter();
+            renderProducts();
           });
-          input.addEventListener("blur", save);
-          nameCell.replaceChildren(input);
-          input.select();
-        };
+        const editNote = () =>
+          editInline(note, { value: c.note || "", maxlength: 200, label: `Note de la catégorie ${c.name}`, placeholder: "Ex. : Servis avec du riz nature" }, async (text) => {
+            const updated = await api("category-update", { id: c.id, note: text });
+            c.note = updated.note;
+            toast(text ? "Note enregistrée." : "Note retirée.");
+          });
         return el(
           "li",
           {},
@@ -476,9 +488,10 @@
             el("button", { class: "icon-btn", type: "button", "aria-label": `Monter ${c.name}`, disabled: i === 0, onclick: () => move(i, -1) }, "↑"),
             el("button", { class: "icon-btn", type: "button", "aria-label": `Descendre ${c.name}`, disabled: i === state.categories.length - 1, onclick: () => move(i, 1) }, "↓")
           ),
-          nameCell,
+          el("div", { class: "cat-name" }, title, note),
           el("span", { class: "cat-count" }, `${c.productCount} produit${c.productCount > 1 ? "s" : ""}`),
           el("button", { class: "link-btn", type: "button", onclick: rename }, "Renommer"),
+          el("button", { class: "link-btn", type: "button", onclick: editNote }, c.note ? "Modifier la note" : "Ajouter une note"),
           el("button", { class: "link-btn danger", type: "button", onclick: () => deleteCategory(c) }, "Supprimer")
         );
       })

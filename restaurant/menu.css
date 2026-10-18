@@ -99,6 +99,7 @@ body {
   display: flex; align-items: center; gap: 14px;
 }
 .cat-section h2::after { content: ""; flex: 1; height: 2px; background: linear-gradient(90deg, var(--ember), transparent); }
+.cat-note { margin: -8px 0 14px; color: var(--muted); font-style: italic; }
 .items { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; }
 
 .item { padding: 14px 0; border-bottom: 1px dashed var(--line); }

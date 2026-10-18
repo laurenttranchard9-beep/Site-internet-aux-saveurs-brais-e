@@ -129,6 +129,13 @@ $c = call('category-create', ['name' => 'Menus enfants'])[1];
 check('catégorie ajoutée', isset($c['id']));
 check('doublon de catégorie refusé', call('category-create', ['name' => 'menus ENFANTS'])[0] === 409);
 check('catégorie renommée', call('category-rename', ['id' => $c['id'], 'name' => 'Menu enfant'])[1]['name'] === 'Menu enfant');
+[$s, $b] = call('category-update', ['id' => $c['id'], 'note' => '  Jusqu\'à 10 ans  ']);
+check('note de catégorie enregistrée sans changer le nom', $s === 200 && $b['note'] === "Jusqu'à 10 ans" && $b['name'] === 'Menu enfant');
+check('note de catégorie trop longue refusée', call('category-update', ['id' => $c['id'], 'note' => str_repeat('x', 201)])[0] === 400);
+call('product-create', ['name' => 'Mini burger', 'categoryId' => $c['id'], 'priceCents' => 900]);
+$carteNote = array_values(array_filter(call('menu', null, false)[1]['categories'], fn($x) => $x['id'] === $c['id']))[0];
+check('note de catégorie affichée sur la carte', $carteNote['note'] === "Jusqu'à 10 ans");
+check('note de catégorie retirée', call('category-update', ['id' => $c['id'], 'note' => ''])[1]['note'] === '');
 $ids = array_reverse(array_column(call('categories')[1]['categories'], 'id'));
 call('category-order', ['ids' => $ids]);
 check('ordre des catégories modifié', array_column(call('categories')[1]['categories'], 'id') === $ids);
@@ -137,7 +144,7 @@ $drinks = array_values(array_filter(call('categories')[1]['categories'], fn($x) 
 check('catégorie non vide protégée', $s === 409 && $b['productCount'] === $drinks['productCount']);
 call('category-delete', ['id' => $drinks['id'], 'moveTo' => $c['id']]);
 $moved = array_values(array_filter(call('categories')[1]['categories'], fn($x) => $x['id'] === $c['id']))[0];
-check('produits déplacés avant suppression', $moved['productCount'] === $drinks['productCount']);
+check('produits déplacés avant suppression', $moved['productCount'] === $drinks['productCount'] + 1); // + le mini burger
 call('category-delete', ['id' => $c['id'], 'deleteProducts' => true]);
 check('catégorie et produits supprimés', !in_array($c['id'], array_column(call('products')[1]['products'], 'categoryId'), true));
 
@@ -178,6 +185,33 @@ $current = $cookie;
 $cookie = $oldCookie;
 check("l'ancienne session est fermée", call('me')[0] === 401);
 $cookie = $current;
+
+// --- Session propre au site ---
+// Un cookie de session valable ici ne doit pas ouvrir la gestion d'un autre site du même serveur (autre dossier data/).
+check('session refusée sur un autre site du même serveur', (function () use ($root, $tmp) {
+    global $cookie;
+    $autre = "$tmp/autre-site";
+    mkdir($autre);
+    $port3 = port_libre();
+    $env = getenv() + ['ASB_DB_FILE' => "$autre/autre.sqlite"];
+    $env['ASB_DB_FILE'] = "$autre/autre.sqlite";
+    $srv = proc_open([PHP_BINARY, '-S', "127.0.0.1:$port3", '-t', $root], [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']], $p3, null, $env);
+    for ($i = 0; $i < 50 && !@fsockopen('127.0.0.1', $port3); $i++) usleep(100000);
+    // Le même compte (même identifiant, même date de mot de passe) existe sur l'autre site : seule l'empreinte du site les distingue.
+    $pdo = new PDO("sqlite:$autre/autre.sqlite");
+    $u = (new PDO('sqlite:' . getenv('ASB_DB_FILE')))->query('SELECT * FROM users')->fetch(PDO::FETCH_ASSOC);
+    $ctx = stream_context_create(['http' => ['header' => "Cookie: $cookie", 'ignore_errors' => true]]);
+    file_get_contents("http://127.0.0.1:$port3/api.php?action=menu", false, $ctx); // crée la base de l'autre site
+    $pdo->prepare('INSERT INTO users (id, username, password_hash, password_changed_at) VALUES (?, ?, ?, ?)')
+        ->execute([$u['id'], $u['username'], $u['password_hash'], $u['password_changed_at']]);
+    file_get_contents("http://127.0.0.1:$port3/api.php?action=me", false, $ctx);
+    $refuse = str_contains($http_response_header[0], '401');
+    proc_terminate($srv);
+    proc_close($srv);
+    array_map('unlink', glob("$autre/*"));
+    rmdir($autre);
+    return $refuse && call('me')[0] === 200; // et la session reste valable sur son propre site
+})());
 
 // --- Réinitialisation par fichier ---
 call('logout', []);

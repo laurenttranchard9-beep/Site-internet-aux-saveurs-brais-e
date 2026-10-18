@@ -57,7 +57,8 @@ function migrate(PDO $pdo): void
         CREATE TABLE IF NOT EXISTS categories (
             id        INTEGER PRIMARY KEY AUTOINCREMENT,
             name      TEXT NOT NULL UNIQUE COLLATE NOCASE,
-            position  INTEGER NOT NULL DEFAULT 0
+            position  INTEGER NOT NULL DEFAULT 0,
+            note      TEXT NOT NULL DEFAULT ''   -- affichée sous le titre (ex. « Servis avec du riz nature »)
         );
         CREATE TABLE IF NOT EXISTS users (
             id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,6 +76,9 @@ function migrate(PDO $pdo): void
             value  TEXT NOT NULL
         );
     " . PRODUCTS_TABLE);
+    // Les bases créées avant l'arrivée des notes de catégorie reçoivent la colonne.
+    $colonnes = array_column($pdo->query('PRAGMA table_info(categories)')->fetchAll(), 'name');
+    if (!in_array('note', $colonnes, true)) $pdo->exec("ALTER TABLE categories ADD COLUMN note TEXT NOT NULL DEFAULT ''");
     require_once __DIR__ . '/stats.php';
     stats_migrer($pdo);
     load_carte_if_outdated($pdo);
@@ -94,13 +98,14 @@ function load_carte_if_outdated(PDO $pdo): void
         $pdo->exec('DROP TABLE IF EXISTS products');
         $pdo->exec('DELETE FROM categories');
         $pdo->exec(PRODUCTS_TABLE);
-        $addCat = $pdo->prepare('INSERT INTO categories (name, position) VALUES (?, ?)');
+        $addCat = $pdo->prepare('INSERT INTO categories (name, position, note) VALUES (?, ?, ?)');
+        $notes = function_exists('carte_notes') ? carte_notes() : []; // facultatif dans inc/carte.php
         $addProd = $pdo->prepare(
             'INSERT INTO products (category_id, name, description, price_cents, tags, position) VALUES (?, ?, ?, ?, ?, ?)'
         );
         $catPosition = 0;
         foreach (carte() as $cat => $items) {
-            $addCat->execute([$cat, $catPosition++]);
+            $addCat->execute([$cat, $catPosition++, $notes[$cat] ?? '']);
             $catId = (int) $pdo->lastInsertId();
             foreach (array_values($items) as $i => [$name, $desc, $price, $tags]) {
                 $addProd->execute([$catId, $name, $desc, $price, $tags, $i]);

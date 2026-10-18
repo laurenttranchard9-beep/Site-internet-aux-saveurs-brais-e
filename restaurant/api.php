@@ -9,6 +9,7 @@ require __DIR__ . '/inc/db.php';
 require __DIR__ . '/inc/auth.php';
 
 const LOW_STOCK = 5;
+const NOTE_MAX = 200; // longueur maximale de la note d'une catégorie
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -85,11 +86,11 @@ function to_product(array $p): array
 
 function get_category(int $id): array
 {
-    $stmt = db()->prepare('SELECT id, name, position FROM categories WHERE id = ?');
+    $stmt = db()->prepare('SELECT id, name, position, note FROM categories WHERE id = ?');
     $stmt->execute([$id]);
     $c = $stmt->fetch();
     if (!$c) fail(404, 'Catégorie introuvable.');
-    return ['id' => (int) $c['id'], 'name' => $c['name'], 'position' => (int) $c['position']];
+    return ['id' => (int) $c['id'], 'name' => $c['name'], 'position' => (int) $c['position'], 'note' => $c['note']];
 }
 
 function get_product(int $id): array
@@ -110,7 +111,7 @@ function next_position(int $categoryId): int
 
 function all_categories(): array
 {
-    return db()->query('SELECT id, name, position FROM categories ORDER BY position, id')->fetchAll();
+    return db()->query('SELECT id, name, position, note FROM categories ORDER BY position, id')->fetchAll();
 }
 
 function unique_name(callable $fn)
@@ -179,7 +180,7 @@ function handle(string $method, string $action, array $body): array
         $categories = [];
         foreach (all_categories() as $c) {
             $id = (int) $c['id'];
-            if (isset($byCategory[$id])) $categories[] = ['id' => $id, 'name' => $c['name'], 'products' => $byCategory[$id]];
+            if (isset($byCategory[$id])) $categories[] = ['id' => $id, 'name' => $c['name'], 'note' => $c['note'], 'products' => $byCategory[$id]];
         }
         return ['categories' => $categories];
     }
@@ -210,20 +211,25 @@ function handle(string $method, string $action, array $body): array
                 'id' => (int) $c['id'],
                 'name' => $c['name'],
                 'position' => (int) $c['position'],
+                'note' => $c['note'],
                 'productCount' => (int) ($counts[$c['id']] ?? 0),
             ], all_categories())];
 
         case 'POST category-create':
             $name = text_field($body['name'] ?? null, 'nom', 1, 50);
+            $note = text_field($body['note'] ?? '', 'note', 0, NOTE_MAX);
             $next = (int) $pdo->query('SELECT COALESCE(MAX(position), -1) + 1 FROM categories')->fetchColumn();
-            unique_name(fn() => $pdo->prepare('INSERT INTO categories (name, position) VALUES (?, ?)')->execute([$name, $next]));
+            unique_name(fn() => $pdo->prepare('INSERT INTO categories (name, position, note) VALUES (?, ?, ?)')->execute([$name, $next, $note]));
             return get_category((int) $pdo->lastInsertId());
 
+        // Nom et/ou note : seuls les champs envoyés changent.
         case 'POST category-rename':
+        case 'POST category-update':
             $id = int_id($body['id'] ?? null);
-            get_category($id);
-            $name = text_field($body['name'] ?? null, 'nom', 1, 50);
-            unique_name(fn() => $pdo->prepare('UPDATE categories SET name = ? WHERE id = ?')->execute([$name, $id]));
+            $c = get_category($id);
+            $name = array_key_exists('name', $body) ? text_field($body['name'], 'nom', 1, 50) : $c['name'];
+            $note = array_key_exists('note', $body) ? text_field($body['note'], 'note', 0, NOTE_MAX) : $c['note'];
+            unique_name(fn() => $pdo->prepare('UPDATE categories SET name = ?, note = ? WHERE id = ?')->execute([$name, $note, $id]));
             return get_category($id);
 
         case 'POST category-order':
