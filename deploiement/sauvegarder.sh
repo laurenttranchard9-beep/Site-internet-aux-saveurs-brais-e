@@ -1,6 +1,6 @@
 #!/bin/bash
 # Sauvegarde les données des sites, pour les garder ou pour déménager sur un autre serveur :
-#   - Aux Saveurs Braisées : la base (carte, prix, stocks, compte, statistiques) ;
+#   - Aux Saveurs Braisées et Aux Saveurs du Cambodge : la base (carte, prix, stocks, compte, statistiques) ;
 #   - La Fleur d'Or : la carte, ses sauvegardes et le mot de passe du panneau ;
 #   - les certificats HTTPS (Let's Encrypt) de leurs domaines, pour que ceux-ci fonctionnent tout de suite
 #     sur le nouveau serveur.
@@ -8,7 +8,7 @@
 # Sur l'ANCIEN serveur, par exemple pour déménager seulement le restaurant :
 #   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/sauvegarder.sh | sudo bash -s -- restaurant ubuntu@ADRESSE-IP-DU-NOUVEAU-SERVEUR
 #
-# Sites : restaurant, fleur-dor, toilettage (sans précision : tous). Le fichier sauvegarde-sites.tar.gz est créé
+# Sites : restaurant, cambodge, fleur-dor, toilettage (sans précision : tous). Le fichier sauvegarde-sites.tar.gz est créé
 # dans le dossier personnel, puis envoyé dans celui de l'utilisateur indiqué sur le nouveau serveur (son mot de passe
 # est demandé). Sans destination, le fichier est seulement créé. Sur le nouveau serveur, installer.sh le trouve et le reprend.
 
@@ -17,10 +17,17 @@ set -euo pipefail
 
 WEB=${WEB:-/var/www/html}
 NOM=sauvegarde-sites.tar.gz
-TOUS_LES_SITES="restaurant fleur-dor toilettage"
+TOUS_LES_SITES="restaurant cambodge fleur-dor toilettage"
 DEPOT_BRUT=https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7
 
 erreur() { echo "Erreur : $*" >&2; exit 1; }
+
+nom_site() {
+    case $1 in
+        restaurant) echo "Aux Saveurs Braisées" ;;
+        cambodge) echo "Aux Saveurs du Cambodge" ;;
+    esac
+}
 
 # Domaines reliés au site par ajouter-domaine.sh (un fichier site-DOMAINE.conf par domaine).
 domaines_du_site() { # site
@@ -58,6 +65,7 @@ main() {
             erreur "« $arg » : indiquez les sites ($TOUS_LES_SITES) puis la destination, par exemple ubuntu@51.68.10.20."
         fi
     done
+    local demandes=$sites
     sites=${sites:-$TOUS_LES_SITES}
     dossier=$(getent passwd "$utilisateur" | cut -d: -f6)
     archive="$dossier/$NOM"
@@ -66,19 +74,21 @@ main() {
     trap 'rm -rf "${SAUVEGARDE_TMP:-}"' EXIT
 
     echo "==> 1/2 Sauvegarde ($sites)"
-    # Copie cohérente de la base, même si quelqu'un modifie la carte au même moment.
-    base=""
-    if [[ " $sites " == *" restaurant "* ]]; then
-        base=$(find "$WEB/restaurant/data" -maxdepth 1 -name 'restaurant-*.sqlite' 2>/dev/null | head -n 1)
-    fi
-    if [ -n "$base" ]; then
-        mkdir -p "$tmp/restaurant/data"
-        php -r '$p = new PDO("sqlite:" . $argv[1], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-                $p->exec("VACUUM INTO " . $p->quote($argv[2]));' "$base" "$tmp/restaurant/data/$(basename "$base")"
-        echo "   Aux Saveurs Braisées : base sauvegardée."
-    elif [[ " $sites " == *" restaurant "* ]]; then
-        echo "   Aux Saveurs Braisées : pas de base trouvée dans $WEB/restaurant/data."
-    fi
+    # Sites à carte : copie cohérente de la base, même si quelqu'un modifie la carte au même moment.
+    for site in restaurant cambodge; do
+        [[ " $sites " == *" $site "* ]] || continue
+        base=""
+        # Dossier absent (site non installé ici) : find échouerait et arrêterait le script.
+        if [ -d "$WEB/$site/data" ]; then base=$(find "$WEB/$site/data" -maxdepth 1 -name 'restaurant-*.sqlite' -print -quit); fi
+        if [ -n "$base" ]; then
+            mkdir -p "$tmp/$site/data"
+            php -r '$p = new PDO("sqlite:" . $argv[1], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                    $p->exec("VACUUM INTO " . $p->quote($argv[2]));' "$base" "$tmp/$site/data/$(basename "$base")"
+            echo "   $(nom_site "$site") : base sauvegardée."
+        elif [ -n "$demandes" ]; then
+            echo "   $(nom_site "$site") : pas de base trouvée dans $WEB/$site/data."
+        fi
+    done
     if [[ " $sites " == *" fleur-dor "* ]] && [ -f "$WEB/fleur-dor/donnees/carte.json" ]; then
         mkdir -p "$tmp/fleur-dor"
         cp -a "$WEB/fleur-dor/donnees" "$tmp/fleur-dor/donnees"

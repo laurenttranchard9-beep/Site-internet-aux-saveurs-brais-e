@@ -2,6 +2,7 @@
 # Installe (ou met à jour) les sites sur un serveur Ubuntu, Debian ou Amazon Linux 2023,
 # accessibles par l'adresse IP :
 #   http://IP/restaurant/   Aux Saveurs Braisées (carte et espace de gestion)
+#   http://IP/cambodge/     Aux Saveurs du Cambodge (site, carte et espace de gestion)
 #   http://IP/fleur-dor/    La Fleur d'Or (site et panneau d'administration)
 #   http://IP/toilettage/   le salon de toilettage
 #
@@ -9,10 +10,12 @@
 #   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash
 #
 # Relancer la même commande met les sites à jour depuis GitHub sans toucher aux données :
-# base du restaurant (produits, stocks, compte, statistiques), carte et mot de passe de La Fleur d'Or.
+# bases des restaurants (produits, stocks, compte, statistiques), carte et mot de passe de La Fleur d'Or.
 #
-# Pour n'installer que certains sites, nommez-les après « bash -s -- » ; le choix est retenu pour les mises à jour :
+# Pour n'installer que certains sites, nommez-les après « bash -s -- » ; le choix est retenu pour les mises à jour.
+# Sur un serveur déjà installé, les sites nommés s'ajoutent à ceux qui y sont (liste dans /opt/sites/sites-installes) :
 #   curl -fsSL …/installer.sh | sudo bash -s -- restaurant
+#   curl -fsSL …/installer.sh | sudo bash -s -- cambodge      (ajoute Aux Saveurs du Cambodge)
 #
 # Déménagement : si le fichier sauvegarde-sites.tar.gz créé par sauvegarder.sh sur l'ancien serveur
 # se trouve dans le dossier personnel de l'utilisateur (ou est indiqué par « --importer FICHIER »),
@@ -31,8 +34,10 @@ FLEUR_BRANCHE=claude/practical-mendel-dpj572
 SOURCES=${SOURCES:-/opt/sites}
 WEB=${WEB:-/var/www/html}
 SAUVEGARDE_NOM=sauvegarde-sites.tar.gz
-TOUS_LES_SITES="restaurant fleur-dor toilettage"
-MEMOIRE="$SOURCES/sites-installes" # sites choisis à la première installation
+TOUS_LES_SITES="restaurant cambodge fleur-dor toilettage"
+SITES_PAR_DEFAUT="restaurant fleur-dor toilettage" # installés quand aucun site n'est nommé (première installation)
+SITES_CARTE="restaurant cambodge"  # sites bâtis sur le moteur de carte : api.php, base SQLite, espace de gestion
+MEMOIRE="$SOURCES/sites-installes" # sites installés sur ce serveur
 DOMAINES_IMPORTES=""               # lignes « domaine site » des certificats repris
 
 etape() { echo; echo "==> $*"; }
@@ -40,15 +45,16 @@ erreur() { echo "Erreur : $*" >&2; exit 1; }
 
 # ---------- Choix des sites ----------
 
-# Sites demandés sur la ligne de commande, sinon ceux de la dernière installation, sinon tous.
+# Sites déjà installés ici, plus ceux demandés sur la ligne de commande. Première installation sans
+# site nommé : les sites par défaut.
 choisir_sites() { # sites demandés (peut être vide)
     local s
-    if [ -n "$1" ]; then
+    if [ -s "$MEMOIRE" ]; then
+        SITES_CHOISIS="$(cat "$MEMOIRE") $1"
+    elif [ -n "$1" ]; then
         SITES_CHOISIS=$1
-    elif [ -s "$MEMOIRE" ]; then
-        SITES_CHOISIS=$(cat "$MEMOIRE")
     else
-        SITES_CHOISIS=$TOUS_LES_SITES
+        SITES_CHOISIS=$SITES_PAR_DEFAUT
     fi
     local liste=""
     for s in $SITES_CHOISIS; do
@@ -60,6 +66,15 @@ choisir_sites() { # sites demandés (peut être vide)
 
 site_choisi() {
     [[ " $SITES_CHOISIS " == *" $1 "* ]]
+}
+
+nom_site() {
+    case $1 in
+        restaurant) echo "Aux Saveurs Braisées" ;;
+        cambodge) echo "Aux Saveurs du Cambodge" ;;
+        fleur-dor) echo "La Fleur d'Or" ;;
+        toilettage) echo "Salon de toilettage" ;;
+    esac
 }
 
 # ---------- Système ----------
@@ -120,8 +135,8 @@ recuperer() { # dépôt, branche, dossier
 
 # ---------- Déploiement ----------
 
-deployer_restaurant() {
-    local src="$SOURCES/aux-saveurs-braisees/restaurant" dst="$WEB/restaurant"
+deployer_carte() { # site (dossier du dépôt et du serveur : restaurant, cambodge)
+    local src="$SOURCES/aux-saveurs-braisees/$1" dst="$WEB/$1"
     mkdir -p "$dst"
     # Les fichiers exclus (base de données, fichier de réinitialisation) ne sont jamais écrasés ni supprimés.
     rsync -a --delete \
@@ -206,6 +221,7 @@ page_accueil() {
   <h1>Nos sites</h1>
 HTML
     if site_choisi restaurant; then echo '  <a href="restaurant/">Aux Saveurs Braisées<small>La carte du restaurant</small></a>'; fi
+    if site_choisi cambodge; then echo '  <a href="cambodge/">Aux Saveurs du Cambodge<small>Cuisine cambodgienne à Saint-Alban</small></a>'; fi
     if site_choisi fleur-dor; then echo '  <a href="fleur-dor/">La Fleur d'"'"'Or<small>Restaurant asiatique à Grenade</small></a>'; fi
     if site_choisi toilettage; then echo '  <a href="toilettage/">Bulles &amp; Moustaches<small>Le salon de toilettage</small></a>'; fi
     cat <<'HTML'
@@ -265,7 +281,7 @@ trouver_sauvegarde() {
 }
 
 importer_sauvegarde() {
-    local archive avant base nb tmp
+    local archive avant tmp site
     archive=$(trouver_sauvegarde)
     if [ -z "$archive" ]; then
         echo "   Aucune sauvegarde à importer."
@@ -279,22 +295,7 @@ importer_sauvegarde() {
     mkdir -p "$avant"
     chmod 700 "$avant"
 
-    # Aux Saveurs Braisées : une seule base, que l'on vérifie avant de remplacer l'actuelle.
-    nb=$(find "$tmp/restaurant/data" -maxdepth 1 -name 'restaurant-*.sqlite' 2>/dev/null | wc -l)
-    if [ "$nb" -gt 0 ] && ! site_choisi restaurant; then
-        echo "   Aux Saveurs Braisées : ignoré, ce site n'est pas installé ici."
-    elif [ "$nb" = 1 ]; then
-        base=$(find "$tmp/restaurant/data" -maxdepth 1 -name 'restaurant-*.sqlite')
-        php -r '$p = new PDO("sqlite:" . $argv[1], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-                $p->query("SELECT COUNT(*) FROM products")->fetchColumn();' "$base" \
-            || erreur "la base du restaurant contenue dans la sauvegarde est illisible. Rien n'a été remplacé."
-        mkdir -p "$avant/restaurant-data"
-        find "$WEB/restaurant/data" -maxdepth 1 -name 'restaurant-*.sqlite*' -exec mv -t "$avant/restaurant-data" {} +
-        install -m 640 -o "$WEB_USER" -g "$WEB_USER" "$base" "$WEB/restaurant/data/"
-        echo "   Aux Saveurs Braisées : carte, stocks, compte et statistiques repris."
-    elif [ "$nb" -gt 1 ]; then
-        erreur "la sauvegarde contient plusieurs bases du restaurant. Rien n'a été remplacé."
-    fi
+    for site in $SITES_CARTE; do importer_base "$site" "$tmp" "$avant"; done
 
     # La Fleur d'Or : carte, sauvegardes de la carte et mot de passe du panneau.
     if [ -f "$tmp/fleur-dor/donnees/carte.json" ] && ! site_choisi fleur-dor; then
@@ -311,6 +312,28 @@ importer_sauvegarde() {
     # Le fichier est renommé : relancer le script (pour une mise à jour) ne le réimportera pas.
     mv "$archive" "${archive%.tar.gz}.importee-$(date +%Y%m%d-%H%M%S).tar.gz"
     echo "   Les données remplacées sont gardées dans $avant"
+}
+
+# Base d'un site à carte : une seule par site, vérifiée avant de remplacer l'actuelle.
+importer_base() { # site, dossier de la sauvegarde, dossier où garder les données remplacées
+    local site=$1 nom nb base
+    [ -d "$2/$site/data" ] || return 0 # rien pour ce site dans la sauvegarde
+    nom=$(nom_site "$site")
+    nb=$(find "$2/$site/data" -maxdepth 1 -name 'restaurant-*.sqlite' | wc -l)
+    if [ "$nb" -gt 0 ] && ! site_choisi "$site"; then
+        echo "   $nom : ignoré, ce site n'est pas installé ici."
+    elif [ "$nb" = 1 ]; then
+        base=$(find "$2/$site/data" -maxdepth 1 -name 'restaurant-*.sqlite')
+        php -r '$p = new PDO("sqlite:" . $argv[1], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+                $p->query("SELECT COUNT(*) FROM products")->fetchColumn();' "$base" \
+            || erreur "la base de $nom contenue dans la sauvegarde est illisible. Rien n'a été remplacé."
+        mkdir -p "$3/$site-data"
+        find "$WEB/$site/data" -maxdepth 1 -name 'restaurant-*.sqlite*' -exec mv -t "$3/$site-data" {} +
+        install -m 640 -o "$WEB_USER" -g "$WEB_USER" "$base" "$WEB/$site/data/"
+        echo "   $nom : carte, stocks, compte et statistiques repris."
+    elif [ "$nb" -gt 1 ]; then
+        erreur "la sauvegarde contient plusieurs bases pour $nom. Rien n'a été remplacé."
+    fi
 }
 
 # Certificats HTTPS des sites installés ici. La sauvegarde les liste dans domaines.txt (« domaine site »).
@@ -373,20 +396,20 @@ demander_mdp() { # libellé
     MDP=$a
 }
 
-compte_restaurant_existe() {
+compte_existe() { # site à carte
     [ "$(en_tant_que_web php -r 'require $argv[1]; echo (int) db()->query("SELECT COUNT(*) FROM users")->fetchColumn();' \
-        "$WEB/restaurant/inc/db.php")" != 0 ]
+        "$WEB/$1/inc/db.php")" != 0 ]
 }
 
-creer_compte_restaurant() { # identifiant, mot de passe (lus sur l'entrée standard)
-    printf '%s\n%s' "$1" "$2" | en_tant_que_web php -r '
+creer_compte() { # site à carte, identifiant, mot de passe (lus sur l'entrée standard)
+    printf '%s\n%s' "$2" "$3" | en_tant_que_web php -r '
         require $argv[1];
         $u = trim((string) fgets(STDIN));
         $p = (string) stream_get_contents(STDIN);
         $pdo = db();
         if ((int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn() > 0) exit(0);
         $pdo->prepare("INSERT INTO users (username, password_hash, password_changed_at) VALUES (?, ?, ?)")
-            ->execute([$u, password_hash($p, PASSWORD_DEFAULT), time()]);' "$WEB/restaurant/inc/db.php"
+            ->execute([$u, password_hash($p, PASSWORD_DEFAULT), time()]);' "$WEB/$1/inc/db.php"
 }
 
 mdp_fleur_existe() {
@@ -403,10 +426,12 @@ definir_mdp_fleur() { # mot de passe (lu sur l'entrée standard)
 }
 
 comptes() {
-    local a_faire_restaurant=0 a_faire_fleur=0 identifiant
-    if site_choisi restaurant && ! compte_restaurant_existe; then a_faire_restaurant=1; fi
+    local a_faire="" a_faire_fleur=0 site identifiant
+    for site in $SITES_CARTE; do
+        if site_choisi "$site" && ! compte_existe "$site"; then a_faire+="$site "; fi
+    done
     if site_choisi fleur-dor && ! mdp_fleur_existe; then a_faire_fleur=1; fi
-    if [ $a_faire_restaurant = 0 ] && [ $a_faire_fleur = 0 ]; then
+    if [ -z "$a_faire" ] && [ $a_faire_fleur = 0 ]; then
         echo "   Les comptes existent déjà, rien à faire."
         return
     fi
@@ -414,13 +439,13 @@ comptes() {
         echo "   Pas de terminal : les comptes seront à créer plus tard (voir les indications à la fin)."
         return
     fi
-    if [ $a_faire_restaurant = 1 ]; then
-        echo "   Aux Saveurs Braisées : compte de l'espace de gestion"
+    for site in $a_faire; do
+        echo "   $(nom_site "$site") : compte de l'espace de gestion"
         read -r -p "   Identifiant [admin] : " identifiant </dev/tty
         demander_mdp "   Mot de passe"
-        creer_compte_restaurant "${identifiant:-admin}" "$MDP"
+        creer_compte "$site" "${identifiant:-admin}" "$MDP"
         echo "   Compte créé."
-    fi
+    done
     if [ $a_faire_fleur = 1 ]; then
         echo "   La Fleur d'Or : mot de passe du panneau d'administration"
         demander_mdp "   Mot de passe"
@@ -445,13 +470,16 @@ verifier() { # nom, adresse, codes HTTP acceptés (ex. "403|404")
 }
 
 verifications() {
+    local site nom
     verifier "Page d'accueil"                          "/"                                   200
-    if site_choisi restaurant; then
-        verifier "Aux Saveurs Braisées : carte"            "/restaurant/"                        200
-        verifier "Aux Saveurs Braisées : données"          "/restaurant/api.php?action=menu"     200
-        verifier "Aux Saveurs Braisées : base protégée"    "/restaurant/data/"                   403
-        verifier "Aux Saveurs Braisées : code protégé"     "/restaurant/inc/db.php"              403
-    fi
+    for site in $SITES_CARTE; do
+        site_choisi "$site" || continue
+        nom=$(nom_site "$site")
+        verifier "$nom : carte"                        "/$site/"                             200
+        verifier "$nom : données"                      "/$site/api.php?action=menu"          200
+        verifier "$nom : base protégée"                "/$site/data/"                        403
+        verifier "$nom : code protégé"                 "/$site/inc/db.php"                   403
+    done
     if site_choisi fleur-dor; then
         verifier "La Fleur d'Or : site"                    "/fleur-dor/"                         200
         verifier "La Fleur d'Or : panneau"                 "/fleur-dor/admin/"                   200
@@ -482,7 +510,7 @@ main() {
     while [ $# -gt 0 ]; do
         case $1 in
             --importer) [ $# -ge 2 ] || erreur "indiquez le fichier après --importer."; IMPORTER=$2; shift 2 ;;
-            restaurant|fleur-dor|toilettage) demandes+="$1 "; shift ;;
+            restaurant|cambodge|fleur-dor|toilettage) demandes+="$1 "; shift ;;
             *) erreur "« $1 » inconnu. Sites possibles : $TOUS_LES_SITES ; option : --importer FICHIER." ;;
         esac
     done
@@ -507,7 +535,10 @@ main() {
     if site_choisi fleur-dor; then recuperer "$FLEUR_DEPOT" "$FLEUR_BRANCHE" "$SOURCES/fleur-dor"; fi
 
     etape "3/7 Copie des sites"
-    if site_choisi restaurant; then deployer_restaurant; fi
+    local site
+    for site in $SITES_CARTE; do
+        if site_choisi "$site"; then deployer_carte "$site"; fi
+    done
     if site_choisi toilettage; then deployer_toilettage; fi
     if site_choisi fleur-dor; then deployer_fleur; fi
     page_accueil
@@ -539,20 +570,22 @@ main() {
         echo "Terminé avec des erreurs. Consultez : sudo tail -n 30 $APACHE_LOGS"
     fi
     echo
-    echo "   Accueil                  http://$ip/"
-    if site_choisi restaurant; then
-        echo "   Aux Saveurs Braisées     http://$ip/restaurant/        gestion : http://$ip/restaurant/admin/"
-    fi
+    echo "   Accueil : http://$ip/"
+    for site in $SITES_CARTE; do
+        if site_choisi "$site"; then echo "   $(nom_site "$site") : http://$ip/$site/   gestion : http://$ip/$site/admin/"; fi
+    done
     if site_choisi fleur-dor; then
         echo "   La Fleur d'Or            http://$ip/fleur-dor/         panneau : http://$ip/fleur-dor/admin/"
     fi
     if site_choisi toilettage; then
         echo "   Salon de toilettage      http://$ip/toilettage/"
     fi
-    if site_choisi restaurant && ! compte_restaurant_existe; then
-        echo
-        echo "À faire : ouvrez tout de suite http://$ip/restaurant/admin/ pour créer le compte du restaurant."
-    fi
+    for site in $SITES_CARTE; do
+        if site_choisi "$site" && ! compte_existe "$site"; then
+            echo
+            echo "À faire : ouvrez tout de suite http://$ip/$site/admin/ pour créer le compte de gestion ($(nom_site "$site"))."
+        fi
+    done
     if site_choisi fleur-dor && ! mdp_fleur_existe; then
         echo "À faire : relancez ce script dans une session SSH pour choisir le mot de passe de La Fleur d'Or."
     fi

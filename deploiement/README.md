@@ -1,10 +1,11 @@
 # Mise en ligne des sites (Ubuntu, Debian ou Amazon Linux 2023)
 
-Trois sites peuvent être installés sur un serveur, dans des sous-dossiers de son adresse IP :
+Quatre sites peuvent être installés sur un serveur, dans des sous-dossiers de son adresse IP :
 
 | Site | Nom dans les scripts | Adresse | Administration |
 |---|---|---|---|
 | Aux Saveurs Braisées | `restaurant` | `http://ADRESSE-IP/restaurant/` | `http://ADRESSE-IP/restaurant/admin/` |
+| Aux Saveurs du Cambodge | `cambodge` | `http://ADRESSE-IP/cambodge/` | `http://ADRESSE-IP/cambodge/admin/` |
 | La Fleur d'Or | `fleur-dor` | `http://ADRESSE-IP/fleur-dor/` | `http://ADRESSE-IP/fleur-dor/admin/` |
 | Salon de toilettage | `toilettage` | `http://ADRESSE-IP/toilettage/` | |
 
@@ -12,7 +13,7 @@ Trois sites peuvent être installés sur un serveur, dans des sous-dossiers de s
 
 Les scripts récupèrent les sites directement sur GitHub :
 
-- `Site-internet-aux-saveurs-brais-e`, branche `claude/pet-grooming-landing-page-po26m7` (restaurant, salon et ces scripts) ;
+- `Site-internet-aux-saveurs-brais-e`, branche `claude/pet-grooming-landing-page-po26m7` (les deux restaurants, le salon et ces scripts) ;
 - `Fleur-d-or`, branche `claude/practical-mendel-dpj572`.
 
 | Script | Rôle |
@@ -29,7 +30,7 @@ Ouvrez un terminal sur le serveur (voir « Se connecter au serveur » plus bas) 
 curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash
 ```
 
-Cette commande installe les trois sites. Pour n'en installer que certains, nommez-les à la fin, après `bash -s --` :
+Sur un serveur neuf, cette commande installe Aux Saveurs Braisées, La Fleur d'Or et le salon. Pour n'installer que certains sites, nommez-les à la fin, après `bash -s --` :
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash -s -- restaurant
@@ -39,10 +40,54 @@ Le script installe Apache et PHP, copie les sites et protège les données. Si a
 
 ## Mettre à jour les sites
 
-Relancez la commande d'installation, **sans nommer les sites** : le serveur se souvient de ceux choisis la première fois. Le script récupère la dernière version sur GitHub et conserve toutes les données :
+Relancez la commande d'installation, **sans nommer les sites** : le serveur se souvient de ceux qui y sont installés (liste dans `/opt/sites/sites-installes`). Le script récupère la dernière version sur GitHub et conserve toutes les données :
 
-- Aux Saveurs Braisées : produits, prix, stocks, catégories, compte et statistiques ;
+- Aux Saveurs Braisées et Aux Saveurs du Cambodge : produits, prix, stocks, catégories, compte et statistiques ;
 - La Fleur d'Or : carte modifiée dans le panneau, sauvegardes et mot de passe.
+
+Pour **ajouter un site** sur un serveur déjà installé, nommez-le : il s'ajoute aux autres. Par exemple, `… | sudo bash -s -- cambodge`.
+
+## Aux Saveurs du Cambodge : quitter Squarespace
+
+Le nouveau site remplace celui de Squarespace sur le même nom de domaine, `auxsaveursducambodge-saintalban.com`. Il peut être installé sur le serveur OVH qui héberge déjà Aux Saveurs Braisées.
+
+### 1. Installer le site et le vérifier
+
+Sur le serveur OVH, collez :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash -s -- cambodge
+```
+
+Le script demande l'identifiant et le mot de passe de l'espace de gestion du nouveau site. Les autres sites du serveur ne sont pas touchés.
+
+Ouvrez ensuite `http://ADRESSE-IP-OVH/cambodge/` pour voir le site, et `http://ADRESSE-IP-OVH/cambodge/admin/` pour vérifier la carte et les prix. Tant que le domaine n'a pas changé, l'ancien site Squarespace reste en ligne.
+
+### 2. Faire pointer le domaine vers le serveur
+
+Le domaine est géré chez Squarespace (anciennement Google Domains) : **Paramètres → Domaines → auxsaveursducambodge-saintalban.com → Paramètres DNS**. En octobre 2026, ses enregistrements étaient :
+
+| Nom | Type | Valeur actuelle (Squarespace) | Nouvelle valeur |
+|---|---|---|---|
+| `@` | A | `198.49.23.144`, `198.49.23.145`, `198.185.159.144`, `198.185.159.145` | une seule : `ADRESSE-IP-OVH` |
+| `www` | CNAME | `ext-sq.squarespace.com` | à remplacer par un enregistrement **A** → `ADRESSE-IP-OVH` |
+
+Squarespace regroupe parfois ces lignes sous « Squarespace Defaults » : supprimez ce groupe, puis ajoutez les deux enregistrements A. S'il existe des enregistrements de messagerie (**MX**, **TXT**), laissez-les tels quels.
+
+### 3. Activer le HTTPS
+
+Une heure environ après le changement, sur le serveur OVH :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/ajouter-domaine.sh | sudo bash -s -- cambodge auxsaveursducambodge-saintalban.com votre@email.fr
+```
+
+Si le script répond que le domaine pointe encore vers une autre adresse, attendez un peu et relancez la même commande.
+
+### 4. Ensuite
+
+- Gardez le **domaine** (son renouvellement annuel), mais vous pouvez arrêter l'**abonnement au site** Squarespace.
+- Dans Google Search Console ou la fiche Google du restaurant, indiquez l'adresse du site : `https://www.auxsaveursducambodge-saintalban.com/`.
 
 ## Déménager un site sur un autre serveur
 

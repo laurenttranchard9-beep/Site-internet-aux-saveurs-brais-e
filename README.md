@@ -17,6 +17,10 @@ Ouvrez `index.html` dans un navigateur pour voir la page.
 
 Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restaurant et son espace de gestion (prix, stocks, produits, catégories). Il fonctionne en PHP (XAMPP en local, ou n'importe quel hébergement web). Voir [`restaurant/README.md`](restaurant/README.md).
 
+## Restaurant « Aux Saveurs du Cambodge »
+
+Le dossier [`cambodge/`](cambodge/) contient le nouveau site du restaurant de Saint-Alban (remplaçant de l'ancien site Squarespace) : page d'accueil, carte avec recherche, horaires en direct, accès, mentions légales. Il utilise le même moteur que celui d'Aux Saveurs Braisées, donc le même espace de gestion. Voir [`cambodge/README.md`](cambodge/README.md).
+
 ## Mise en ligne
 
-Le dossier [`deploiement/`](deploiement/) contient les scripts qui installent ces deux sites, ainsi que [La Fleur d'Or](https://github.com/laurenttranchard9-beep/Fleur-d-or), sur un serveur Ubuntu, Debian ou Amazon Linux 2023 : installation, noms de domaine en HTTPS, sauvegarde et déménagement d'un serveur à l'autre. Voir [`deploiement/README.md`](deploiement/README.md).
+Le dossier [`deploiement/`](deploiement/) contient les scripts qui installent ces sites, ainsi que [La Fleur d'Or](https://github.com/laurenttranchard9-beep/Fleur-d-or), sur un serveur Ubuntu, Debian ou Amazon Linux 2023 : installation, noms de domaine en HTTPS, sauvegarde et déménagement d'un serveur à l'autre. Voir [`deploiement/README.md`](deploiement/README.md).
