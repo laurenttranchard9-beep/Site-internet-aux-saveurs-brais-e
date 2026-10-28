@@ -308,12 +308,6 @@ h3 { font-size: 2rem; }
 .heros-infos li { display: flex; align-items: center; gap: 10px; }
 .heros-infos svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--vert-pale); stroke-width: 2; stroke-linecap: round; color: var(--vert-pale); }
 .heros-infos a { color: inherit; }
-/* L'appareil demande moins d'animations : on le dit, et on propose de les activer (site.js) */
-.avis-animations {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; width: fit-content; margin: -6px 0 18px; padding: 9px 15px;
-  border: 1px dashed rgba(255, 255, 255, .4); border-radius: 14px; color: var(--t2); font-size: .92rem; line-height: 1.35;
-}
-.avis-animations .lien { padding: 0; color: #fff; font-size: inherit; font-weight: 700; }
 .heros-scene { position: relative; width: min(100%, 520px); margin: 10px auto 0; }
 .scene-wok { width: 100%; height: auto; overflow: visible; }
 .heros-badge {
@@ -366,7 +360,6 @@ h3 { font-size: 2rem; }
 .js .heros-texte > :nth-child(5) { animation-delay: .36s; }
 .js .heros-texte > :nth-child(6) { animation-delay: .46s; }
 .js .heros-texte > :nth-child(7) { animation-delay: .56s; }
-.js .heros-texte > :nth-child(8) { animation-delay: .66s; }
 .js .heros-scene { animation-name: entree-scene; animation-duration: 1.2s; animation-delay: .2s; }
 .intro-en-cours .heros-texte > *, .intro-en-cours .heros-scene { animation-play-state: paused; }
 @keyframes entree { from { opacity: 0; transform: translateY(30px); } }
@@ -1117,8 +1110,8 @@ address { font-size: 1.15rem; font-style: normal; font-weight: 600; }
   .cookies-corps p { font-size: .82rem; }
   .chiffres { gap: 10px; }
 }
-/* Animations réduites : classe « sobre » posée par intro.js, selon le réglage de l'appareil ou le choix du visiteur
-   (bouton « Voir les animations »). Plus rien ne bouge ; seuls les fondus et les changements de couleur restent. */
+/* Animations réduites : classe « sobre » posée par intro.js quand le visiteur l'a choisi (bouton « Réduire les
+   animations » du pied de page). Plus rien ne bouge ; seuls les fondus et les changements de couleur restent. */
 html.sobre { scroll-behavior: auto; }
 .sobre *, .sobre *::before, .sobre *::after {
   animation: none !important;

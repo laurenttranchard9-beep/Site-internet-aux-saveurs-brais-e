@@ -162,6 +162,8 @@ check('mentions légales : site.css à la même version', $version
 // Animations : le choix du visiteur (site.js) est lu avant l'affichage (intro.js), sous le même nom
 check('choix des animations partagé par intro.js et site.js', str_contains(file_get_contents("$root/intro.js"), '"wok888-animations"')
     && str_contains($siteJs, 'stockage.ecrire("wok888-animations"'));
+// … et sans ce choix, elles sont complètes, même si l'appareil demande moins d'animations
+check('animations complètes par défaut', !str_contains(file_get_contents("$root/intro.js"), 'prefers-reduced-motion'));
 preg_match_all('/url\((polices\/[^)"\']+)\)/', file_get_contents("$root/site.css"), $u);
 check('polices de site.css présentes', count($u[1]) === 4 && !array_filter($u[1], fn($f) => !is_file("$root/$f")));
 preg_match_all('/\$\("#([\w-]+)"\)/', $siteJs, $cibles);

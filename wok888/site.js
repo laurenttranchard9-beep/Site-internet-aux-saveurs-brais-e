@@ -29,7 +29,7 @@
   const euros = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
   const prix = (c) => (c === null ? "Sur demande" : euros.format(c / 100));
   const prixOption = (c) => (c ? `+ ${euros.format(c / 100)}` : "Inclus");
-  // Animations réduites (classe « sobre », posée par intro.js) : réglage de l'appareil, ou choix du visiteur
+  // Animations réduites (classe « sobre », posée par intro.js) : choix du visiteur
   const sobre = { get matches() { return document.documentElement.classList.contains("sobre"); } };
   const pointeurFin = matchMedia("(hover: hover) and (pointer: fine)");
   const alea = (n) => (((Math.sin(n * 12.9898) * 43758.5453) % 1) + 1) % 1; // pseudo-hasard stable
@@ -1556,7 +1556,7 @@
     document.documentElement.addEventListener("pointerleave", relacher);
   }
 
-  // ---------- Animations : le visiteur choisit (sinon, le réglage de son appareil s'applique) ----------
+  // ---------- Animations : complètes pour tous ; le visiteur peut les réduire (pied de page) ----------
   function choisirAnimations(actives) {
     stockage.ecrire("wok888-animations", actives);
     try {
@@ -1570,9 +1570,6 @@
   boutonAnimations.textContent = sobre.matches ? "Activer les animations" : "Réduire les animations";
   boutonAnimations.hidden = false;
   boutonAnimations.addEventListener("click", () => choisirAnimations(sobre.matches));
-  // Animations réduites par l'appareil, sans choix du visiteur : on le dit sur l'accueil
-  $("#avis-animations").hidden = !(sobre.matches && stockage.lire("wok888-animations", null) === null);
-  $("#activer-animations").addEventListener("click", () => choisirAnimations(true));
 
   // ---------- Démarrage ----------
   majHoraires();
