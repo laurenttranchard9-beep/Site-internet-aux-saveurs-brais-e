@@ -1,0 +1,11 @@
+Photos de la galerie « En images » de la page d'accueil
+
+Déposez ici vos propres photos (plats, salle, équipe) : elles apparaissent toutes seules sur le site,
+dans l'ordre de leur nom. Sans photo, la galerie n'est pas affichée.
+
+- Formats : JPG, PNG ou WebP, 1600 pixels de large au plus (environ 300 Ko par photo).
+- Le nom du fichier sert de légende : « 01-wok-aux-crevettes.jpg » s'affiche « Wok aux crevettes ».
+  Le numéro du début sert seulement à choisir l'ordre.
+- 24 photos au plus.
+
+N'utilisez que des photos dont vous avez les droits (prises par le restaurant, ou achetées pour lui).

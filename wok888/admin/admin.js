@@ -1,0 +1,733 @@
+(() => {
+  const LOW_STOCK = 5;
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const euroInput = (cents) => (cents === null ? "" : (cents / 100).toFixed(2).replace(".", ","));
+  const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+  const state = { categories: [], products: [] };
+
+  // ---------- Utilitaires ----------
+  class ApiError extends Error {
+    constructor(status, body) {
+      super(body.error || "Une erreur est survenue.");
+      this.status = status;
+      this.body = body;
+    }
+  }
+
+  // Sans corps : lecture (GET). Avec corps : modification (POST en JSON).
+  async function api(action, body, params = {}) {
+    const res = await fetch(`../api.php?${new URLSearchParams({ action, ...params })}`, {
+      method: body !== undefined ? "POST" : "GET",
+      headers: body !== undefined ? { "Content-Type": "application/json" } : {},
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      credentials: "same-origin",
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401 && !["login", "me", "setup"].includes(action)) {
+      showLogin("Votre session a expiré. Merci de vous reconnecter.");
+      throw new ApiError(401, data);
+    }
+    if (!res.ok) throw new ApiError(res.status, data);
+    return data;
+  }
+
+  function toast(message, type = "ok") {
+    const t = document.createElement("div");
+    t.className = `toast ${type}`;
+    t.textContent = message;
+    $("#toasts").append(t);
+    setTimeout(() => t.remove(), type === "error" ? 5000 : 2500);
+  }
+  const fail = (err) => err.status !== 401 && toast(err.message, "error");
+
+  // Renvoie des centimes, null si le champ est vide (prix sur demande), ou undefined si la saisie est invalide.
+  function parsePrice(value) {
+    const v = String(value).trim().replace(/\s|€/g, "").replace(",", ".");
+    if (v === "") return null;
+    if (!/^\d+(\.\d{1,2})?$/.test(v)) return undefined;
+    return Math.round(parseFloat(v) * 100);
+  }
+
+  function el(tag, props = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (k === "class") node.className = v;
+      else if (k === "dataset") Object.assign(node.dataset, v);
+      else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+      else if (k in node && typeof v !== "string") node[k] = v;
+      else node.setAttribute(k, v);
+    }
+    node.append(...children.filter((c) => c !== null && c !== undefined && c !== false));
+    return node;
+  }
+
+  function flash(input, cls) {
+    input.classList.remove("saving", "saved", "error");
+    input.classList.add(cls);
+    if (cls === "saved") setTimeout(() => input.classList.remove("saved"), 1200);
+  }
+
+  const confirmDialog = (title, text, label = "Supprimer") =>
+    new Promise((resolve) => {
+      const d = $("#confirm-dialog");
+      $("#confirm-title").textContent = title;
+      $("#confirm-text").textContent = text;
+      $('button[value="confirm"]', d).textContent = label;
+      d.returnValue = "";
+      d.addEventListener("close", () => resolve(d.returnValue === "confirm"), { once: true });
+      d.showModal();
+    });
+
+  // ---------- Connexion ----------
+  function showLogin(message) {
+    $("#app-view").hidden = true;
+    $("#setup-view").hidden = true;
+    $("#login-view").hidden = false;
+    document.querySelectorAll("dialog[open]").forEach((d) => d.close());
+    const err = $("#login-error");
+    err.hidden = !message;
+    err.textContent = message || "";
+    $('#login-form [name="username"]').focus();
+  }
+
+  function showSetup() {
+    $("#app-view").hidden = true;
+    $("#login-view").hidden = true;
+    $("#setup-view").hidden = false;
+    $('#setup-form [name="username"]').focus();
+  }
+
+  async function showApp() {
+    $("#login-view").hidden = true;
+    $("#setup-view").hidden = true;
+    $("#app-view").hidden = false;
+    await refresh();
+  }
+
+  $("#login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const btn = $('button[type="submit"]', f);
+    btn.disabled = true;
+    try {
+      await api("login", { username: f.username.value, password: f.password.value });
+      f.reset();
+      await showApp();
+    } catch (err) {
+      const box = $("#login-error");
+      box.textContent = err.message;
+      box.hidden = false;
+      f.password.select();
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Premier lancement (ou réinitialisation) : création du compte administrateur
+  $("#setup-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const box = $("#setup-error");
+    const showErr = (m) => {
+      box.textContent = m;
+      box.hidden = false;
+    };
+    if (f.password.value !== f.confirm.value) return showErr("Les deux mots de passe ne correspondent pas.");
+    try {
+      await api("setup", { username: f.username.value, password: f.password.value });
+      f.reset();
+      toast("Compte créé. Bienvenue !");
+      await showApp();
+    } catch (err) {
+      showErr(err.message);
+    }
+  });
+
+  $("#logout").addEventListener("click", async () => {
+    await api("logout", {}).catch(() => {});
+    showLogin();
+  });
+
+  // ---------- Chargement ----------
+  async function refresh() {
+    const [{ categories }, { products }] = await Promise.all([api("categories"), api("products")]);
+    state.categories = categories;
+    state.products = products;
+    renderCategoryFilter();
+    renderProducts();
+    renderCategories();
+  }
+
+  const catName = (id) => state.categories.find((c) => c.id === id)?.name ?? "—";
+  const stockLevel = (p) => (p.stock === null ? "none" : p.stock === 0 ? "out" : p.stock <= LOW_STOCK ? "low" : "ok");
+
+  function renderStats() {
+    const ps = state.products;
+    $("#stat-total").textContent = ps.length;
+    $("#stat-low").textContent = ps.filter((p) => stockLevel(p) === "low").length;
+    $("#stat-out").textContent = ps.filter((p) => stockLevel(p) === "out").length;
+    $("#stat-hidden").textContent = ps.filter((p) => !p.visible).length;
+  }
+
+  // ---------- Onglets ----------
+  document.querySelectorAll('[role="tab"]').forEach((tab) =>
+    tab.addEventListener("click", () => {
+      document.querySelectorAll('[role="tab"]').forEach((t) => {
+        const on = t === tab;
+        t.setAttribute("aria-selected", String(on));
+        $(`#${t.getAttribute("aria-controls")}`).hidden = !on;
+      });
+    })
+  );
+
+  // ---------- Produits ----------
+  function renderCategoryFilter() {
+    const sel = $("#p-cat");
+    const current = sel.value;
+    sel.replaceChildren(
+      el("option", { value: "" }, "Toutes les catégories"),
+      ...state.categories.map((c) => el("option", { value: String(c.id) }, c.name))
+    );
+    sel.value = state.categories.some((c) => String(c.id) === current) ? current : "";
+  }
+
+  function filteredProducts() {
+    const q = norm($("#p-search").value.trim());
+    const cat = $("#p-cat").value;
+    const lowOnly = $("#p-low").checked;
+    const order = new Map(state.categories.map((c, i) => [c.id, i]));
+    return state.products
+      .filter((p) => !cat || String(p.categoryId) === cat)
+      .filter((p) => !lowOnly || ["low", "out"].includes(stockLevel(p)))
+      .filter((p) => !q || norm(`${p.name} ${p.description} ${p.tags.join(" ")}`).includes(q))
+      .sort((a, b) => order.get(a.categoryId) - order.get(b.categoryId) || a.position - b.position || a.id - b.id);
+  }
+
+  function renderProducts() {
+    const rows = filteredProducts().map(productRow);
+    $("#p-rows").replaceChildren(...rows);
+    $("#p-empty").hidden = rows.length > 0;
+    renderStats();
+  }
+
+  function replaceProduct(updated) {
+    state.products = state.products.map((p) => (p.id === updated.id ? updated : p));
+    const row = $(`#p-rows tr[data-id="${updated.id}"]`);
+    if (row) row.replaceWith(productRow(updated));
+    renderStats();
+  }
+
+  async function patchProduct(p, changes, input) {
+    if (input) flash(input, "saving");
+    try {
+      const updated = await api("product-update", { id: p.id, ...changes });
+      replaceProduct(updated);
+      const again = input && $(`#p-rows tr[data-id="${p.id}"] [data-field="${input.dataset.field}"]`);
+      if (again) flash(again, "saved");
+      return updated;
+    } catch (err) {
+      if (input) flash(input, "error");
+      fail(err);
+    }
+  }
+
+  function productRow(p) {
+    const level = stockLevel(p);
+    const price = el("input", {
+      class: "price-input",
+      inputmode: "decimal",
+      value: euroInput(p.priceCents),
+      placeholder: "Sur demande",
+      "aria-label": `Prix de ${p.name}`,
+      dataset: { field: "price" },
+      onchange: (e) => {
+        const cents = parsePrice(e.target.value);
+        if (cents === undefined) {
+          flash(e.target, "error");
+          return toast("Prix invalide. Exemple : 12,50 (vide = prix sur demande)", "error");
+        }
+        patchProduct(p, { priceCents: cents }, e.target);
+      },
+      onkeydown: (e) => e.key === "Enter" && e.target.blur(),
+    });
+
+    let stockCell;
+    if (p.stock === null) {
+      stockCell = el("span", { class: "unlimited" }, "Illimité");
+    } else {
+      const adjust = async (delta) => {
+        try {
+          replaceProduct(await api("product-stock", { id: p.id, delta }));
+          $(`#p-rows tr[data-id="${p.id}"] button[data-delta="${delta}"]`)?.focus();
+        } catch (err) {
+          fail(err);
+        }
+      };
+      stockCell = el(
+        "div",
+        { class: "stock-ctl" },
+        el("button", { class: "icon-btn", type: "button", "aria-label": `Retirer 1 à ${p.name}`, dataset: { delta: "-1" }, disabled: p.stock === 0, onclick: () => adjust(-1) }, "−"),
+        el("input", {
+          type: "number", min: "0", step: "1", value: String(p.stock), "aria-label": `Stock de ${p.name}`,
+          dataset: { field: "stock" },
+          onchange: (e) => {
+            const n = Number(e.target.value);
+            if (!Number.isInteger(n) || n < 0 || e.target.value === "") {
+              flash(e.target, "error");
+              return toast("Le stock doit être un nombre entier positif.", "error");
+            }
+            patchProduct(p, { stock: n }, e.target);
+          },
+          onkeydown: (e) => e.key === "Enter" && e.target.blur(),
+        }),
+        el("button", { class: "icon-btn", type: "button", "aria-label": `Ajouter 1 à ${p.name}`, dataset: { delta: "1" }, onclick: () => adjust(1) }, "+")
+      );
+    }
+
+    const visible = el(
+      "label",
+      { class: "switch", title: p.visible ? "Visible sur la carte" : "Masqué de la carte" },
+      el("input", {
+        type: "checkbox",
+        checked: p.visible,
+        "aria-label": `Afficher ${p.name} sur la carte`,
+        onchange: (e) => patchProduct(p, { visible: e.target.checked }),
+      }),
+      el("span")
+    );
+
+    return el(
+      "tr",
+      { dataset: { id: String(p.id) }, class: [!p.visible && "is-hidden", level === "out" && "is-out", level === "low" && "is-low"].filter(Boolean).join(" ") },
+      el(
+        "td",
+        { class: "c-name" },
+        el("div", { class: "p-name" }, p.name,
+          level === "out" ? el("span", { class: "p-badge out" }, "Épuisé") : null,
+          level === "low" ? el("span", { class: "p-badge low" }, "Stock faible") : null),
+        p.description ? el("div", { class: "p-desc", title: p.description }, p.description) : null
+      ),
+      el("td", { class: "c-cat" }, catName(p.categoryId)),
+      el("td", { "data-label": "Prix (€)" }, price),
+      el("td", { "data-label": "Stock" }, stockCell),
+      el("td", { "data-label": "Visible" }, visible),
+      el(
+        "td",
+        { class: "c-actions" },
+        el(
+          "div",
+          { class: "row-actions" },
+          el("button", { class: "link-btn", type: "button", onclick: () => openProductDialog(p) }, "Modifier"),
+          el("button", { class: "link-btn danger", type: "button", onclick: () => deleteProduct(p) }, "Supprimer")
+        )
+      )
+    );
+  }
+
+  async function deleteProduct(p) {
+    if (!(await confirmDialog("Supprimer ce produit ?", `« ${p.name} » sera retiré définitivement de la carte.`))) return;
+    try {
+      await api("product-delete", { id: p.id });
+      state.products = state.products.filter((x) => x.id !== p.id);
+      renderProducts();
+      bumpCategoryCount(p.categoryId, -1);
+      toast(`« ${p.name} » supprimé.`);
+    } catch (err) {
+      fail(err);
+    }
+  }
+
+  function bumpCategoryCount(catId, delta) {
+    const c = state.categories.find((x) => x.id === catId);
+    if (c) c.productCount += delta;
+    renderCategories();
+  }
+
+  ["#p-search", "#p-cat", "#p-low"].forEach((s) => $(s).addEventListener("input", renderProducts));
+
+  // ---------- Fenêtre produit (ajout / modification) ----------
+  const pDialog = $("#product-dialog");
+  const pForm = $("#product-form");
+  let editing = null;
+
+  function openProductDialog(p = null) {
+    if (!state.categories.length) {
+      toast("Créez d'abord une catégorie.", "error");
+      $("#tab-categories").click();
+      return;
+    }
+    editing = p;
+    pForm.reset();
+    $(".form-error", pForm).hidden = true;
+    $("#product-title").textContent = p ? `Modifier « ${p.name} »` : "Ajouter un produit";
+    pForm.categoryId.replaceChildren(...state.categories.map((c) => el("option", { value: String(c.id) }, c.name)));
+    const defaultCat = $("#p-cat").value || String(state.categories[0].id);
+    pForm.categoryId.value = p ? String(p.categoryId) : defaultCat;
+    pForm.name.value = p?.name ?? "";
+    pForm.price.value = p ? euroInput(p.priceCents) : "";
+    pForm.description.value = p?.description ?? "";
+    pForm.tags.value = p?.tags.join(", ") ?? "";
+    pForm.trackStock.checked = p ? p.stock !== null : true;
+    pForm.stock.value = p?.stock ?? 0;
+    pForm.stock.disabled = !pForm.trackStock.checked;
+    pForm.visible.checked = p ? p.visible : true;
+    pDialog.showModal();
+    pForm.name.focus();
+  }
+
+  pForm.trackStock.addEventListener("change", () => {
+    pForm.stock.disabled = !pForm.trackStock.checked;
+  });
+
+  pForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (e.submitter?.value === "cancel") return pDialog.close();
+    const errBox = $(".form-error", pForm);
+    const showErr = (m) => {
+      errBox.textContent = m;
+      errBox.hidden = false;
+    };
+    const priceCents = parsePrice(pForm.price.value);
+    if (priceCents === undefined) return showErr("Prix invalide. Exemple : 12,50 (vide = prix sur demande)");
+    const stockVal = Number(pForm.stock.value);
+    if (pForm.trackStock.checked && (!Number.isInteger(stockVal) || stockVal < 0)) {
+      return showErr("La quantité doit être un nombre entier positif.");
+    }
+    const body = {
+      name: pForm.name.value,
+      categoryId: Number(pForm.categoryId.value),
+      priceCents,
+      description: pForm.description.value,
+      tags: pForm.tags.value,
+      stock: pForm.trackStock.checked ? stockVal : null,
+      visible: pForm.visible.checked,
+    };
+    try {
+      if (editing) {
+        const updated = await api("product-update", { id: editing.id, ...body });
+        if (updated.categoryId !== editing.categoryId) {
+          bumpCategoryCount(editing.categoryId, -1);
+          bumpCategoryCount(updated.categoryId, 1);
+        }
+        state.products = state.products.map((x) => (x.id === updated.id ? updated : x));
+        toast(`« ${updated.name} » mis à jour.`);
+      } else {
+        const created = await api("product-create", body);
+        state.products.push(created);
+        bumpCategoryCount(created.categoryId, 1);
+        toast(`« ${created.name} » ajouté à la carte.`);
+      }
+      renderProducts();
+      pDialog.close();
+    } catch (err) {
+      if (err.status !== 401) showErr(err.message);
+    }
+  });
+
+  $("#add-product").addEventListener("click", () => openProductDialog());
+
+  // ---------- Catégories ----------
+  // Remplace un texte par un champ de saisie : Entrée ou clic ailleurs enregistre, Échap annule.
+  function editInline(zone, { value, maxlength, label, placeholder = "" }, save) {
+    const input = el("input", { value, maxlength: String(maxlength), "aria-label": label, placeholder });
+    let done = false;
+    const finish = async (keep) => {
+      if (done) return;
+      done = true;
+      const v = input.value.trim();
+      if (keep && v !== value) {
+        try {
+          await save(v);
+        } catch (err) {
+          fail(err);
+        }
+      }
+      renderCategories();
+    };
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") finish(true);
+      if (e.key === "Escape") finish(false);
+    });
+    input.addEventListener("blur", () => finish(true));
+    zone.replaceChildren(input);
+    input.select();
+  }
+
+  function renderCategories() {
+    const list = $("#cat-rows");
+    if (!state.categories.length) {
+      list.replaceChildren(el("li", { class: "muted" }, "Aucune catégorie pour le moment."));
+      return;
+    }
+    list.replaceChildren(
+      ...state.categories.map((c, i) => {
+        const title = el("span", { class: "cat-title" }, c.name);
+        const note = el("span", { class: "cat-note" }, c.note || "");
+        const rename = () =>
+          editInline(title, { value: c.name, maxlength: 50, label: `Nouveau nom pour ${c.name}` }, async (name) => {
+            if (!name) return;
+            const updated = await api("category-update", { id: c.id, name });
+            c.name = updated.name;
+            toast("Catégorie renommée.");
+            renderCategoryFilter();
+            renderProducts();
+          });
+        const editNote = () =>
+          editInline(note, { value: c.note || "", maxlength: 200, label: `Note de la catégorie ${c.name}`, placeholder: "Ex. : Servis avec du riz nature" }, async (text) => {
+            const updated = await api("category-update", { id: c.id, note: text });
+            c.note = updated.note;
+            toast(text ? "Note enregistrée." : "Note retirée.");
+          });
+        return el(
+          "li",
+          {},
+          el(
+            "div",
+            { class: "cat-order" },
+            el("button", { class: "icon-btn", type: "button", "aria-label": `Monter ${c.name}`, disabled: i === 0, onclick: () => move(i, -1) }, "↑"),
+            el("button", { class: "icon-btn", type: "button", "aria-label": `Descendre ${c.name}`, disabled: i === state.categories.length - 1, onclick: () => move(i, 1) }, "↓")
+          ),
+          el("div", { class: "cat-name" }, title, note),
+          el("span", { class: "cat-count" }, `${c.productCount} produit${c.productCount > 1 ? "s" : ""}`),
+          el("button", { class: "link-btn", type: "button", onclick: rename }, "Renommer"),
+          el("button", { class: "link-btn", type: "button", onclick: editNote }, c.note ? "Modifier la note" : "Ajouter une note"),
+          el("button", { class: "link-btn danger", type: "button", onclick: () => deleteCategory(c) }, "Supprimer")
+        );
+      })
+    );
+  }
+
+  async function move(index, dir) {
+    const cats = [...state.categories];
+    [cats[index], cats[index + dir]] = [cats[index + dir], cats[index]];
+    try {
+      await api("category-order", { ids: cats.map((c) => c.id) });
+      state.categories = cats;
+      renderCategories();
+      renderCategoryFilter();
+      renderProducts();
+      $("#cat-rows").children[index + dir]?.querySelector(`[aria-label^="${dir < 0 ? "Monter" : "Descendre"}"]:not(:disabled)`)?.focus();
+    } catch (err) {
+      fail(err);
+    }
+  }
+
+  $("#cat-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const input = e.target.name;
+    try {
+      const c = await api("category-create", { name: input.value });
+      state.categories.push({ ...c, productCount: 0 });
+      input.value = "";
+      renderCategories();
+      renderCategoryFilter();
+      toast(`Catégorie « ${c.name} » créée.`);
+    } catch (err) {
+      fail(err);
+    }
+  });
+
+  async function deleteCategory(c) {
+    const body = { id: c.id };
+    if (c.productCount === 0) {
+      if (!(await confirmDialog("Supprimer cette catégorie ?", `La catégorie « ${c.name} » est vide et sera supprimée.`))) return;
+    } else {
+      const d = $("#delcat-dialog");
+      const f = $("#delcat-form");
+      const others = state.categories.filter((x) => x.id !== c.id);
+      $("#delcat-name").textContent = c.name;
+      $("#delcat-count").textContent = `${c.productCount} produit${c.productCount > 1 ? "s" : ""}`;
+      f.moveTo.replaceChildren(...others.map((x) => el("option", { value: String(x.id) }, x.name)));
+      f.mode.value = others.length ? "move" : "delete";
+      f.querySelector('input[value="move"]').disabled = !others.length;
+      f.moveTo.disabled = !others.length;
+      d.returnValue = "";
+      d.showModal();
+      await new Promise((r) => d.addEventListener("close", r, { once: true }));
+      if (d.returnValue !== "confirm") return;
+      if (f.mode.value === "move") body.moveTo = Number(f.moveTo.value);
+      else body.deleteProducts = true;
+    }
+    try {
+      await api("category-delete", body);
+      toast(`Catégorie « ${c.name} » supprimée.`);
+      await refresh();
+    } catch (err) {
+      fail(err);
+    }
+  }
+
+  // ---------- Mot de passe ----------
+  const pwDialog = $("#password-dialog");
+  const pwForm = $("#password-form");
+  $("#open-password").addEventListener("click", () => {
+    pwForm.reset();
+    $(".form-error", pwForm).hidden = true;
+    pwDialog.showModal();
+  });
+  pwForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (e.submitter?.value === "cancel") return pwDialog.close();
+    const errBox = $(".form-error", pwForm);
+    if (pwForm.newPassword.value !== pwForm.confirm.value) {
+      errBox.textContent = "Les deux nouveaux mots de passe ne correspondent pas.";
+      errBox.hidden = false;
+      return;
+    }
+    try {
+      await api("password", {
+        currentPassword: pwForm.currentPassword.value,
+        newPassword: pwForm.newPassword.value,
+      });
+      pwDialog.close();
+      toast("Mot de passe mis à jour.");
+    } catch (err) {
+      if (err.status !== 401) {
+        errBox.textContent = err.message;
+        errBox.hidden = false;
+      }
+    }
+  });
+
+  // ---------- Statistiques ----------
+  const bulle = $("#info-bulle");
+  const nombre = new Intl.NumberFormat("fr-FR");
+  const pct = (n, total) => (total ? Math.round((n / total) * 100) : 0);
+  let joursStats = 30;
+
+  function montrerBulle(cible, texte) {
+    const r = cible.getBoundingClientRect();
+    bulle.textContent = texte;
+    bulle.hidden = false;
+    bulle.style.left = `${Math.min(Math.max(r.left + r.width / 2, 70), innerWidth - 70)}px`;
+    bulle.style.top = `${r.top + (cible.firstChild?.getBoundingClientRect().top - r.top || 0)}px`;
+  }
+  const cacherBulle = () => (bulle.hidden = true);
+  addEventListener("scroll", cacherBulle, { passive: true });
+
+  // Colonnes verticales : une par jour, mois ou heure. Le détail s'affiche au survol ou au toucher.
+  function colonnes(points, etiquetteTous = 1) {
+    const max = Math.max(1, ...points.map((p) => p.valeur));
+    const zone = el("div", { class: "colonnes" });
+    zone.append(el("div", { class: "ligne-max" }, el("b", {}, nombre.format(max))));
+    zone.lastChild.style.bottom = "100%";
+    for (const p of points) {
+      const barre = el("span");
+      barre.style.height = p.valeur ? `max(2px, ${(p.valeur / max) * 100}%)` : "0";
+      const col = el("div", { class: "colonne", tabindex: "0", "aria-label": `${p.detail} : ${p.valeur} visite${p.valeur > 1 ? "s" : ""}` }, barre);
+      const texte = `${p.detail} · ${nombre.format(p.valeur)} visite${p.valeur > 1 ? "s" : ""}`;
+      col.addEventListener("mouseenter", () => montrerBulle(col, texte));
+      col.addEventListener("focus", () => montrerBulle(col, texte));
+      col.addEventListener("touchstart", () => montrerBulle(col, texte), { passive: true });
+      col.addEventListener("mouseleave", cacherBulle);
+      col.addEventListener("blur", cacherBulle);
+      zone.append(col);
+    }
+    const axe = el("div", { class: "axe-x", "aria-hidden": "true" },
+      ...points.map((p, i) => el("span", {}, i % etiquetteTous === 0 ? p.court : "")));
+    return el("div", {}, zone, axe);
+  }
+
+  // Barres horizontales : nom, longueur proportionnelle, nombre et pourcentage.
+  function barres(lignes, total) {
+    if (!lignes.length) return el("p", { class: "muted" }, "—");
+    const max = Math.max(...lignes.map((l) => l.visites));
+    return el("div", { class: "barres" }, ...lignes.slice(0, 8).map((l) => {
+      const remplissage = el("span");
+      remplissage.style.width = `${(l.visites / max) * 100}%`;
+      return el("div", { class: "barre" },
+        el("span", { class: "nom", title: l.nom }, l.nom),
+        el("span", { class: "piste", "aria-hidden": "true" }, remplissage),
+        el("span", { class: "chiffre" }, el("b", {}, `${pct(l.visites, total)} %`), ` · ${nombre.format(l.visites)}`));
+    }));
+  }
+
+  const graphe = (titre, sousTitre, contenu, large = false) =>
+    el("section", { class: large ? "graphe large" : "graphe" }, el("h3", {}, titre), el("p", { class: "sous-titre" }, sousTitre), contenu);
+
+  function parJourOuMois(d) {
+    const dateLongue = (j) => new Date(`${j}T12:00:00`).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+    if (d.jours <= 60) {
+      return {
+        titre: "Visites par jour",
+        points: d.parJour.map((p) => ({
+          valeur: p.visites, detail: dateLongue(p.jour), court: String(Number(p.jour.slice(8))),
+        })),
+        pas: d.jours > 14 ? 5 : 1,
+      };
+    }
+    const mois = new Map();
+    for (const p of d.parJour) mois.set(p.jour.slice(0, 7), (mois.get(p.jour.slice(0, 7)) || 0) + p.visites);
+    return {
+      titre: "Visites par mois",
+      points: [...mois].map(([m, v]) => {
+        const date = new Date(`${m}-15T12:00:00`);
+        return { valeur: v, detail: date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+          court: date.toLocaleDateString("fr-FR", { month: "short" }).replace(".", "") };
+      }),
+      pas: 1,
+    };
+  }
+
+  function rendreStats(d) {
+    const zone = $("#stats-contenu");
+    if (!d.visites) {
+      const cookie = $(".stats-cookie").cloneNode(true);
+      cookie.removeAttribute("class");
+      cookie.querySelector("mask").id = "croque-vide";
+      cookie.querySelector("g").setAttribute("mask", "url(#croque-vide)");
+      zone.replaceChildren(el("div", { class: "stats-vide" }, cookie,
+        el("p", {}, "Pas encore de visite sur cette période."),
+        el("p", {}, "Les visites s'affichent ici dès que des visiteurs acceptent le cookie sur la carte.")));
+      return;
+    }
+    const smartphones = d.appareils.find((a) => a.nom === "Smartphone")?.visites || 0;
+    const heureMax = d.heures.indexOf(Math.max(...d.heures));
+    const jourMax = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"][d.semaine.indexOf(Math.max(...d.semaine))];
+    const tuile = (valeur, libelle) => el("div", { class: "tuile" }, el("span", { class: "valeur" }, valeur), el("span", { class: "libelle" }, libelle));
+    const serie = parJourOuMois(d);
+    const jours = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+    const joursLongs = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+    zone.replaceChildren(
+      el("div", { class: "tuiles" },
+        tuile(nombre.format(d.visites), `visite${d.visites > 1 ? "s" : ""}`),
+        tuile(nombre.format(d.visiteurs), `visiteur${d.visiteurs > 1 ? "s" : ""} différent${d.visiteurs > 1 ? "s" : ""}`),
+        tuile(`${pct(smartphones, d.visites)} %`, "sur smartphone"),
+        tuile(`${heureMax} h`, `heure la plus fréquentée · surtout le ${jourMax}`)),
+      el("div", { class: "graphes" },
+        graphe(serie.titre, "Nombre de visites, heure de Paris", colonnes(serie.points, serie.pas), true),
+        graphe("Appareils", "Smartphone, tablette ou ordinateur", barres(d.appareils, d.visites)),
+        graphe("Heures de visite", "À quelle heure la carte est consultée",
+          colonnes(d.heures.map((v, h) => ({ valeur: v, detail: `${h} h – ${h + 1} h`, court: `${h}` })), 3)),
+        graphe("Jours de la semaine", "Visites cumulées par jour",
+          colonnes(d.semaine.map((v, i) => ({ valeur: v, detail: joursLongs[i], court: jours[i] })))),
+        graphe("Systèmes", "Android, iPhone (iOS), Windows…", barres(d.systemes, d.visites)),
+        graphe("Navigateurs", "Chrome, Safari, Firefox…", barres(d.navigateurs, d.visites)),
+        graphe("Provenance", "D'où arrivent les visiteurs", barres(d.origines, d.visites))));
+  }
+
+  async function chargerStats() {
+    $("#stats-contenu").replaceChildren(el("p", { class: "muted" }, "Chargement…"));
+    try {
+      rendreStats(await api("stats", undefined, { jours: joursStats }));
+    } catch (err) {
+      fail(err);
+    }
+  }
+
+  document.querySelectorAll(".stats-periodes .chip").forEach((b) =>
+    b.addEventListener("click", () => {
+      joursStats = Number(b.dataset.jours);
+      document.querySelectorAll(".stats-periodes .chip").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      chargerStats();
+    })
+  );
+  $("#tab-stats").addEventListener("click", chargerStats);
+
+  // ---------- Démarrage ----------
+  api("me")
+    .then(showApp)
+    .catch((err) => (err.body?.needsSetup ? showSetup() : showLogin()));
+})();

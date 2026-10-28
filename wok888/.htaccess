@@ -1,0 +1,22 @@
+# En-têtes de sécurité et mise en cache (serveurs Apache : OVH, XAMPP…)
+Options -Indexes
+# Documentation du dossier : pas pour les visiteurs.
+<Files "README.md">
+  Require all denied
+</Files>
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "DENY"
+  # Pages, styles et scripts : le navigateur vérifie à chaque visite s'ils ont changé (une mise à jour se voit tout de suite).
+  <FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # Polices et images : gardées 30 jours.
+  <FilesMatch "(?i)\.(woff2|png|svg|jpe?g|webp)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>

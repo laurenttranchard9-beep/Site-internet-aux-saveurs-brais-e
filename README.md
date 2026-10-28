@@ -21,6 +21,10 @@ Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restauran
 
 Le dossier [`cambodge/`](cambodge/) contient le nouveau site du restaurant de Saint-Alban (remplaçant de l'ancien site Squarespace) : page d'accueil, carte avec recherche, horaires en direct, accès, mentions légales. Il utilise le même moteur que celui d'Aux Saveurs Braisées, donc le même espace de gestion. Voir [`cambodge/README.md`](cambodge/README.md).
 
+## Restaurant « WOK 888 »
+
+Le dossier [`wok888/`](wok888/) contient le nouveau site du restaurant de Seilh (remplaçant de wok888.fr) : accueil animé, wok à composer, carte en 8 univers, machine 888, réservation resOS, commande à emporter en ligne avec écran de réception et suivi en direct. Il utilise le même moteur de carte qu'Aux Saveurs Braisées et s'installe tel quel sous XAMPP. Voir [`wok888/README.md`](wok888/README.md).
+
 ## Mise en ligne
 
 Le dossier [`deploiement/`](deploiement/) contient les scripts qui installent ces sites, ainsi que [La Fleur d'Or](https://github.com/laurenttranchard9-beep/Fleur-d-or), sur un serveur Ubuntu, Debian ou Amazon Linux 2023 : installation, noms de domaine en HTTPS, sauvegarde et déménagement d'un serveur à l'autre. Voir [`deploiement/README.md`](deploiement/README.md).

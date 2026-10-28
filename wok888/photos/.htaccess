@@ -1,0 +1,5 @@
+# Seules les photos sont servies depuis ce dossier.
+Require all denied
+<FilesMatch "(?i)\.(jpe?g|png|webp)$">
+  Require all granted
+</FilesMatch>

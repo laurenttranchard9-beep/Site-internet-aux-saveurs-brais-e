@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; frame-src https://www.openstreetmap.org https://wok-888-1749636011.resos.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>WOK 888 · Restaurant asiatique à Seilh · Wok, sushis, poké bowls</title>
+  <meta name="description" content="WOK 888, restaurant asiatique à Seilh (31840) : woks à composer, sushis, makis, poké bowls, bouchées vapeur. Sur place ou à emporter, du mardi au dimanche. Réservez ou commandez en ligne." />
+  <link rel="canonical" href="https://wok888.fr/" />
+  <meta name="theme-color" content="#120e0c" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="WOK 888" />
+  <meta property="og:title" content="WOK 888 · L'art du wok à Seilh" />
+  <meta property="og:description" content="Woks à composer, sushis, poké bowls et bouchées vapeur. Sur place ou à emporter, du mardi au dimanche." />
+  <meta property="og:url" content="https://wok888.fr/" />
+  <meta property="og:image" content="https://wok888.fr/images/partage.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="WOK 888, l'art du wok à Seilh" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preload" href="polices/bebas-neue.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="polices/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="polices/noto-serif-tc-wok-hei.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="site.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="images/icone-180.png" />
+  <script src="intro.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "@id": "https://wok888.fr/#restaurant",
+    "name": "WOK 888",
+    "description": "Restaurant asiatique à Seilh : woks à composer, sushis, makis, poké bowls, bouchées vapeur.",
+    "url": "https://wok888.fr/",
+    "telephone": "+33 5 61 58 06 97",
+    "email": "contact@wok888.fr",
+    "image": "https://wok888.fr/images/partage.png",
+    "logo": "https://wok888.fr/images/icone-512.png",
+    "servesCuisine": ["Asiatique", "Chinoise", "Japonaise", "Thaïlandaise"],
+    "priceRange": "€€",
+    "hasMenu": "https://wok888.fr/#carte",
+    "acceptsReservations": "https://wok-888-1749636011.resos.com/booking",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "16 route de Grenade",
+      "postalCode": "31840",
+      "addressLocality": "Seilh",
+      "addressRegion": "Haute-Garonne",
+      "addressCountry": "FR"
+    },
+    "geo": { "@type": "GeoCoordinates", "latitude": 43.696159, "longitude": 1.350528 },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "12:00", "closes": "22:30" }
+    ]
+  }
+  </script>
+</head>
+<body id="haut">
+  <!-- Illustrations et icônes, réutilisées dans toute la page -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="g-feu" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffc23a"/><stop offset=".55" stop-color="#ff6a1a"/><stop offset="1" stop-color="#e3262b"/>
+      </linearGradient>
+      <linearGradient id="g-flamme" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="#ff3d0a"/><stop offset=".45" stop-color="#ff8a00"/><stop offset=".85" stop-color="#ffc93c" stop-opacity=".9"/><stop offset="1" stop-color="#fff1a8" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="g-flamme-coeur" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="#fff6c9"/><stop offset=".6" stop-color="#ffd54a"/><stop offset="1" stop-color="#ffb000" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="g-acier" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#4a413b"/><stop offset=".35" stop-color="#262120"/><stop offset="1" stop-color="#0c0a09"/>
+      </linearGradient>
+      <radialGradient id="g-acier-int" cx=".5" cy=".55" r=".6">
+        <stop offset="0" stop-color="#3a2b22"/><stop offset=".7" stop-color="#1a1411"/><stop offset="1" stop-color="#0b0908"/>
+      </radialGradient>
+      <linearGradient id="g-bois" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9a6634"/><stop offset="1" stop-color="#5c3818"/>
+      </linearGradient>
+      <radialGradient id="g-lueur" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#ff7a1a" stop-opacity=".55"/><stop offset=".55" stop-color="#ff4d00" stop-opacity=".16"/><stop offset="1" stop-color="#ff4d00" stop-opacity="0"/>
+      </radialGradient>
+      <path id="forme-flamme" d="M0 0C-27-5-33-38-16-63-9-74-7-86-10-100 6-88 22-71 24-49 26-34 23-13 0 0Z"/>
+    </defs>
+
+    <!-- Logo : le W, le wok (le O) et le K -->
+    <symbol id="logo-wk" viewBox="90 260 1205 675">
+      <path fill="currentColor" d="M95 470 155 435 372 820 331 890Z M297 468 357 435 533 745 810 265 870 300 535 890Z M1160 323H1268L1028 612 1288 927H1180L972 672 945 690 975 550Z"/>
+      <path fill="url(#g-feu)" d="M908 348A354 354 0 0 1 582 902L630 818A265 265 0 0 0 860 430Z"/>
+    </symbol>
+
+    <!-- Ingrédients -->
+    <symbol id="i-brocoli" viewBox="0 0 40 44">
+      <path d="M15 25 13 42h14l-2-17Z" fill="#9ccc65"/>
+      <circle cx="11" cy="19" r="9" fill="#2e7d32"/><circle cx="29" cy="19" r="9" fill="#2e7d32"/>
+      <circle cx="20" cy="12" r="10.5" fill="#43a047"/><circle cx="20" cy="23" r="7.5" fill="#2e7d32"/>
+      <g fill="#66bb6a"><circle cx="16" cy="8" r="2.2"/><circle cx="25" cy="13" r="2"/><circle cx="9" cy="17" r="1.8"/><circle cx="30" cy="20" r="1.6"/></g>
+    </symbol>
+    <symbol id="i-carotte" viewBox="0 0 30 30">
+      <circle cx="15" cy="15" r="13" fill="#ef6c00"/><circle cx="15" cy="15" r="8.5" fill="#ffa726"/><circle cx="15" cy="15" r="3" fill="#fb8c00"/>
+    </symbol>
+    <symbol id="i-courgette" viewBox="0 0 34 20">
+      <path d="M2 3a15 15 0 0 0 30 0Z" fill="#2e7d32"/><path d="M5 3a12 12 0 0 0 24 0Z" fill="#e6f2c8"/>
+      <g fill="#c5d99a"><circle cx="13" cy="7" r="1.3"/><circle cx="17" cy="9" r="1.3"/><circle cx="21" cy="7" r="1.3"/></g>
+    </symbol>
+    <symbol id="i-oignon" viewBox="0 0 40 20">
+      <path d="M4 17C10 3 30 3 36 17" fill="none" stroke="#f6eaf5" stroke-width="5" stroke-linecap="round"/>
+      <path d="M4 17C10 3 30 3 36 17" fill="none" stroke="#b56bb5" stroke-width="1.4" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-choufleur" viewBox="0 0 36 32">
+      <path d="M14 22 13 31h10l-1-9Z" fill="#d7e8b0"/>
+      <circle cx="10" cy="16" r="8" fill="#ece3cf"/><circle cx="26" cy="16" r="8" fill="#ece3cf"/><circle cx="18" cy="10" r="9" fill="#f7f1e3"/><circle cx="18" cy="19" r="7" fill="#efe6d3"/>
+    </symbol>
+    <symbol id="i-poivron" viewBox="0 0 40 14">
+      <rect x="1" y="3" width="38" height="8" rx="4" fill="#e53935"/><path d="M6 5.5h22" stroke="#ff8a80" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-nouille" viewBox="0 0 90 24">
+      <path d="M3 13C13 1 23 25 33 13S53 1 63 13 83 25 88 13" fill="none" stroke="#c98a1c" stroke-width="6.5" stroke-linecap="round"/>
+      <path d="M3 12C13 0 23 24 33 12S53 0 63 12 83 24 88 12" fill="none" stroke="#f4c552" stroke-width="4.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-riz" viewBox="0 0 60 30">
+      <g fill="#fbf8f1" stroke="#d9d1c2" stroke-width=".8">
+        <ellipse cx="10" cy="15" rx="6" ry="2.6" transform="rotate(-25 10 15)"/><ellipse cx="22" cy="9" rx="6" ry="2.6" transform="rotate(15 22 9)"/>
+        <ellipse cx="23" cy="20" rx="6" ry="2.6" transform="rotate(-10 23 20)"/><ellipse cx="35" cy="13" rx="6" ry="2.6" transform="rotate(35 35 13)"/>
+        <ellipse cx="37" cy="23" rx="6" ry="2.6" transform="rotate(-30 37 23)"/><ellipse cx="48" cy="15" rx="6" ry="2.6" transform="rotate(10 48 15)"/>
+        <ellipse cx="14" cy="25" rx="6" ry="2.6" transform="rotate(20 14 25)"/><ellipse cx="30" cy="5" rx="6" ry="2.6" transform="rotate(-15 30 5)"/>
+      </g>
+    </symbol>
+    <symbol id="i-riz-saute" viewBox="0 0 60 30">
+      <g fill="#f3d27a" stroke="#d7a53c" stroke-width=".8">
+        <ellipse cx="10" cy="15" rx="6" ry="2.6" transform="rotate(-25 10 15)"/><ellipse cx="22" cy="9" rx="6" ry="2.6" transform="rotate(15 22 9)"/>
+        <ellipse cx="23" cy="21" rx="6" ry="2.6" transform="rotate(-10 23 21)"/><ellipse cx="47" cy="12" rx="6" ry="2.6" transform="rotate(35 47 12)"/>
+        <ellipse cx="40" cy="23" rx="6" ry="2.6" transform="rotate(-30 40 23)"/><ellipse cx="14" cy="25" rx="6" ry="2.6" transform="rotate(20 14 25)"/>
+      </g>
+      <path d="M30 8a5 5 0 1 0 6 6" fill="none" stroke="#ff8a65" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="51" cy="22" r="3.2" fill="#b0855a"/><rect x="31" y="20" width="6" height="4" rx="1.5" fill="#fff" stroke="#f48fb1" stroke-width="1"/>
+    </symbol>
+    <symbol id="i-poulet" viewBox="0 0 30 26">
+      <rect x="2" y="3" width="26" height="20" rx="7" fill="#d9963e"/><rect x="5" y="5" width="20" height="8" rx="4" fill="#f2c27a"/>
+      <path d="M8 18h6M17 16h5" stroke="#a8641f" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-porc" viewBox="0 0 40 24">
+      <path d="M2 7Q20 0 38 7l-2 13Q20 15 4 20Z" fill="#d06a4a"/><path d="M2 7Q20 0 38 7" fill="none" stroke="#8e2f1f" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M9 13q11-3 22 0" fill="none" stroke="#f0a088" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-boeuf" viewBox="0 0 44 16">
+      <path d="M2 8C10 0 34 2 42 6 38 14 12 16 2 8Z" fill="#6b3a22"/><path d="M10 7c8-3 18-2 26 0" fill="none" stroke="#9c5a37" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-crevette" viewBox="0 0 36 36">
+      <path d="M27 9a12 12 0 1 0 2 17" fill="none" stroke="#ff7f5c" stroke-width="9" stroke-linecap="round"/>
+      <path d="M27 9a12 12 0 1 0 2 17" fill="none" stroke="#ffb199" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 5"/>
+      <path d="M29 26 35 23 33 31Z" fill="#ff7043"/>
+    </symbol>
+    <symbol id="i-canard" viewBox="0 0 42 22">
+      <path d="M2 12Q21 2 40 12l-2 8Q21 14 4 20Z" fill="#e9a07a"/><path d="M2 12Q21 2 40 12" fill="none" stroke="#7a2e14" stroke-width="5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-loklak" viewBox="0 0 30 28">
+      <rect x="2" y="4" width="26" height="21" rx="5" fill="#7b3f22"/><rect x="5" y="6" width="20" height="7" rx="3" fill="#9c5634"/>
+      <g fill="#1b1311"><circle cx="9" cy="17" r="1.4"/><circle cx="15" cy="20" r="1.4"/><circle cx="21" cy="16" r="1.4"/><circle cx="12" cy="10" r="1.2"/></g>
+    </symbol>
+    <symbol id="i-oeuf" viewBox="0 0 50 40">
+      <path d="M6 20C3 9 15 3 25 5c10-4 22 3 19 13 6 9-4 18-15 16-9 4-23-2-23-14Z" fill="#fffdf6" stroke="#eadfc8" stroke-width="1.2"/>
+      <circle cx="24" cy="20" r="8.5" fill="#ffb300"/><circle cx="21" cy="17" r="2.6" fill="#ffe082"/>
+    </symbol>
+
+    <!-- Univers de la carte -->
+    <symbol id="u-entrees" viewBox="0 0 24 24"><path d="M3 15c0-4 4-7 9-7s9 3 9 7c-2 2-5 3-9 3s-7-1-9-3Z"/><path d="M8 9.5 9 12M12 8v3.5M16 9.5 15 12"/></symbol>
+    <symbol id="u-wok" viewBox="0 0 24 24"><path d="M2.5 11h19a9.5 6.5 0 0 1-19 0Z"/><path d="M21.5 11 23 9.5M9 3.5c-1 1 1 2 0 3.5M13 3c-1 1 1 2 0 3.5"/></symbol>
+    <symbol id="u-poke" viewBox="0 0 24 24"><path d="M3 12h18a9 7 0 0 1-18 0Z"/><circle cx="8" cy="9.5" r="2"/><circle cx="12.5" cy="8.5" r="2"/><path d="M15.5 10.5l2.5-3"/></symbol>
+    <symbol id="u-plats" viewBox="0 0 24 24"><circle cx="11" cy="14" r="7"/><circle cx="11" cy="14" r="3.5"/><path d="M15 2.5l6.5 6.5M18.5 2l3 3"/></symbol>
+    <symbol id="u-japonais" viewBox="0 0 24 24"><path d="M3.5 15c0-2 3.5-3 8.5-3s8.5 1 8.5 3-3.5 3-8.5 3-8.5-1-8.5-3Z"/><path d="M3.5 13c2-3 5-4.5 8.5-4.5s6.5 1.5 8.5 4.5M11 9v9"/></symbol>
+    <symbol id="u-menus" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 5v14M3 12h9"/></symbol>
+    <symbol id="u-desserts" viewBox="0 0 24 24"><path d="M8 12l4 10 4-10"/><path d="M6.5 12a5.5 5.5 0 1 1 11 0Z"/></symbol>
+    <symbol id="u-boissons" viewBox="0 0 24 24"><path d="M4 4h16l-8 8Z"/><path d="M12 12v8M8 21h8M16 4l2-2.5"/></symbol>
+    <symbol id="u-defaut" viewBox="0 0 24 24"><path d="M12 21c-4 0-7-3-7-6.5 0-4 3-5.5 4-9 2 1.5 2.5 3 2.5 5 1-1 1.5-2 1.5-3.5 3 2 6 5 6 8 0 3.5-3 6-7 6Z"/></symbol>
+
+    <!-- Icônes -->
+    <symbol id="ic-tel" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8Z"/></symbol>
+    <symbol id="ic-sac" viewBox="0 0 24 24"><path d="M5.5 8h13l-1.2 12.2a1 1 0 0 1-1 .8H7.7a1 1 0 0 1-1-.8L5.5 8Z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></symbol>
+    <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="ic-moins" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="ic-fermer" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="ic-fleche" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="ic-retour" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="ic-pin" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></symbol>
+    <symbol id="ic-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="ic-recherche" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="ic-feu" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 22c-4.4 0-7.5-3-7.5-7 0-4.2 3.2-6 4.3-9.8 2.2 1.6 2.8 3.4 2.7 5.4 1.1-1 1.7-2.3 1.7-4 3.3 2.2 6.3 5.4 6.3 8.6 0 3.9-3.2 6.8-7.5 6.8Zm0-2.2c1.9 0 3.2-1.2 3.2-2.9 0-1.5-1.2-2.8-2.4-3.8-.2 1.2-.9 2-1.9 2.5.2-1-.1-1.8-.9-2.5-.8 1.2-1.6 2.2-1.6 3.6 0 1.8 1.4 3.1 3.6 3.1Z"/></symbol>
+    <symbol id="ic-son" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4Z"/><path d="M16 9a4.5 4.5 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+    <symbol id="ic-muet" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4Z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+    <symbol id="ic-calendrier" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+    <symbol id="ic-coche" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="ic-carte" viewBox="0 0 24 24"><path d="M6 3h10a3 3 0 0 1 3 3v15H8a3 3 0 0 1-3-3V4"/><path d="M9 8h7M9 12h7M9 16h4"/></symbol>
+    <symbol id="ic-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+    <symbol id="ic-de" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol>
+  </svg>
+
+  <!-- Animation d'ouverture (intro.js décide de la jouer : une fois par visite) -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro-scene">
+      <svg class="intro-logo" viewBox="90 260 1205 675">
+        <path class="trait t1" pathLength="1" d="M95 470 155 435 372 820 331 890Z"/>
+        <path class="trait t2" pathLength="1" d="M297 468 357 435 533 745 810 265 870 300 535 890Z"/>
+        <path class="trait t3" pathLength="1" d="M908 348A354 354 0 0 1 582 902L630 818A265 265 0 0 0 860 430Z"/>
+        <path class="trait t4" pathLength="1" d="M1160 323H1268L1028 612 1288 927H1180L972 672 945 690 975 550Z"/>
+      </svg>
+      <p class="intro-nom"><span>W</span><span>O</span><span>K</span> <span class="or">8</span><span class="or">8</span><span class="or">8</span></p>
+      <p class="intro-devise">L'art du wok</p>
+    </div>
+    <div class="intro-feu"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+
+  <a class="evitement" href="#carte">Aller à la carte</a>
+
+  <header class="entete" id="entete">
+    <div class="wrap entete-inner">
+      <a class="marque" href="#haut" aria-label="WOK 888, retour en haut de page">
+        <svg class="marque-logo" aria-hidden="true"><use href="#logo-wk"/></svg>
+        <span class="marque-nom">WOK <b>888</b></span>
+      </a>
+      <nav class="nav" aria-label="Sections de la page">
+        <a href="#composer">Mon wok</a>
+        <a href="#carte">La carte</a>
+        <a href="#menus">Menus</a>
+        <a href="#reserver">Réserver</a>
+        <a href="#infos">Infos</a>
+      </nav>
+      <a class="entete-tel" href="tel:+33561580697">
+        <svg aria-hidden="true"><use href="#ic-tel"/></svg>
+        <span class="entete-tel-texte">05 61 58 06 97</span>
+        <span class="sr-only">Appeler le restaurant</span>
+      </a>
+      <button type="button" class="panier-bouton" id="ouvrir-panier" aria-haspopup="dialog" aria-controls="panier">
+        <svg aria-hidden="true"><use href="#ic-sac"/></svg>
+        <span class="sr-only" id="panier-libelle">Ma commande</span>
+        <span class="panier-compte" id="panier-compte" aria-hidden="true" hidden>0</span>
+      </button>
+    </div>
+    <button type="button" class="suivi-pastille" id="suivi-pastille" hidden></button>
+  </header>
+
+  <main>
+    <!-- ============ Accueil ============ -->
+    <section class="heros" id="accueil" aria-labelledby="heros-titre">
+      <canvas class="braises" id="braises" aria-hidden="true"></canvas>
+      <div class="wrap heros-grille">
+        <div class="heros-texte">
+          <p class="statut" data-statut aria-live="polite"></p>
+          <p class="pinceau heros-sur">Saveurs d'Asie à Seilh</p>
+          <h1 class="heros-titre" id="heros-titre"><span class="titre-ligne">L'art</span> <span class="titre-ligne feu" data-texte="du wok">du wok</span></h1>
+          <p class="heros-intro">Woks à composer, sushis, poké bowls et bouchées vapeur&nbsp;: une cuisine asiatique authentique et savoureuse, préparée avec passion. Sur place ou à emporter.</p>
+          <div class="heros-actions">
+            <a class="bouton bouton-feu bouton-grand" href="#composer">
+              <svg aria-hidden="true"><use href="#ic-feu"/></svg>Composer mon wok
+            </a>
+            <a class="bouton bouton-clair bouton-grand" href="#carte">Voir la carte</a>
+          </div>
+          <ul class="heros-infos">
+            <li><svg aria-hidden="true"><use href="#ic-horloge"/></svg>Du mardi au dimanche, 12h00 – 22h30</li>
+            <li><svg aria-hidden="true"><use href="#ic-pin"/></svg>16 route de Grenade, Seilh</li>
+            <li><svg aria-hidden="true"><use href="#ic-calendrier"/></svg><a href="#reserver">Réservation en ligne</a></li>
+          </ul>
+        </div>
+
+        <div class="heros-scene" aria-hidden="true">
+          <svg class="scene-wok" viewBox="0 0 640 560">
+            <ellipse class="lueur" cx="330" cy="380" rx="300" ry="230" fill="url(#g-lueur)"/>
+            <!-- Vapeur -->
+            <g class="vapeur" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="10">
+              <path class="v1" d="M262 250c-18-26 16-44 0-72-14-26 14-42 2-66"/>
+              <path class="v2" d="M330 240c-18-28 16-46 0-76-14-28 14-44 2-70"/>
+              <path class="v3" d="M398 250c-18-26 16-44 0-72-14-26 14-42 2-66"/>
+            </g>
+            <!-- Brûleur -->
+            <ellipse cx="330" cy="500" rx="160" ry="24" fill="#1c1715"/>
+            <ellipse cx="330" cy="494" rx="118" ry="15" fill="#2e2622"/>
+            <ellipse cx="330" cy="492" rx="80" ry="9" fill="#120e0c"/>
+            <!-- Flammes derrière le wok -->
+            <g class="flammes flammes-fond">
+              <g transform="translate(206 494) scale(1.1 2.1)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(250 496) scale(1.3 2.5) rotate(-6)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(298 498) scale(1.4 2.7)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(350 498) scale(1.4 2.8) rotate(4)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(402 496) scale(1.3 2.5)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(452 494) scale(1.1 2.1) rotate(8)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(176 490) scale(.8 1.5) rotate(-14)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(484 490) scale(.8 1.5) rotate(14)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+            </g>
+            <!-- Le wok -->
+            <g class="wok-anime">
+              <path d="M168 316 72 280" stroke="#2a2421" stroke-width="12" stroke-linecap="round"/>
+              <path d="M88 286 10 256" stroke="url(#g-bois)" stroke-width="24" stroke-linecap="round"/>
+              <path d="M510 310c34-8 46 4 40 14-6 9-24 8-36 4" fill="none" stroke="#2a2421" stroke-width="8" stroke-linecap="round"/>
+              <path d="M150 318c10 92 90 134 180 134s170-42 180-134Z" fill="url(#g-acier)"/>
+              <path d="M184 352c22 48 70 74 118 78" fill="none" stroke="#fff" stroke-opacity=".1" stroke-width="7" stroke-linecap="round"/>
+              <path d="M222 428c50 26 166 26 216 0" fill="none" stroke="#ff8a2a" stroke-opacity=".35" stroke-width="9" stroke-linecap="round"/>
+              <ellipse cx="330" cy="318" rx="180" ry="44" fill="url(#g-acier-int)"/>
+              <g class="contenu">
+                <ellipse cx="330" cy="314" rx="150" ry="28" fill="#8a5a1c"/>
+                <use href="#i-nouille" x="196" y="296" width="96" height="26" transform="rotate(-8 244 309)"/>
+                <use href="#i-nouille" x="300" y="292" width="100" height="27" transform="rotate(10 350 305)"/>
+                <use href="#i-nouille" x="240" y="308" width="110" height="28" transform="rotate(4 295 322)"/>
+                <use href="#i-nouille" x="350" y="310" width="96" height="26" transform="rotate(-12 398 323)"/>
+                <use href="#i-poivron" x="208" y="288" width="40" height="14" transform="rotate(-20 228 295)"/>
+                <use href="#i-carotte" x="380" y="288" width="26" height="26"/>
+                <use href="#i-brocoli" x="262" y="270" width="38" height="42"/>
+                <use href="#i-courgette" x="420" y="300" width="32" height="19" transform="rotate(12 436 309)"/>
+                <use href="#i-crevette" x="318" y="276" width="34" height="34" transform="rotate(20 335 293)"/>
+                <use href="#i-brocoli" x="402" y="268" width="32" height="36"/>
+                <use href="#i-oignon" x="168" y="304" width="36" height="18"/>
+                <use href="#i-carotte" x="228" y="316" width="22" height="22"/>
+                <use href="#i-crevette" x="440" y="282" width="28" height="28" transform="rotate(-30 454 296)"/>
+              </g>
+              <path d="M150 318a180 44 0 0 0 360 0" fill="none" stroke="#5c514a" stroke-width="7"/>
+              <ellipse cx="330" cy="318" rx="180" ry="44" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="2"/>
+            </g>
+            <!-- Morceaux qui sautent -->
+            <g class="volants">
+              <g transform="translate(300 300)"><use class="vol vol1" href="#i-brocoli" x="-16" y="-18" width="32" height="36"/></g>
+              <g transform="translate(350 296)"><use class="vol vol2" href="#i-crevette" x="-15" y="-15" width="30" height="30"/></g>
+              <g transform="translate(270 304)"><use class="vol vol3" href="#i-carotte" x="-11" y="-11" width="22" height="22"/></g>
+              <g transform="translate(386 300)"><use class="vol vol4" href="#i-nouille" x="-40" y="-11" width="80" height="22"/></g>
+              <g transform="translate(320 306)"><use class="vol vol5" href="#i-poivron" x="-18" y="-6" width="36" height="12"/></g>
+              <g transform="translate(240 300)"><use class="vol vol6" href="#i-courgette" x="-14" y="-8" width="28" height="17"/></g>
+              <g transform="translate(410 304)"><use class="vol vol7" href="#i-carotte" x="-10" y="-10" width="20" height="20"/></g>
+            </g>
+            <!-- Flammes devant -->
+            <g class="flammes flammes-avant">
+              <g transform="translate(286 500) scale(.7 .9)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(330 502) scale(.8 1.1)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(374 500) scale(.7 .9)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+              <g transform="translate(330 502) scale(.42 .7)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme-coeur)"/></g>
+            </g>
+          </svg>
+          <p class="heros-badge"><span class="pinceau">888</span><span>le chiffre<br/>du bonheur</span></p>
+        </div>
+      </div>
+      <a class="defiler" href="#wok-hei"><span class="sr-only">Découvrir</span><span class="defiler-souris" aria-hidden="true"></span></a>
+    </section>
+
+    <!-- Bandeau défilant -->
+    <div class="bandeau-cadre" aria-hidden="true"><div class="bandeau">
+      <div class="bandeau-piste">
+        <span>Woks à composer</span><i>888</i><span>Sushis</span><i>888</i><span>Poké bowls</span><i>888</i><span>Bò bún</span><i>888</i><span>Bouchées vapeur</span><i>888</i><span>California rolls</span><i>888</i><span>Cocktails</span><i>888</i>
+        <span>Woks à composer</span><i>888</i><span>Sushis</span><i>888</i><span>Poké bowls</span><i>888</i><span>Bò bún</span><i>888</i><span>Bouchées vapeur</span><i>888</i><span>California rolls</span><i>888</i><span>Cocktails</span><i>888</i>
+      </div>
+    </div></div>
+
+    <!-- ============ Wok hei ============ -->
+    <section class="wokhei" id="wok-hei" aria-labelledby="wokhei-titre">
+      <div class="wrap wokhei-grille">
+        <p class="hanzi" lang="zh-Hant" aria-hidden="true" data-revele><span>鑊氣</span></p>
+        <div class="wokhei-texte" data-revele>
+          <p class="pinceau">Wok hei</p>
+          <h2 id="wokhei-titre">Le souffle du wok</h2>
+          <p class="grand">En cantonais, on l'appelle <em>wok hei</em>&nbsp;: le «&nbsp;souffle du wok&nbsp;». C'est ce parfum légèrement fumé que prennent les aliments saisis à feu très vif, en quelques secondes.</p>
+          <p>Les légumes restent croquants, les viandes caramélisent, la sauce enrobe chaque bouchée. C'est tout l'art du wok, et c'est notre façon de cuisiner.</p>
+          <ul class="chiffres">
+            <li><span class="chiffre" data-compteur="36" id="chiffre-woks">36</span><span>façons de composer votre wok</span></li>
+            <li><span class="chiffre" data-compteur="42" id="chiffre-royal">42</span><span>pièces dans le menu Royal 888</span></li>
+            <li><span class="chiffre"><span data-compteur="6">6</span>/7</span><span>jours ouverts, midi et soir</span></li>
+          </ul>
+        </div>
+      </div>
+      <ol class="wrap gestes">
+        <li class="geste" data-revele>
+          <svg class="geste-icone" viewBox="0 0 64 64" aria-hidden="true">
+            <g transform="translate(32 58) scale(.42 .5)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+            <g transform="translate(20 58) scale(.26 .32) rotate(-10)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+            <g transform="translate(44 58) scale(.26 .34) rotate(10)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+          </svg>
+          <h3>Le feu</h3>
+          <p>Une flamme vive, qui saisit les aliments au lieu de les cuire à l'étouffée.</p>
+        </li>
+        <li class="geste" data-revele>
+          <svg class="geste-icone geste-sauter" viewBox="0 0 64 64" aria-hidden="true">
+            <g class="mini-wok"><path d="M8 34h48a24 14 0 0 1-48 0Z" fill="url(#g-acier)"/><path d="M8 34 1 30" stroke="url(#g-bois)" stroke-width="5" stroke-linecap="round"/></g>
+            <use class="mini-vol m1" href="#i-brocoli" x="20" y="10" width="13" height="14"/>
+            <use class="mini-vol m2" href="#i-carotte" x="34" y="14" width="10" height="10"/>
+            <use class="mini-vol m3" href="#i-crevette" x="27" y="4" width="12" height="12"/>
+          </svg>
+          <h3>Le geste</h3>
+          <p>On fait sauter, on retourne, on nappe&nbsp;: chaque bouchée prend la sauce.</p>
+        </li>
+        <li class="geste" data-revele>
+          <svg class="geste-icone geste-legumes" viewBox="0 0 64 64" aria-hidden="true">
+            <use href="#i-brocoli" x="6" y="18" width="24" height="27"/>
+            <use href="#i-carotte" x="32" y="12" width="16" height="16"/>
+            <use href="#i-courgette" x="34" y="34" width="22" height="13"/>
+            <use href="#i-choufleur" x="18" y="38" width="20" height="18"/>
+            <use href="#i-oignon" x="40" y="48" width="18" height="9"/>
+          </svg>
+          <h3>La fraîcheur</h3>
+          <p>Oignon, brocoli, chou-fleur, courgettes, carottes&nbsp;: les légumes de nos woks.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ Composer son wok ============ -->
+    <section class="composer" id="composer" aria-labelledby="composer-titre">
+      <div class="wrap">
+        <header class="section-tete" data-revele>
+          <p class="pinceau">À vous de jouer</p>
+          <h2 id="composer-titre">Composez votre wok</h2>
+          <p id="composer-note">Choisissez votre base et votre garniture&nbsp;: nous faisons sauter le tout au wok, avec ses légumes.</p>
+        </header>
+        <div class="composer-grille">
+          <form class="etapes" id="composeur" novalidate>
+            <fieldset class="etape" id="etape-base">
+              <legend><span class="etape-num">1</span>Votre base</legend>
+              <div class="choix choix-souple" id="choix-base"></div>
+            </fieldset>
+            <fieldset class="etape" id="etape-garniture">
+              <legend><span class="etape-num">2</span>Votre garniture</legend>
+              <div class="choix choix-garnitures" id="choix-garniture"></div>
+            </fieldset>
+            <fieldset class="etape" id="etape-plus" hidden>
+              <legend><span class="etape-num">3</span>Le petit plus</legend>
+              <div class="choix choix-souple" id="choix-plus"></div>
+            </fieldset>
+          </form>
+
+          <div class="poele" id="poele">
+            <div class="poele-scene">
+              <svg class="scene-poele" id="scene-poele" viewBox="0 130 520 300" aria-hidden="true">
+                <ellipse class="lueur" cx="260" cy="300" rx="250" ry="170" fill="url(#g-lueur)"/>
+                <ellipse cx="260" cy="392" rx="150" ry="22" fill="#1c1715"/>
+                <ellipse cx="260" cy="387" rx="110" ry="14" fill="#2e2622"/>
+                <g class="flammes flammes-fond">
+                  <g transform="translate(150 388) scale(.9 1.6) rotate(-10)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(196 390) scale(1.1 1.9)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(240 392) scale(1.2 2.1)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(284 392) scale(1.2 2.1) rotate(4)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(328 390) scale(1.1 1.9)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(372 388) scale(.9 1.6) rotate(10)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                </g>
+                <g class="wok-poele" id="wok-poele">
+                  <path d="M76 236 28 218" stroke="#2a2421" stroke-width="10" stroke-linecap="round"/>
+                  <path d="M50 226 10 211" stroke="url(#g-bois)" stroke-width="20" stroke-linecap="round"/>
+                  <path d="M60 236c10 86 96 124 200 124s190-38 200-124Z" fill="url(#g-acier)"/>
+                  <path d="M150 340c56 26 164 26 220 0" fill="none" stroke="#ff8a2a" stroke-opacity=".35" stroke-width="9" stroke-linecap="round"/>
+                  <ellipse cx="260" cy="236" rx="200" ry="48" fill="url(#g-acier-int)"/>
+                  <g id="couche-base"></g>
+                  <g id="couche-legumes"></g>
+                  <g id="couche-garniture"></g>
+                  <g id="couche-plus"></g>
+                  <path d="M60 236a200 48 0 0 0 400 0" fill="none" stroke="#5c514a" stroke-width="7"/>
+                </g>
+                <g class="flammes flammes-avant">
+                  <g transform="translate(222 394) scale(.6 .8)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(260 396) scale(.7 1)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                  <g transform="translate(298 394) scale(.6 .8)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
+                </g>
+              </svg>
+              <button type="button" class="scene-bouton recommencer" id="wok-recommencer">
+                <svg aria-hidden="true"><use href="#ic-retour"/></svg><span>Recommencer</span>
+              </button>
+              <button type="button" class="scene-bouton son-bouton" id="son-bouton" aria-pressed="false">
+                <svg aria-hidden="true"><use href="#ic-muet"/></svg><span>Son</span>
+              </button>
+            </div>
+            <div class="poele-resume">
+              <p class="poele-nom" id="wok-nom" aria-live="polite">Votre wok, à composer</p>
+              <p class="poele-details" id="wok-details">Légumes inclus</p>
+              <p class="poele-prix" id="wok-prix">—</p>
+              <div class="poele-actions">
+                <button type="button" class="bouton bouton-feu bouton-grand" id="wok-ajouter" disabled>
+                  <svg aria-hidden="true"><use href="#ic-sac"/></svg>Ajouter à ma commande
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ À la une (étiquette « À la une » dans l'espace de gestion) ============ -->
+    <section class="signature" id="menus" aria-labelledby="signature-titre" hidden>
+      <div class="wrap">
+        <header class="section-tete" data-revele>
+          <p class="pinceau">À la une</p>
+          <h2 id="signature-titre">Nos menus</h2>
+          <p id="signature-note"></p>
+        </header>
+        <div class="signature-liste" id="signature-liste"></div>
+      </div>
+    </section>
+
+    <!-- ============ La carte ============ -->
+    <section class="carte" id="carte" aria-labelledby="carte-titre">
+      <div class="wrap">
+        <header class="section-tete" data-revele>
+          <p class="pinceau">Midi et soir</p>
+          <h2 id="carte-titre">La carte</h2>
+          <p>Touchez <span class="plus-exemple" aria-hidden="true">+</span> pour préparer votre commande à emporter, ou appelez-nous au <a href="tel:+33561580697">05 61 58 06 97</a>.</p>
+        </header>
+      </div>
+      <div class="carte-outils" id="carte-outils">
+        <div class="wrap carte-outils-inner">
+          <label class="recherche">
+            <span class="sr-only">Rechercher un plat</span>
+            <svg aria-hidden="true"><use href="#ic-recherche"/></svg>
+            <input type="search" id="recherche" placeholder="Rechercher : nems, saumon, mojito…" autocomplete="off" />
+          </label>
+          <div class="univers" id="univers" role="tablist" aria-label="Univers de la carte"></div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="filtres" id="filtres" role="group" aria-label="Filtrer les plats"></div>
+        <p class="etat" id="etat" role="status">Chargement de la carte…</p>
+        <noscript><p class="etat">Pour voir la carte, activez JavaScript ou appelez-nous au <a href="tel:+33561580697">05 61 58 06 97</a>.</p></noscript>
+        <div class="panneau-carte" id="plats" role="tabpanel" aria-live="off"></div>
+        <p class="carte-legal">Prix nets en euros, service compris. Liste des allergènes disponible sur demande.<br />L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+      </div>
+    </section>
+
+    <!-- ============ La machine 888 ============ -->
+    <section class="machine" id="machine" aria-labelledby="machine-titre" hidden>
+      <div class="wrap machine-grille">
+        <div class="machine-texte" data-revele>
+          <p class="pinceau">Pas d'idée&nbsp;?</p>
+          <h2 id="machine-titre">La machine <span class="or">888</span></h2>
+          <p>Le 8 porte bonheur&nbsp;: laissez la chance composer votre repas. Une entrée, un plat, un dessert… et si le menu vous plaît, il part dans votre commande.</p>
+        </div>
+        <div class="machine-boite" data-revele>
+          <div class="machine-ampoules" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <p class="machine-enseigne" aria-hidden="true">8 8 8</p>
+          <div class="rouleaux" id="rouleaux">
+            <div class="rouleau" data-type="entree"><p class="rouleau-titre">Entrée</p><div class="rouleau-fenetre"><ul class="rouleau-bande"></ul></div></div>
+            <div class="rouleau" data-type="plat"><p class="rouleau-titre">Plat</p><div class="rouleau-fenetre"><ul class="rouleau-bande"></ul></div></div>
+            <div class="rouleau" data-type="dessert"><p class="rouleau-titre">Dessert</p><div class="rouleau-fenetre"><ul class="rouleau-bande"></ul></div></div>
+          </div>
+          <p class="machine-resultat" id="machine-resultat" aria-live="polite">Tentez votre chance&nbsp;!</p>
+          <div class="machine-actions">
+            <button type="button" class="bouton bouton-or bouton-grand" id="lancer"><svg aria-hidden="true"><use href="#ic-de"/></svg>Lancer la machine</button>
+            <button type="button" class="bouton bouton-clair" id="machine-ajouter" hidden><svg aria-hidden="true"><use href="#ic-sac"/></svg>Ajouter ce repas</button>
+          </div>
+          <button type="button" class="levier" id="levier" tabindex="-1" aria-hidden="true"><span class="levier-tige"></span><span class="levier-boule"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Galerie (photos du dossier photos/) ============ -->
+    <section class="galerie" id="galerie" aria-labelledby="galerie-titre" hidden>
+      <div class="wrap">
+        <header class="section-tete" data-revele>
+          <p class="pinceau">#wok888</p>
+          <h2 id="galerie-titre">En images</h2>
+        </header>
+        <div class="galerie-grille" id="galerie-grille"></div>
+      </div>
+    </section>
+
+    <!-- ============ Réserver ============ -->
+    <section class="reserver" id="reserver" aria-labelledby="reserver-titre">
+      <div class="lanternes" aria-hidden="true">
+        <svg class="lanterne l1" viewBox="0 0 80 200"><path d="M40 0v40" stroke="#c9a24a" stroke-width="2"/><rect x="24" y="38" width="32" height="10" rx="3" fill="#e2b45c"/><ellipse cx="40" cy="92" rx="34" ry="46" fill="#d7261e"/><path d="M40 46c-14 12-14 80 0 92M40 46c14 12 14 80 0 92M40 46c-28 14-28 78 0 92M40 46c28 14 28 78 0 92" fill="none" stroke="#9e1510" stroke-width="2"/><ellipse class="lanterne-lumiere" cx="40" cy="92" rx="20" ry="30" fill="#ffb03a" opacity=".35"/><rect x="24" y="134" width="32" height="10" rx="3" fill="#e2b45c"/><path d="M34 144v40M40 144v48M46 144v40" stroke="#e2b45c" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="lanterne l2" viewBox="0 0 80 200"><path d="M40 0v40" stroke="#c9a24a" stroke-width="2"/><rect x="24" y="38" width="32" height="10" rx="3" fill="#e2b45c"/><ellipse cx="40" cy="92" rx="34" ry="46" fill="#d7261e"/><path d="M40 46c-14 12-14 80 0 92M40 46c14 12 14 80 0 92M40 46c-28 14-28 78 0 92M40 46c28 14 28 78 0 92" fill="none" stroke="#9e1510" stroke-width="2"/><ellipse class="lanterne-lumiere" cx="40" cy="92" rx="20" ry="30" fill="#ffb03a" opacity=".35"/><rect x="24" y="134" width="32" height="10" rx="3" fill="#e2b45c"/><path d="M34 144v40M40 144v48M46 144v40" stroke="#e2b45c" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="lanterne l3" viewBox="0 0 80 200"><path d="M40 0v40" stroke="#c9a24a" stroke-width="2"/><rect x="24" y="38" width="32" height="10" rx="3" fill="#e2b45c"/><ellipse cx="40" cy="92" rx="34" ry="46" fill="#d7261e"/><path d="M40 46c-14 12-14 80 0 92M40 46c14 12 14 80 0 92M40 46c-28 14-28 78 0 92M40 46c28 14 28 78 0 92" fill="none" stroke="#9e1510" stroke-width="2"/><ellipse class="lanterne-lumiere" cx="40" cy="92" rx="20" ry="30" fill="#ffb03a" opacity=".35"/><rect x="24" y="134" width="32" height="10" rx="3" fill="#e2b45c"/><path d="M34 144v40M40 144v48M46 144v40" stroke="#e2b45c" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="wrap reserver-contenu" data-revele>
+        <p class="pinceau">Une table pour ce soir&nbsp;?</p>
+        <h2 id="reserver-titre">Réservez votre table</h2>
+        <p class="grand">Choisissez le jour, l'heure et le nombre de convives&nbsp;: votre table vous attend.</p>
+        <div class="reserver-actions">
+          <button type="button" class="bouton bouton-feu bouton-grand" id="ouvrir-resa"><svg aria-hidden="true"><use href="#ic-calendrier"/></svg>Réserver en ligne</button>
+          <a class="bouton bouton-clair bouton-grand" href="tel:+33561580697"><svg aria-hidden="true"><use href="#ic-tel"/></svg>05 61 58 06 97</a>
+        </div>
+        <p class="petit">La réservation en ligne est assurée par resOS. Elle ne se charge que si vous l'ouvrez.</p>
+      </div>
+    </section>
+
+    <!-- ============ Horaires et accès ============ -->
+    <section class="infos" id="infos" aria-labelledby="infos-titre">
+      <div class="wrap">
+        <header class="section-tete" data-revele>
+          <p class="pinceau">On vous attend</p>
+          <h2 id="infos-titre">Horaires &amp; accès</h2>
+        </header>
+        <div class="infos-grille">
+          <article class="encart" data-revele>
+            <h3>Horaires</h3>
+            <p class="statut statut-encart" data-statut aria-live="polite"></p>
+            <table class="horaires">
+              <caption class="sr-only">Horaires d'ouverture</caption>
+              <tbody>
+                <tr data-jour="1"><th scope="row">Lundi</th><td class="ferme-jour">Fermé</td></tr>
+                <tr data-jour="2"><th scope="row">Mardi</th><td>12h00 – 22h30</td></tr>
+                <tr data-jour="3"><th scope="row">Mercredi</th><td>12h00 – 22h30</td></tr>
+                <tr data-jour="4"><th scope="row">Jeudi</th><td>12h00 – 22h30</td></tr>
+                <tr data-jour="5"><th scope="row">Vendredi</th><td>12h00 – 22h30</td></tr>
+                <tr data-jour="6"><th scope="row">Samedi</th><td>12h00 – 22h30</td></tr>
+                <tr data-jour="0"><th scope="row">Dimanche</th><td>12h00 – 22h30</td></tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="encart" data-revele>
+            <h3>Adresse</h3>
+            <address>16 route de Grenade<br />31840 Seilh</address>
+            <p class="itineraires">
+              <a class="bouton bouton-clair bouton-petit" href="https://www.google.com/maps/dir/?api=1&amp;destination=16+route+de+Grenade+31840+Seilh" rel="noopener" target="_blank">Google Maps</a>
+              <a class="bouton bouton-clair bouton-petit" href="https://waze.com/ul?ll=43.696159,1.350528&amp;navigate=yes" rel="noopener" target="_blank">Waze</a>
+              <a class="bouton bouton-clair bouton-petit" href="https://maps.apple.com/?daddr=16+route+de+Grenade,+31840+Seilh&amp;ll=43.696159,1.350528" rel="noopener" target="_blank">Plans (iPhone)</a>
+            </p>
+            <h3 class="encart-titre-2">Contact</h3>
+            <p class="contacts">
+              <a href="tel:+33561580697"><svg aria-hidden="true"><use href="#ic-tel"/></svg>05 61 58 06 97</a>
+              <a href="mailto:contact@wok888.fr"><svg aria-hidden="true"><use href="#ic-mail"/></svg>contact@wok888.fr</a>
+            </p>
+          </article>
+          <figure class="plan" id="plan" data-revele>
+            <div class="plan-attente">
+              <svg aria-hidden="true"><use href="#ic-pin"/></svg>
+              <button type="button" class="bouton bouton-feu" id="afficher-plan">Afficher le plan</button>
+              <p>Le plan est fourni par OpenStreetMap&nbsp;: il ne se charge que si vous le demandez.</p>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pied">
+    <div class="wrap pied-grille">
+      <div class="pied-marque">
+        <svg class="pied-logo" aria-hidden="true"><use href="#logo-wk"/></svg>
+        <p><strong>WOK 888</strong><br />L'art du wok, saveurs d'Asie à chaque bouchée.</p>
+      </div>
+      <div>
+        <h2 class="pied-titre">Nous trouver</h2>
+        <p>16 route de Grenade<br />31840 Seilh<br /><a href="tel:+33561580697">05 61 58 06 97</a><br /><a href="mailto:contact@wok888.fr">contact@wok888.fr</a></p>
+      </div>
+      <div>
+        <h2 class="pied-titre">Horaires</h2>
+        <p>Du mardi au dimanche<br />12h00 – 22h30<br />Fermé le lundi</p>
+      </div>
+    </div>
+    <div class="wrap pied-bas">
+      <p class="pied-liens">
+        <a href="mentions-legales.html">Mentions légales</a>
+        <button type="button" class="lien" id="gerer-cookies">Gérer les cookies</button>
+        <a href="admin/">Espace gestion</a>
+      </p>
+      <p class="credit">Site réalisé par Laurent TRANCHARD</p>
+    </div>
+  </footer>
+
+  <!-- Barre d'actions sur téléphone -->
+  <nav class="barre-actions" aria-label="Actions rapides">
+    <a href="tel:+33561580697"><svg aria-hidden="true"><use href="#ic-tel"/></svg>Appeler</a>
+    <a href="#carte"><svg aria-hidden="true"><use href="#ic-carte"/></svg>La carte</a>
+    <a href="#composer"><svg aria-hidden="true"><use href="#ic-feu"/></svg>Mon wok</a>
+    <button type="button" id="barre-panier" aria-haspopup="dialog" aria-controls="panier"><svg aria-hidden="true"><use href="#ic-sac"/></svg>Commande<span class="panier-compte" id="barre-compte" aria-hidden="true" hidden>0</span></button>
+  </nav>
+
+  <!-- ============ Ma commande (panier, envoi, suivi) ============ -->
+  <div class="tiroir" id="panier" role="dialog" aria-modal="true" aria-labelledby="panier-titre" hidden>
+    <div class="tiroir-fond" data-fermer></div>
+    <div class="tiroir-panneau" tabindex="-1">
+      <header class="tiroir-tete">
+        <button type="button" class="tiroir-retour" id="panier-retour" hidden><svg aria-hidden="true"><use href="#ic-retour"/></svg><span class="sr-only">Revenir à ma commande</span></button>
+        <h2 id="panier-titre">Ma commande</h2>
+        <button type="button" class="tiroir-fermer" data-fermer><svg aria-hidden="true"><use href="#ic-fermer"/></svg><span class="sr-only">Fermer</span></button>
+      </header>
+
+      <!-- 1. Le panier -->
+      <div class="tiroir-vue" id="vue-panier">
+        <div class="tiroir-corps">
+          <div class="panier-vide" id="panier-vide">
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <ellipse cx="100" cy="128" rx="60" ry="8" fill="#000" opacity=".25"/>
+              <g class="vide-flammes"><g transform="translate(84 128) scale(.35 .45)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g><g transform="translate(100 128) scale(.42 .55)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g><g transform="translate(116 128) scale(.35 .45)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g></g>
+              <path d="M30 70h140a70 40 0 0 1-140 0Z" fill="url(#g-acier)"/><ellipse cx="100" cy="70" rx="70" ry="14" fill="url(#g-acier-int)"/><path d="M30 70 4 60" stroke="url(#g-bois)" stroke-width="9" stroke-linecap="round"/>
+            </svg>
+            <p class="panier-vide-titre">Votre wok est vide</p>
+            <p>Ajoutez des plats depuis la carte, ou composez votre wok.</p>
+            <div class="panier-vide-actions">
+              <a class="bouton bouton-feu" href="#composer" data-fermer>Composer mon wok</a>
+              <a class="bouton bouton-clair" href="#carte" data-fermer>Voir la carte</a>
+            </div>
+          </div>
+          <ul class="lignes" id="lignes"></ul>
+        </div>
+        <footer class="tiroir-pied" id="panier-pied" hidden>
+          <p class="total"><span>Total</span><span id="panier-total">0,00 €</span></p>
+          <p class="dispo" id="commande-dispo"></p>
+          <button type="button" class="bouton bouton-feu bouton-grand bouton-plein" id="aller-commande">Commander à emporter</button>
+          <a class="bouton bouton-clair bouton-plein" href="tel:+33561580697" id="commander-tel"><svg aria-hidden="true"><use href="#ic-tel"/></svg>Commander par téléphone</a>
+          <button type="button" class="lien-discret" id="vider-panier">Vider ma commande</button>
+        </footer>
+      </div>
+
+      <!-- 2. Retrait et coordonnées -->
+      <form class="tiroir-vue" id="vue-formulaire" novalidate hidden>
+        <div class="tiroir-corps">
+          <p class="chargement" id="chargement-commande" hidden>Un instant, on vérifie les heures de retrait…</p>
+          <div class="indispo" id="indispo" hidden>
+            <p class="indispo-titre">La commande en ligne est fermée pour le moment</p>
+            <p id="indispo-texte">Appelez-nous&nbsp;: votre commande est prête à être lue au téléphone.</p>
+            <a class="bouton bouton-feu bouton-grand bouton-plein" href="tel:+33561580697"><svg aria-hidden="true"><use href="#ic-tel"/></svg>Appeler le 05 61 58 06 97</a>
+            <h3 class="recap-titre">Votre commande</h3>
+            <ul class="recap" id="recap-tel"></ul>
+            <p class="recap-total" id="recap-tel-total"></p>
+          </div>
+          <div class="champs" id="champs">
+            <p class="retrait-info"><svg aria-hidden="true"><use href="#ic-pin"/></svg>À retirer au restaurant, 16 route de Grenade à Seilh. Paiement sur place, au retrait.</p>
+            <label class="champ">Heure de retrait
+              <select name="retrait" id="champ-retrait" required></select>
+            </label>
+            <label class="champ">Votre prénom et nom
+              <input name="nom" autocomplete="name" maxlength="60" required />
+            </label>
+            <label class="champ">Votre téléphone
+              <input name="telephone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required />
+              <small>Pour vous prévenir en cas de besoin.</small>
+            </label>
+            <label class="champ"><span class="champ-titre">Précisions <small>(facultatif)</small></span>
+              <textarea name="note" rows="2" maxlength="300" placeholder="Allergie, sans piment, couverts…"></textarea>
+            </label>
+            <label class="piege" aria-hidden="true">Ne pas remplir <input name="site" tabindex="-1" autocomplete="off" /></label>
+            <p class="erreur" id="erreur-commande" role="alert" hidden></p>
+          </div>
+        </div>
+        <footer class="tiroir-pied" id="formulaire-pied">
+          <p class="total"><span>À payer au retrait</span><span id="formulaire-total">0,00 €</span></p>
+          <button type="submit" class="bouton bouton-feu bouton-grand bouton-plein" id="envoyer-commande">Envoyer ma commande</button>
+          <p class="petit">Vos coordonnées servent uniquement à préparer cette commande. <a href="mentions-legales.html#commandes">En savoir plus</a></p>
+        </footer>
+      </form>
+
+      <!-- 3. Suivi -->
+      <div class="tiroir-vue" id="vue-suivi" hidden>
+        <div class="tiroir-corps">
+          <div class="suivi-tete">
+            <svg class="suivi-wok" viewBox="0 0 120 90" aria-hidden="true">
+              <g class="suivi-flammes"><g transform="translate(46 88) scale(.3 .38)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g><g transform="translate(60 88) scale(.36 .46)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g><g transform="translate(74 88) scale(.3 .38)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g></g>
+              <g class="suivi-sauter"><path d="M14 48h92a46 26 0 0 1-92 0Z" fill="url(#g-acier)"/><path d="M14 48 2 42" stroke="url(#g-bois)" stroke-width="6" stroke-linecap="round"/><ellipse cx="60" cy="48" rx="46" ry="9" fill="url(#g-acier-int)"/>
+              <use class="mini-vol m1" href="#i-brocoli" x="40" y="26" width="16" height="18"/><use class="mini-vol m2" href="#i-crevette" x="60" y="28" width="15" height="15"/><use class="mini-vol m3" href="#i-carotte" x="52" y="18" width="11" height="11"/></g>
+            </svg>
+            <p class="suivi-numero" id="suivi-numero"></p>
+            <p class="suivi-message" id="suivi-message"></p>
+          </div>
+          <ol class="etapes-suivi" id="etapes-suivi">
+            <li data-etape="nouvelle"><span class="puce"></span><span><strong>Envoyée</strong><small>Le restaurant l'a reçue</small></span></li>
+            <li data-etape="acceptee"><span class="puce"></span><span><strong>En préparation</strong><small>Ça saute dans le wok&nbsp;!</small></span></li>
+            <li data-etape="prete"><span class="puce"></span><span><strong>Prête</strong><small>Elle vous attend au comptoir</small></span></li>
+          </ol>
+          <h3 class="recap-titre">Votre commande</h3>
+          <ul class="recap" id="recap-suivi"></ul>
+          <p class="recap-total" id="suivi-total"></p>
+        </div>
+        <footer class="tiroir-pied">
+          <a class="bouton bouton-clair bouton-plein" href="tel:+33561580697"><svg aria-hidden="true"><use href="#ic-tel"/></svg>Une question&nbsp;? 05 61 58 06 97</a>
+          <button type="button" class="lien-discret" id="nouvelle-commande">Faire une nouvelle commande</button>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Réservation (resOS, chargé à la demande) et photos ============ -->
+  <div class="modale" id="modale" role="dialog" aria-modal="true" aria-labelledby="modale-titre" hidden>
+    <div class="modale-fond" data-fermer></div>
+    <div class="modale-panneau" tabindex="-1">
+      <header class="modale-tete">
+        <h2 id="modale-titre"></h2>
+        <button type="button" class="tiroir-fermer" data-fermer><svg aria-hidden="true"><use href="#ic-fermer"/></svg><span class="sr-only">Fermer</span></button>
+      </header>
+      <div class="modale-corps" id="modale-corps"></div>
+    </div>
+  </div>
+
+  <!-- Annonces pour les lecteurs d'écran (« Ajouté à votre commande ») -->
+  <p class="sr-only" id="annonce" aria-live="polite"></p>
+
+  <template id="plat-modele">
+    <li class="plat">
+      <div class="plat-texte">
+        <h4 class="plat-nom"></h4>
+        <p class="plat-desc"></p>
+        <div class="plat-infos"></div>
+      </div>
+      <div class="plat-cote">
+        <span class="plat-prix"></span>
+      </div>
+    </li>
+  </template>
+
+  <!-- Consentement aux cookies de mesure d'audience (voir consentement.js) -->
+  <div class="cookies" id="cookies" role="dialog" tabindex="-1" aria-labelledby="cookies-titre" aria-describedby="cookies-texte" hidden>
+    <div class="cookies-carte">
+      <svg class="cookie-img" viewBox="0 0 120 100" aria-hidden="true">
+        <path class="cookie-papier" d="M38 52 92 40l6 10-54 12Z" fill="#fffaf0" stroke="#e5d6b8"/>
+        <path d="M58 52h22" stroke="#d7261e" stroke-width="2.4" stroke-linecap="round" class="cookie-papier"/>
+        <path class="cookie-g" d="M14 66C10 40 30 22 52 28c-6 10-8 22-2 34-12 4-24 6-36 4Z" fill="#e7a95b"/>
+        <path class="cookie-d" d="M60 30c22-10 48 4 46 30-12 4-26 4-40 0 2-12 0-22-6-30Z" fill="#dc9a4a"/>
+        <path class="cookie-g" d="M18 62c10 0 20-2 30-6" fill="none" stroke="#c07a33" stroke-width="2" stroke-linecap="round"/>
+        <path class="cookie-d" d="M70 54c10 2 20 2 30 0" fill="none" stroke="#b9732d" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="cookies-corps">
+        <h2 id="cookies-titre">Un petit fortune cookie&nbsp;?</h2>
+        <p id="cookies-texte">Avec votre accord, nous déposons un cookie de mesure d'audience&nbsp;: il nous dit, de façon anonyme, quand et sur quel type d'appareil notre site est consulté. Pas de publicité, rien n'est revendu, et il expire au bout de 13 mois. <a href="mentions-legales.html#cookies">En savoir plus</a></p>
+        <div class="cookies-boutons">
+          <button type="button" class="cookies-btn" id="cookies-refuser">Refuser</button>
+          <button type="button" class="cookies-btn" id="cookies-accepter">Accepter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="site.js"></script>
+  <script src="consentement.js"></script>
+</body>
+</html>

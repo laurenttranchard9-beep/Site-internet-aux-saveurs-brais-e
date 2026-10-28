@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>Commandes en ligne · WOK 888</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="commandes.css" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <!-- ===== Connexion (mêmes identifiants que la gestion de la carte) ===== -->
+  <section class="login" id="login-view" hidden>
+    <form class="login-card" id="login-form">
+      <img src="../favicon.svg" alt="" width="48" height="48" />
+      <h1>Commandes en ligne</h1>
+      <p class="muted">WOK 888</p>
+      <label>Identifiant
+        <input name="username" autocomplete="username" required />
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" autocomplete="current-password" required />
+      </label>
+      <p class="form-error" id="login-error" role="alert" hidden></p>
+      <button class="btn primary block" type="submit">Se connecter</button>
+      <a class="back" href="./">Pas encore de compte ? Espace gestion</a>
+    </form>
+  </section>
+
+  <!-- ===== Réception des commandes ===== -->
+  <div id="app-view" hidden>
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <div class="brand"><img src="../favicon.svg" alt="" width="28" height="28" /> <span>Commandes en ligne</span></div>
+        <nav class="top-actions">
+          <button class="btn primary small" id="son" type="button" aria-pressed="false">🔔 Activer le son</button>
+          <a class="btn ghost small" href="./">Gestion de la carte</a>
+          <button class="btn ghost small" id="logout" type="button">Déconnexion</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="reception" aria-label="Commande en ligne">
+        <label class="switch-ligne">
+          <input type="checkbox" id="actives" />
+          <span class="interrupteur" aria-hidden="true"></span>
+          <span><strong>Commande en ligne</strong> <span id="actives-texte">ouverte</span></span>
+        </label>
+        <p class="reception-etat" id="reception-etat" role="status"></p>
+      </section>
+
+      <div class="colonnes-commandes">
+        <section class="colonne-cmd" aria-labelledby="titre-nouvelles">
+          <h2 id="titre-nouvelles">Nouvelles <span class="compte" id="compte-nouvelle">0</span></h2>
+          <div class="cartes-cmd" id="col-nouvelle"></div>
+        </section>
+        <section class="colonne-cmd" aria-labelledby="titre-preparation">
+          <h2 id="titre-preparation">En préparation <span class="compte" id="compte-acceptee">0</span></h2>
+          <div class="cartes-cmd" id="col-acceptee"></div>
+        </section>
+        <section class="colonne-cmd" aria-labelledby="titre-pretes">
+          <h2 id="titre-pretes">Prêtes <span class="compte" id="compte-prete">0</span></h2>
+          <div class="cartes-cmd" id="col-prete"></div>
+        </section>
+      </div>
+
+      <details class="terminees">
+        <summary>Terminées aujourd'hui (<span id="compte-terminees">0</span>)</summary>
+        <div class="cartes-cmd" id="col-terminees"></div>
+      </details>
+
+      <p class="muted aide">Gardez cet écran ouvert (une tablette en cuisine suffit) : c'est lui qui ouvre la commande en ligne sur le site.
+        S'il est fermé, ou si l'appareil se met en veille, le site propose simplement d'appeler le restaurant.
+        Les commandes sont payées au retrait. Le nom et le téléphone des clients sont effacés au bout de 3 mois.</p>
+    </main>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <template id="carte-cmd">
+    <article class="cmd">
+      <header class="cmd-tete">
+        <p class="cmd-numero"></p>
+        <p class="cmd-retrait"><span class="cmd-heure"></span><span class="cmd-delai"></span></p>
+      </header>
+      <p class="cmd-client"><strong class="cmd-nom"></strong> · <a class="cmd-tel"></a></p>
+      <ul class="cmd-articles"></ul>
+      <p class="cmd-note"></p>
+      <p class="cmd-total"></p>
+      <div class="cmd-actions"></div>
+      <p class="cmd-recue muted"></p>
+    </article>
+  </template>
+
+  <script src="commandes.js"></script>
+</body>
+</html>

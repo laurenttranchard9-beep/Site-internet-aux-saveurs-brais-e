@@ -1,0 +1,77 @@
+/* Écran de réception des commandes en ligne (complète admin.css) */
+
+.reception {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin: 20px 0;
+  padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card);
+}
+.switch-ligne { display: flex; align-items: center; gap: 12px; font-size: 1.05rem; font-weight: 500; cursor: pointer; }
+.switch-ligne input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.interrupteur { position: relative; flex: none; width: 52px; height: 30px; border-radius: 999px; background: #d5ccc2; transition: background .15s; }
+.interrupteur::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .15s;
+}
+.switch-ligne input:checked + .interrupteur { background: var(--ok); }
+.switch-ligne input:checked + .interrupteur::after { transform: translateX(22px); }
+.switch-ligne input:focus-visible + .interrupteur { outline: 3px solid rgba(232, 89, 12, .45); outline-offset: 2px; }
+.reception-etat { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); }
+.reception-etat::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: #c7bcb1; }
+.reception-etat.ok { color: var(--ink); }
+.reception-etat.ok::before { background: var(--ok); animation: pouls 2s ease-out infinite; }
+@keyframes pouls { 0% { box-shadow: 0 0 0 0 rgba(47, 158, 68, .5); } 100% { box-shadow: 0 0 0 10px rgba(47, 158, 68, 0); } }
+
+.colonnes-commandes { display: grid; gap: 16px; align-items: start; }
+.colonne-cmd h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-family: var(--font-display); font-size: 1.35rem; }
+.compte { display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 999px; background: var(--line); font: 700 .9rem var(--font-body); }
+.alerte #compte-nouvelle { background: var(--ember); color: #fff; }
+.cartes-cmd { display: grid; gap: 12px; }
+.vide { margin: 0; padding: 18px; border: 2px dashed var(--line); border-radius: var(--radius); color: var(--muted); text-align: center; }
+
+.cmd { padding: 16px; border: 1px solid var(--line); border-left: 6px solid var(--line); border-radius: var(--radius); background: var(--card); box-shadow: 0 6px 20px -14px rgba(0, 0, 0, .35); }
+.cmd p { margin: 0; }
+.cmd.statut-nouvelle { border-left-color: var(--ember); animation: arrivee 1.6s ease-in-out infinite; }
+.cmd.statut-acceptee { border-left-color: #fab005; }
+.cmd.statut-prete { border-left-color: var(--ok); }
+.cmd.statut-retiree, .cmd.statut-annulee { opacity: .7; }
+.cmd.statut-annulee .cmd-numero { text-decoration: line-through; }
+@keyframes arrivee { 50% { box-shadow: 0 0 0 4px rgba(232, 89, 12, .25), 0 6px 20px -14px rgba(0, 0, 0, .35); } }
+.cmd-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.cmd-numero { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
+.cmd-retrait { display: grid; justify-items: end; font-weight: 700; font-size: 1.05rem; }
+.cmd-delai { color: var(--muted); font-size: .85rem; font-weight: 600; }
+.cmd-delai.retard { color: var(--danger); }
+.cmd-client { margin-bottom: 10px !important; }
+.cmd-tel { color: var(--ember-dark); font-weight: 600; white-space: nowrap; }
+.cmd-articles { display: grid; gap: 6px; margin: 0 0 10px; padding: 10px 0; border-block: 1px dashed var(--line); list-style: none; }
+.cmd-articles li { display: grid; grid-template-columns: auto 1fr auto; gap: 0 8px; align-items: baseline; }
+.cmd-qte { font-weight: 800; }
+.cmd-art { font-weight: 600; }
+.cmd-details { grid-column: 2; color: var(--muted); }
+.cmd-prix { grid-column: 3; grid-row: 1; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cmd-note { margin-bottom: 10px !important; padding: 8px 10px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-weight: 600; }
+.cmd-total { margin-bottom: 12px !important; font-weight: 700; }
+.cmd-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.cmd-actions .btn:not(.small) { flex: 1 1 120px; padding: 12px 16px; font-size: 1rem; }
+.cmd-actions .imprimer { margin-left: auto; }
+.cmd-recue { margin-top: 8px !important; font-size: .82rem; }
+
+.terminees { margin: 24px 0; }
+.terminees summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+.terminees .cartes-cmd { margin-top: 10px; }
+.aide { max-width: 60em; margin: 30px 0 60px; font-size: .9rem; }
+
+@media (min-width: 860px) {
+  .colonnes-commandes { grid-template-columns: repeat(3, 1fr); }
+  .terminees .cartes-cmd { grid-template-columns: repeat(3, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmd.statut-nouvelle, .reception-etat.ok::before { animation: none; }
+}
+
+/* Impression d'un ticket : seule la commande choisie s'imprime */
+@media print {
+  body * { visibility: hidden; }
+  .a-imprimer, .a-imprimer * { visibility: visible; }
+  .a-imprimer { position: absolute; inset: 0 auto auto 0; width: 80mm; border: 0; box-shadow: none; animation: none; }
+  .a-imprimer .cmd-actions { display: none; }
+}
