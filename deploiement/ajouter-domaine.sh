@@ -14,7 +14,7 @@
 # Utilisation (une fois par site) :
 #   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/ajouter-domaine.sh | sudo bash -s -- SITE DOMAINE [EMAIL]
 #
-#   SITE     restaurant, cambodge, fleur-dor ou toilettage
+#   SITE     restaurant, fleur-dor ou toilettage
 #   DOMAINE  par exemple auxsaveursbraisees.fr (sans « www » ni « https:// »)
 #   EMAIL    facultatif : Let's Encrypt y envoie un avertissement si le certificat risque d'expirer
 #
@@ -23,7 +23,7 @@
 set -euo pipefail
 
 WEB=${WEB:-/var/www/html}
-SITES="restaurant cambodge fleur-dor toilettage"
+SITES="restaurant fleur-dor toilettage"
 
 erreur() { echo "Erreur : $*" >&2; exit 1; }
 
@@ -327,7 +327,7 @@ main() {
     echo "Terminé : https://$domaine/ affiche le site « $site »."
     [ -n "$www" ] && echo "          https://$www/ aussi."
     case $site in
-        restaurant|cambodge) echo "Espace de gestion : https://$domaine/admin/" ;;
+        restaurant) echo "Espace de gestion : https://$domaine/admin/" ;;
         fleur-dor)  echo "Panneau d'administration : https://$domaine/admin/" ;;
     esac
     echo "Les mots de passe ont circulé sans chiffrement avant le HTTPS : changez-les depuis l'administration."

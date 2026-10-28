@@ -1,6 +1,6 @@
 #!/bin/bash
 # Sauvegarde les données des sites, pour les garder ou pour déménager sur un autre serveur :
-#   - Aux Saveurs Braisées et Aux Saveurs du Cambodge : la base (carte, prix, stocks, compte, statistiques) ;
+#   - Aux Saveurs Braisées : la base (carte, prix, stocks, compte, statistiques) ;
 #   - La Fleur d'Or : la carte, ses sauvegardes et le mot de passe du panneau ;
 #   - les certificats HTTPS (Let's Encrypt) de leurs domaines, pour que ceux-ci fonctionnent tout de suite
 #     sur le nouveau serveur.
@@ -8,7 +8,7 @@
 # Sur l'ANCIEN serveur, par exemple pour déménager seulement le restaurant :
 #   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/sauvegarder.sh | sudo bash -s -- restaurant ubuntu@ADRESSE-IP-DU-NOUVEAU-SERVEUR
 #
-# Sites : restaurant, cambodge, fleur-dor, toilettage (sans précision : tous). Le fichier sauvegarde-sites.tar.gz est créé
+# Sites : restaurant, fleur-dor, toilettage (sans précision : tous). Le fichier sauvegarde-sites.tar.gz est créé
 # dans le dossier personnel, puis envoyé dans celui de l'utilisateur indiqué sur le nouveau serveur (son mot de passe
 # est demandé). Sans destination, le fichier est seulement créé. Sur le nouveau serveur, installer.sh le trouve et le reprend.
 
@@ -17,7 +17,8 @@ set -euo pipefail
 
 WEB=${WEB:-/var/www/html}
 NOM=sauvegarde-sites.tar.gz
-TOUS_LES_SITES="restaurant cambodge fleur-dor toilettage"
+TOUS_LES_SITES="restaurant fleur-dor toilettage"
+SITES_CARTE="restaurant" # sites bâtis sur le moteur de carte (base SQLite)
 DEPOT_BRUT=https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7
 
 erreur() { echo "Erreur : $*" >&2; exit 1; }
@@ -25,7 +26,6 @@ erreur() { echo "Erreur : $*" >&2; exit 1; }
 nom_site() {
     case $1 in
         restaurant) echo "Aux Saveurs Braisées" ;;
-        cambodge) echo "Aux Saveurs du Cambodge" ;;
     esac
 }
 
@@ -75,7 +75,7 @@ main() {
 
     echo "==> 1/2 Sauvegarde ($sites)"
     # Sites à carte : copie cohérente de la base, même si quelqu'un modifie la carte au même moment.
-    for site in restaurant cambodge; do
+    for site in $SITES_CARTE; do
         [[ " $sites " == *" $site "* ]] || continue
         base=""
         # Dossier absent (site non installé ici) : find échouerait et arrêterait le script.

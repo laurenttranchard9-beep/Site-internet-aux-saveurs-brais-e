@@ -2,7 +2,6 @@
 # Installe (ou met à jour) les sites sur un serveur Ubuntu, Debian ou Amazon Linux 2023,
 # accessibles par l'adresse IP :
 #   http://IP/restaurant/   Aux Saveurs Braisées (carte et espace de gestion)
-#   http://IP/cambodge/     Aux Saveurs du Cambodge (site, carte et espace de gestion)
 #   http://IP/fleur-dor/    La Fleur d'Or (site et panneau d'administration)
 #   http://IP/toilettage/   le salon de toilettage
 #
@@ -10,12 +9,12 @@
 #   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash
 #
 # Relancer la même commande met les sites à jour depuis GitHub sans toucher aux données :
-# bases des restaurants (produits, stocks, compte, statistiques), carte et mot de passe de La Fleur d'Or.
+# base du restaurant (produits, stocks, compte, statistiques), carte et mot de passe de La Fleur d'Or.
 #
 # Pour n'installer que certains sites, nommez-les après « bash -s -- » ; le choix est retenu pour les mises à jour.
 # Sur un serveur déjà installé, les sites nommés s'ajoutent à ceux qui y sont (liste dans /opt/sites/sites-installes) :
 #   curl -fsSL …/installer.sh | sudo bash -s -- restaurant
-#   curl -fsSL …/installer.sh | sudo bash -s -- cambodge      (ajoute Aux Saveurs du Cambodge)
+#   curl -fsSL …/installer.sh | sudo bash -s -- fleur-dor     (ajoute La Fleur d'Or)
 #
 # Déménagement : si le fichier sauvegarde-sites.tar.gz créé par sauvegarder.sh sur l'ancien serveur
 # se trouve dans le dossier personnel de l'utilisateur (ou est indiqué par « --importer FICHIER »),
@@ -34,9 +33,9 @@ FLEUR_BRANCHE=claude/practical-mendel-dpj572
 SOURCES=${SOURCES:-/opt/sites}
 WEB=${WEB:-/var/www/html}
 SAUVEGARDE_NOM=sauvegarde-sites.tar.gz
-TOUS_LES_SITES="restaurant cambodge fleur-dor toilettage"
+TOUS_LES_SITES="restaurant fleur-dor toilettage"
 SITES_PAR_DEFAUT="restaurant fleur-dor toilettage" # installés quand aucun site n'est nommé (première installation)
-SITES_CARTE="restaurant cambodge"  # sites bâtis sur le moteur de carte : api.php, base SQLite, espace de gestion
+SITES_CARTE="restaurant"           # sites bâtis sur le moteur de carte : api.php, base SQLite, espace de gestion
 MEMOIRE="$SOURCES/sites-installes" # sites installés sur ce serveur
 DOMAINES_IMPORTES=""               # lignes « domaine site » des certificats repris
 
@@ -58,7 +57,11 @@ choisir_sites() { # sites demandés (peut être vide)
     fi
     local liste=""
     for s in $SITES_CHOISIS; do
-        [[ " $TOUS_LES_SITES " == *" $s "* ]] || erreur "site « $s » inconnu dans $MEMOIRE. Relancez en nommant les sites : $TOUS_LES_SITES."
+        # Site qui n'existe plus (retiré du dépôt) mais encore noté sur ce serveur : ignoré, sans bloquer la mise à jour.
+        if [[ " $TOUS_LES_SITES " != *" $s "* ]]; then
+            echo "Site « $s » ignoré : il ne fait plus partie des sites installables (ses fichiers restent dans $WEB/$s)."
+            continue
+        fi
         [[ " $liste " == *" $s "* ]] || liste+="${liste:+ }$s"
     done
     SITES_CHOISIS=$liste
@@ -71,7 +74,6 @@ site_choisi() {
 nom_site() {
     case $1 in
         restaurant) echo "Aux Saveurs Braisées" ;;
-        cambodge) echo "Aux Saveurs du Cambodge" ;;
         fleur-dor) echo "La Fleur d'Or" ;;
         toilettage) echo "Salon de toilettage" ;;
     esac
@@ -135,7 +137,7 @@ recuperer() { # dépôt, branche, dossier
 
 # ---------- Déploiement ----------
 
-deployer_carte() { # site (dossier du dépôt et du serveur : restaurant, cambodge)
+deployer_carte() { # site (dossier du dépôt et du serveur : restaurant)
     local src="$SOURCES/aux-saveurs-braisees/$1" dst="$WEB/$1"
     mkdir -p "$dst"
     # Les fichiers exclus (base de données, fichier de réinitialisation) ne sont jamais écrasés ni supprimés.
@@ -221,7 +223,6 @@ page_accueil() {
   <h1>Nos sites</h1>
 HTML
     if site_choisi restaurant; then echo '  <a href="restaurant/">Aux Saveurs Braisées<small>La carte du restaurant</small></a>'; fi
-    if site_choisi cambodge; then echo '  <a href="cambodge/">Aux Saveurs du Cambodge<small>Cuisine cambodgienne à Saint-Alban</small></a>'; fi
     if site_choisi fleur-dor; then echo '  <a href="fleur-dor/">La Fleur d'"'"'Or<small>Restaurant asiatique à Grenade</small></a>'; fi
     if site_choisi toilettage; then echo '  <a href="toilettage/">Bulles &amp; Moustaches<small>Le salon de toilettage</small></a>'; fi
     cat <<'HTML'
@@ -510,7 +511,7 @@ main() {
     while [ $# -gt 0 ]; do
         case $1 in
             --importer) [ $# -ge 2 ] || erreur "indiquez le fichier après --importer."; IMPORTER=$2; shift 2 ;;
-            restaurant|cambodge|fleur-dor|toilettage) demandes+="$1 "; shift ;;
+            restaurant|fleur-dor|toilettage) demandes+="$1 "; shift ;;
             *) erreur "« $1 » inconnu. Sites possibles : $TOUS_LES_SITES ; option : --importer FICHIER." ;;
         esac
     done
