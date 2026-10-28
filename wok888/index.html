@@ -22,10 +22,10 @@
   <link rel="preload" href="polices/bebas-neue.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="polices/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="polices/noto-serif-tc-wok-hei.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="site.css?v=7" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="images/icone-180.png" />
-  <script src="intro.js"></script>
+  <script src="intro.js?v=7"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -242,6 +242,10 @@
       <div class="wrap heros-grille">
         <div class="heros-texte">
           <p class="statut" data-statut aria-live="polite"></p>
+          <p class="avis-animations" id="avis-animations" hidden>
+            <span>Votre appareil demande moins d'animations&nbsp;: le site reste calme.</span>
+            <button type="button" class="lien" id="activer-animations">Voir les animations</button>
+          </p>
           <p class="pinceau heros-sur">Saveurs d'Asie à Seilh</p>
           <h1 class="heros-titre" id="heros-titre"><span class="titre-ligne">L'art</span> <span class="titre-ligne feu" data-texte="du wok">du wok</span></h1>
           <p class="heros-intro">Woks à composer, sushis, poké bowls et bouchées vapeur&nbsp;: une cuisine asiatique authentique et savoureuse, préparée avec passion. Sur place ou à emporter.</p>
@@ -708,6 +712,7 @@
       <p class="pied-liens">
         <a href="mentions-legales.html">Mentions légales</a>
         <button type="button" class="lien" id="gerer-cookies">Gérer les cookies</button>
+        <button type="button" class="lien" id="bouton-animations" hidden>Réduire les animations</button>
         <a href="admin/">Espace gestion</a>
       </p>
       <p class="credit">Site réalisé par Laurent TRANCHARD</p>
@@ -772,7 +777,7 @@
     </div>
   </div>
 
-  <script src="site.js"></script>
-  <script src="consentement.js"></script>
+  <script src="site.js?v=7"></script>
+  <script src="consentement.js?v=7"></script>
 </body>
 </html>

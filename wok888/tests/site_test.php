@@ -153,6 +153,15 @@ foreach (['site.css', 'site.js', 'intro.js', 'consentement.js', 'polices/bebas-n
     'polices/kaushan-script.woff2', 'polices/noto-serif-tc-wok-hei.woff2', 'polices/LICENCE-POLICES.txt'] as $f) {
     check("fichier $f présent", is_file("$root/$f") && filesize("$root/$f") > 0);
 }
+// Cache : les styles et scripts portent tous la même version (?v=), changée à chaque mise à jour du site
+preg_match_all('/(?:href|src)="((?:site|intro|consentement)\.(?:css|js))\?v=(\w+)"/', $index, $versions, PREG_SET_ORDER);
+$version = array_unique(array_column($versions, 2));
+check('index.html : site.css, intro.js, site.js et consentement.js à la même version', count($versions) === 4 && count($version) === 1);
+check('mentions légales : site.css à la même version', $version
+    && str_contains(file_get_contents("$root/mentions-legales.html"), 'href="site.css?v=' . reset($version) . '"'));
+// Animations : le choix du visiteur (site.js) est lu avant l'affichage (intro.js), sous le même nom
+check('choix des animations partagé par intro.js et site.js', str_contains(file_get_contents("$root/intro.js"), '"wok888-animations"')
+    && str_contains($siteJs, 'stockage.ecrire("wok888-animations"'));
 preg_match_all('/url\((polices\/[^)"\']+)\)/', file_get_contents("$root/site.css"), $u);
 check('polices de site.css présentes', count($u[1]) === 4 && !array_filter($u[1], fn($f) => !is_file("$root/$f")));
 preg_match_all('/\$\("#([\w-]+)"\)/', $siteJs, $cibles);

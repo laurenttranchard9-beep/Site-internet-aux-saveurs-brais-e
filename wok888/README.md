@@ -21,7 +21,7 @@ Il fonctionne en **PHP** avec une base **SQLite** (un simple fichier créé tout
 
 Partout : les titres montent mot à mot, des mots clés se surlignent au feutre vert, une barre de progression suit la lecture, le bandeau accélère avec le défilement (et repart en arrière quand on remonte), des feuilles de bambou flottent sur les grands écrans, les grands boutons suivent légèrement la souris et le téléphone « sonne » de temps en temps quand le restaurant est ouvert.
 
-Tout s'adapte au téléphone (barre d'actions en bas : Appeler, La carte, Mon wok, Réserver). Les animations s'arrêtent pour les visiteurs qui ont demandé à leur appareil de limiter les mouvements.
+Tout s'adapte au téléphone (barre d'actions en bas : Appeler, La carte, Mon wok, Réserver). Quand l'appareil du visiteur demande moins d'animations (Windows : « Effets d'animation » désactivés ; iPhone : « Réduire les animations »), le site reste calme et l'indique sur l'accueil, avec un bouton « Voir les animations ». Le bouton du pied de page (« Activer » ou « Réduire les animations ») permet à chacun de changer d'avis ; le choix est gardé sur l'appareil.
 
 ## Ce qui change par rapport à l'ancien site
 
@@ -79,9 +79,21 @@ Du mardi au dimanche, 12h00 – 22h30, fermé le lundi. Ils sont écrits à deux
 
 Les tests vérifient que les deux concordent.
 
+## Si les animations ne se voient pas
+
+1. **L'appareil demande moins d'animations** : l'accueil affiche « Votre appareil demande moins d'animations ». Touchez « Voir les animations » (ou « Activer les animations » en bas de la page). Sous Windows, le réglage est dans Paramètres → Accessibilité → Effets visuels → « Effets d'animation » ; sur iPhone, dans Réglages → Accessibilité → Mouvement → « Réduire les animations ».
+2. **Ce n'est pas le nouveau site** : tant que la zone DNS de `wok888.fr` n'a pas changé, `wok888.fr` affiche encore l'ancien site WordPress. Le nouveau est à l'adresse `http://ADRESSE-IP/wok888/` (serveur) ou `http://localhost/wok888/` (XAMPP).
+3. **Une ancienne version est installée** : remplacez le dossier par la dernière version, puis rechargez la page avec **Ctrl + F5**.
+
+L'animation d'ouverture ne se joue qu'une fois par visite : pour la revoir, ouvrez le site dans un nouvel onglet.
+
 ## Textes animés
 
 Les plats de « Ce soir, envie… » (`ENVIES`) et les messages des fortune cookies (`FORTUNES`) sont en clair dans `site.js` : ils se modifient comme du texte. Le plat porte-bonheur, lui, est tiré de la carte (jamais une boisson ni un plat épuisé).
+
+## Après une modification de `site.css` ou des scripts
+
+Dans `index.html` et `mentions-legales.html`, augmentez le numéro `?v=` des styles et des scripts, le même partout (par exemple `?v=7` → `?v=8`) : les navigateurs reprennent alors la nouvelle version au lieu de celle qu'ils ont gardée en mémoire. Les tests vérifient que tous portent la même version.
 
 ## Couleurs
 
