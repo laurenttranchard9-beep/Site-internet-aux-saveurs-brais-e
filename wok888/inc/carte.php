@@ -7,14 +7,12 @@
 // (Entrées, Japonais, Boissons…). Une catégorie sans « · » forme un univers à elle seule (Côté wok, Poké bowls).
 //
 // Étiquettes particulières (non affichées comme filtres) :
-//   « À la une »   : le plat est mis en avant dans le bandeau « Nos menus signature » ;
+//   « À la une »   : le plat est mis en avant dans la section « À la une » ;
 //   « Base »       : base au choix du wok à composer (nouilles, riz…) : une seule par wok ;
-//   « Supplément » : option du wok à composer (œuf bio) ;
-//   « Sur place »  : pas de commande en ligne pour ce produit.
+//   « Supplément » : option du wok à composer (œuf bio).
 
-const CARTE_VERSION = 1;
-
-const SUR_PLACE = 'Sur place';
+// Version 2 : sans la commande en ligne (étiquettes « Sur place » retirées).
+const CARTE_VERSION = 2;
 
 // Note affichée sous le titre de la catégorie (facultatif).
 function carte_notes(): array
@@ -45,7 +43,6 @@ function carte_notes(): array
 
 function carte(): array
 {
-    $sp = SUR_PLACE;
     return [
         'Entrées · Grillades' => [
             ['Brochette de poulet', '1 pièce.', 390, ''],
@@ -196,9 +193,9 @@ function carte(): array
             ['Menu Sushi', '11 pièces : 3 sushis saumon, 3 sushis thon, 3 sushis daurade, 2 sushis du moment.', 2290, 'À la une'],
         ],
         'Menus · Menu du jour' => [
-            ['Menu du jour entrée + plat', '', 1390, $sp],
-            ['Menu du jour plat + dessert', '', 1390, $sp],
-            ['Menu du jour entrée + plat + dessert', '', 1690, $sp],
+            ['Menu du jour entrée + plat', '', 1390, ''],
+            ['Menu du jour plat + dessert', '', 1390, ''],
+            ['Menu du jour entrée + plat + dessert', '', 1690, ''],
         ],
         'Desserts · Douceurs' => [
             ['Banane grillée', 'Nappée de caramel, avec une boule de glace vanille.', 700, ''],
@@ -218,99 +215,99 @@ function carte(): array
             ['Colonel normand', 'À la vodka.', 660, ''],
         ],
         'Desserts · Glaces' => [
-            ['Glace 1 boule', '', 250, $sp],
-            ['Glace 2 boules', '', 390, $sp],
-            ['Glace 3 boules', '', 500, $sp],
+            ['Glace 1 boule', '', 250, ''],
+            ['Glace 2 boules', '', 390, ''],
+            ['Glace 3 boules', '', 500, ''],
         ],
         'Boissons · Jus & softs' => [
-            ['Coca-Cola ou Coca-Cola Zéro', '33 cl.', 400, $sp],
-            ['Orangina', '25 cl.', 300, $sp],
-            ['Ice Tea', '', 390, $sp],
-            ['Limonade japonaise', '', 410, $sp],
-            ['Jus de fruits Pago', 'Orange, ananas, pomme, abricot ou mangue.', 390, $sp],
-            ["Sirop à l'eau", '', 190, $sp],
+            ['Coca-Cola ou Coca-Cola Zéro', '33 cl.', 400, ''],
+            ['Orangina', '25 cl.', 300, ''],
+            ['Ice Tea', '', 390, ''],
+            ['Limonade japonaise', '', 410, ''],
+            ['Jus de fruits Pago', 'Orange, ananas, pomme, abricot ou mangue.', 390, ''],
+            ["Sirop à l'eau", '', 190, ''],
         ],
         'Boissons · Eaux' => [
-            ['Evian 50 cl', '', 390, $sp],
-            ['Evian 1 L', '', 500, $sp],
-            ['Perrier 33 cl', '', 390, $sp],
-            ['San Pellegrino 50 cl', '', 390, $sp],
-            ['San Pellegrino 1 L', '', 500, $sp],
+            ['Evian 50 cl', '', 390, ''],
+            ['Evian 1 L', '', 500, ''],
+            ['Perrier 33 cl', '', 390, ''],
+            ['San Pellegrino 50 cl', '', 390, ''],
+            ['San Pellegrino 1 L', '', 500, ''],
         ],
         'Boissons · Boissons chaudes' => [
-            ['Café', 'Cafés Richard.', 250, $sp],
-            ['Café noisette', '', 300, $sp],
-            ['Thé', 'Thés Richard.', 290, $sp],
+            ['Café', 'Cafés Richard.', 250, ''],
+            ['Café noisette', '', 300, ''],
+            ['Thé', 'Thés Richard.', 290, ''],
         ],
         'Boissons · Cocktails' => [
-            ['Cocktail 888', 'Le cocktail de la maison, 15 cl.', 800, $sp],
-            ['Mojito', 'Rhum blanc, menthe fraîche, citron vert, sucre de canne, eau gazeuse.', 800, $sp],
-            ['Piña colada', "Rhum blanc, rhum ambré, lait de coco, jus d'ananas.", 800, $sp],
-            ['Pornstar Martini', 'Vodka infusée à la vanille, liqueur de fruit de la passion, jus de maracuja, jus de citron, un shot de prosecco.', 800, $sp],
-            ['Apérol Spritz', 'Prosecco, Apérol, eau gazeuse.', 800, $sp],
-            ['Bellini', 'Prosecco, nectar de mangue.', 800, $sp],
-            ['Angkor Red', 'Vodka, jus de goyave, sirop de fraise, jus de citron, eau gazeuse.', 800, $sp],
-            ['Cosmopolitan', 'Vodka, Cointreau, jus de cranberry, jus de citron.', 800, $sp],
-            ['Virgin Mojito', 'Menthe fraîche, citron vert, sucre de canne, eau gazeuse.', 500, "Sans alcool, $sp"],
-            ['Cocktail du moment', "Sans alcool : demandez à notre équipe la création du jour.", 500, "Sans alcool, $sp"],
+            ['Cocktail 888', 'Le cocktail de la maison, 15 cl.', 800, ''],
+            ['Mojito', 'Rhum blanc, menthe fraîche, citron vert, sucre de canne, eau gazeuse.', 800, ''],
+            ['Piña colada', "Rhum blanc, rhum ambré, lait de coco, jus d'ananas.", 800, ''],
+            ['Pornstar Martini', 'Vodka infusée à la vanille, liqueur de fruit de la passion, jus de maracuja, jus de citron, un shot de prosecco.', 800, ''],
+            ['Apérol Spritz', 'Prosecco, Apérol, eau gazeuse.', 800, ''],
+            ['Bellini', 'Prosecco, nectar de mangue.', 800, ''],
+            ['Angkor Red', 'Vodka, jus de goyave, sirop de fraise, jus de citron, eau gazeuse.', 800, ''],
+            ['Cosmopolitan', 'Vodka, Cointreau, jus de cranberry, jus de citron.', 800, ''],
+            ['Virgin Mojito', 'Menthe fraîche, citron vert, sucre de canne, eau gazeuse.', 500, 'Sans alcool'],
+            ['Cocktail du moment', "Sans alcool : demandez à notre équipe la création du jour.", 500, 'Sans alcool'],
         ],
         'Boissons · Apéritifs' => [
-            ['Martini blanc', '5 cl.', 450, $sp],
-            ['Martini rouge', '5 cl.', 450, $sp],
-            ['Ricard', '4 cl.', 490, $sp],
-            ['Get 27', '', 800, $sp],
-            ['Kir', '10 cl.', 430, $sp],
-            ['Kir royal', '10 cl.', 800, $sp],
-            ['Porto', '5 cl.', 450, $sp],
-            ['Coupe de champagne', '10 cl.', 800, $sp],
-            ['Mei Kwei Lu', 'Alcool de riz à la rose, 5 cl.', 350, $sp],
+            ['Martini blanc', '5 cl.', 450, ''],
+            ['Martini rouge', '5 cl.', 450, ''],
+            ['Ricard', '4 cl.', 490, ''],
+            ['Get 27', '', 800, ''],
+            ['Kir', '10 cl.', 430, ''],
+            ['Kir royal', '10 cl.', 800, ''],
+            ['Porto', '5 cl.', 450, ''],
+            ['Coupe de champagne', '10 cl.', 800, ''],
+            ['Mei Kwei Lu', 'Alcool de riz à la rose, 5 cl.', 350, ''],
         ],
         'Boissons · Saké' => [
-            ['Saké japonais', '16°, chaud ou froid.', 650, $sp],
+            ['Saké japonais', '16°, chaud ou froid.', 650, ''],
         ],
         'Boissons · Bières' => [
-            ['Tsingtao', 'Bouteille, Chine.', 470, $sp],
-            ['Singha', 'Bouteille, Thaïlande.', 470, $sp],
-            ['Asahi', 'Bouteille, Japon.', 470, $sp],
-            ['Kirin', 'Bouteille, Japon.', 560, $sp],
-            ['Iki', 'Bouteille, Japon.', 560, $sp],
+            ['Tsingtao', 'Bouteille, Chine.', 470, ''],
+            ['Singha', 'Bouteille, Thaïlande.', 470, ''],
+            ['Asahi', 'Bouteille, Japon.', 470, ''],
+            ['Kirin', 'Bouteille, Japon.', 560, ''],
+            ['Iki', 'Bouteille, Japon.', 560, ''],
             // L'ancien site affichait 8,00 € pour 25 cl comme pour 50 cl : prix à confirmer, affiché « sur demande ».
-            ['Bière pression 25 cl', 'Heineken, Affligem ou bière du moment.', null, $sp],
-            ['Bière pression 50 cl', 'Heineken, Affligem ou bière du moment.', 800, $sp],
+            ['Bière pression 25 cl', 'Heineken, Affligem ou bière du moment.', null, ''],
+            ['Bière pression 50 cl', 'Heineken, Affligem ou bière du moment.', 800, ''],
         ],
         'Boissons · Spiritueux' => [
-            ['Whisky J&B', '', 550, $sp],
-            ["Jack Daniel's", '', 900, $sp],
-            ['Whisky japonais Nikka', '', 1000, $sp],
-            ['Rhum blanc Havana Club', '', 800, $sp],
-            ['Rhum ambré Havana Club', '', 800, $sp],
-            ['Rhum Diplomático', '', 900, $sp],
-            ['Rhum Don Papa', '', 800, $sp],
-            ['Gin', '', 900, $sp],
-            ['Armagnac', '', 700, $sp],
-            ['Cognac Hennessy', '', 900, $sp],
+            ['Whisky J&B', '', 550, ''],
+            ["Jack Daniel's", '', 900, ''],
+            ['Whisky japonais Nikka', '', 1000, ''],
+            ['Rhum blanc Havana Club', '', 800, ''],
+            ['Rhum ambré Havana Club', '', 800, ''],
+            ['Rhum Diplomático', '', 900, ''],
+            ['Rhum Don Papa', '', 800, ''],
+            ['Gin', '', 900, ''],
+            ['Armagnac', '', 700, ''],
+            ['Cognac Hennessy', '', 900, ''],
         ],
         'Boissons · Vins rouges' => [
-            ['Côtes du Rhône, cuvée Perrin', '2022.', 2500, $sp],
-            ["Pays d'Oc, Chemin de Moscou", 'Bio, 2021.', 2500, $sp],
-            ['Fronton, Bodego', '2022.', 1400, $sp],
-            ['Corbières', '2023.', 1700, $sp],
-            ['Pic Saint-Loup', '', 3100, $sp],
+            ['Côtes du Rhône, cuvée Perrin', '2022.', 2500, ''],
+            ["Pays d'Oc, Chemin de Moscou", 'Bio, 2021.', 2500, ''],
+            ['Fronton, Bodego', '2022.', 1400, ''],
+            ['Corbières', '2023.', 1700, ''],
+            ['Pic Saint-Loup', '', 3100, ''],
         ],
         'Boissons · Vins blancs' => [
-            ['Côtes de Gascogne, domaine de Pé-Jéhout', 'Moelleux, 2023.', 1700, $sp],
-            ['Picpoul de Pinet, Beau Vignac', 'Sec, 2022.', 2000, $sp],
-            ["Pays d'Oc, domaine de Fontiès, chardonnay", 'Sec, 2023.', 2000, $sp],
+            ['Côtes de Gascogne, domaine de Pé-Jéhout', 'Moelleux, 2023.', 1700, ''],
+            ['Picpoul de Pinet, Beau Vignac', 'Sec, 2022.', 2000, ''],
+            ["Pays d'Oc, domaine de Fontiès, chardonnay", 'Sec, 2023.', 2000, ''],
         ],
         'Boissons · Vins rosés' => [
-            ['Côtes de Provence, Murmure de Goa', 'Bio, 2023.', 1900, $sp],
+            ['Côtes de Provence, Murmure de Goa', 'Bio, 2023.', 1900, ''],
         ],
         'Boissons · Pétillants & champagne' => [
-            ['Prosecco', 'Vin pétillant italien.', 2000, $sp],
-            ['Champagne Jeeper Grande Réserve', 'Blanc de blancs.', 10000, $sp],
+            ['Prosecco', 'Vin pétillant italien.', 2000, ''],
+            ['Champagne Jeeper Grande Réserve', 'Blanc de blancs.', 10000, ''],
         ],
         'Boissons · Vins au verre' => [
-            ['Labastide', 'Rouge, blanc ou rosé.', 350, $sp],
+            ['Labastide', 'Rouge, blanc ou rosé.', 350, ''],
         ],
     ];
 }

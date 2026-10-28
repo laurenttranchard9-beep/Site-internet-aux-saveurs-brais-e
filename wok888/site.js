@@ -1,4 +1,4 @@
-// WOK 888 : carte (api.php), wok à composer, commande à emporter et suivi (commande.php), machine 888, animations.
+// WOK 888 : carte (api.php), wok à composer, machine 888, horaires en direct, réservation et animations.
 (() => {
   "use strict";
 
@@ -53,26 +53,18 @@
   const TEL = "05 61 58 06 97";
   const RESERVATION = "https://wok-888-1749636011.resos.com/booking";
   // Étiquettes particulières de l'espace de gestion (voir inc/carte.php)
-  const ETIQUETTE = { une: "a la une", base: "base", supplement: "supplement", surPlace: "sur place" };
+  const ETIQUETTE = { une: "a la une", base: "base", supplement: "supplement" };
   const SPECIALES = new Set(Object.values(ETIQUETTE));
   const a = (p, etiquette) => p.cles.includes(ETIQUETTE[etiquette]);
-  const commandable = (p) => !p.soldOut && p.priceCents !== null && !a(p, "surPlace") && !a(p, "base") && !a(p, "supplement");
+  // Plat que la machine 888 peut tirer : ni épuisé, ni sans prix, ni base ou option du wok
+  const disponible = (p) => !p.soldOut && p.priceCents !== null && !a(p, "base") && !a(p, "supplement");
 
   document.documentElement.classList.add("revele"); // les blocs [data-revele] apparaissent au défilement
 
-  async function api(url, corps) {
-    const options = corps === undefined
-      ? { cache: "no-store" }
-      : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corps) };
-    const rep = await fetch(url, options);
-    const data = await rep.json().catch(() => ({}));
-    if (!rep.ok) {
-      const erreur = new Error(data.error || `Le serveur ne répond pas. Réessayez, ou appelez-nous au ${TEL}.`);
-      erreur.status = rep.status;
-      erreur.data = data;
-      throw erreur;
-    }
-    return data;
+  async function lire(url) {
+    const rep = await fetch(url, { cache: "no-store" });
+    if (!rep.ok) throw new Error(String(rep.status));
+    return rep.json();
   }
 
   const annonce = $("#annonce");
@@ -130,12 +122,12 @@
     const ctx = toile.getContext("2d");
     if (!ctx || sobre.matches) return;
     const scene = $(".heros-scene");
-    const sprites = ["255,214,120", "255,138,31", "227,60,40"].map((rvb) => {
+    const sprites = ["255,244,214", "183,240,206", "255,196,92"].map((rvb) => {
       const c = document.createElement("canvas");
       c.width = c.height = 32;
       const g = c.getContext("2d");
       const d = g.createRadialGradient(16, 16, 0, 16, 16, 16);
-      d.addColorStop(0, "rgba(255,250,230,1)");
+      d.addColorStop(0, "rgba(255,255,255,1)");
       d.addColorStop(0.25, `rgba(${rvb},.95)`);
       d.addColorStop(1, `rgba(${rvb},0)`);
       g.fillStyle = d;
@@ -196,28 +188,52 @@
     addEventListener("resize", () => actif && dimensionner());
   })();
 
-  // ---------- Horaires et état de la commande en ligne (commande.php) ----------
-  let etatCommande = null;
-  async function chargerEtat() {
-    try {
-      const etat = await api("commande.php?action=etat");
-      document.querySelectorAll("[data-statut]").forEach((n) => {
-        if (n.textContent !== etat.statut.texte) n.textContent = etat.statut.texte; // évite de répéter l'annonce
-        n.classList.toggle("ouvert", etat.statut.ouvert);
-        n.classList.toggle("ferme", !etat.statut.ouvert);
-      });
-      $$(".horaires tr[data-jour]").forEach((tr) => {
-        const aujourdhui = Number(tr.dataset.jour) === etat.jour;
-        tr.classList.toggle("aujourdhui", aujourdhui);
-        if (aujourdhui) tr.setAttribute("aria-current", "date");
-        else tr.removeAttribute("aria-current");
-      });
-      etatCommande = etat.commande;
-    } catch {
-      etatCommande = null;
+  // ---------- Horaires en direct (heure de Seilh, quel que soit le fuseau de l'appareil) ----------
+  // À modifier avec le tableau des horaires de index.html. 0 = dimanche … 6 = samedi ; fermé le lundi.
+  const SERVICE = [12 * 60, 22 * 60 + 30];
+  const CRENEAUX = [[SERVICE], [], [SERVICE], [SERVICE], [SERVICE], [SERVICE], [SERVICE]];
+  const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+  const hm = (m) => `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}`;
+
+  function heureLocale(date = new Date()) {
+    const p = {};
+    const format = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Paris", weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+    for (const { type, value } of format.formatToParts(date)) p[type] = value;
+    return { jour: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday), minutes: (Number(p.hour) % 24) * 60 + Number(p.minute) };
+  }
+
+  function statut({ jour, minutes }) {
+    const enCours = CRENEAUX[jour].find(([debut, fin]) => minutes >= debut && minutes < fin);
+    if (enCours) {
+      const bientot = enCours[1] - minutes <= 30;
+      return { ouvert: true, bientot, texte: bientot ? `Ferme bientôt · à ${hm(enCours[1])}` : `Ouvert · jusqu'à ${hm(enCours[1])}` };
     }
-    majDisponibilite();
-    return etatCommande;
+    for (let d = 0; d <= 7; d++) {
+      const j = (jour + d) % 7;
+      const suivant = CRENEAUX[j].find(([debut]) => d > 0 || debut > minutes);
+      if (suivant) {
+        const quand = d === 0 ? `à ${hm(suivant[0])}` : d === 1 ? `demain à ${hm(suivant[0])}` : `${JOURS[j]} à ${hm(suivant[0])}`;
+        return { ouvert: false, bientot: false, texte: `Fermé · ouvre ${quand}` };
+      }
+    }
+    return { ouvert: false, bientot: false, texte: "Fermé" };
+  }
+
+  function majHoraires() {
+    const maintenant = heureLocale();
+    const s = statut(maintenant);
+    $$("[data-statut]").forEach((n) => {
+      if (n.textContent !== s.texte) n.textContent = s.texte; // évite de répéter l'annonce aux lecteurs d'écran
+      n.classList.toggle("ouvert", s.ouvert && !s.bientot);
+      n.classList.toggle("bientot", s.bientot);
+      n.classList.toggle("ferme", !s.ouvert);
+    });
+    $$(".horaires tr[data-jour]").forEach((tr) => {
+      const aujourdhui = Number(tr.dataset.jour) === maintenant.jour;
+      tr.classList.toggle("aujourdhui", aujourdhui);
+      if (aujourdhui) tr.setAttribute("aria-current", "date");
+      else tr.removeAttribute("aria-current");
+    });
   }
 
   // ---------- La carte (api.php) ----------
@@ -270,12 +286,10 @@
       const premiere = !empreinte;
       empreinte = texte;
       analyser(JSON.parse(texte));
-      nettoyerPanier();
       rendreCarte(premiere);
       rendreComposeur();
       rendreUne();
       preparerMachine();
-      majPanier();
     } catch {
       if (!univers.length) {
         const lien = el("a", "", TEL);
@@ -384,21 +398,6 @@
     (!filtresActifs.size || p.cles.some((t) => filtresActifs.has(t))) &&
     (!requete || norm(`${c.name} ${p.name} ${p.description} ${p.tags.join(" ")}`).includes(requete));
 
-  function quantiteDans(id) {
-    return panier.filter((l) => l.id === id && !l.options.length).reduce((n, l) => n + l.quantite, 0);
-  }
-
-  function boutonAjouter(p) {
-    const b = el("button", "ajouter");
-    b.type = "button";
-    b.dataset.id = p.id;
-    b.setAttribute("aria-label", `Ajouter « ${p.name} » à ma commande`);
-    b.append(icone("ic-plus"));
-    const qte = quantiteDans(p.id);
-    if (qte) b.append(el("span", "ajouter-qte", String(qte)));
-    return b;
-  }
-
   function plat(p, c, i, animer) {
     const n = $("#plat-modele").content.firstElementChild.cloneNode(true);
     $(".plat-nom", n).textContent = p.name;
@@ -422,15 +421,11 @@
       // Garniture du wok : on la choisit dans « Composez votre wok »
       $(".plat-prix", n).textContent = p.priceCents === null ? "Sur demande" : `dès ${prix(p.priceCents)}`;
       if (!p.soldOut) {
-        const b = el("button", "bouton bouton-clair bouton-petit composer-lien", "Composer");
+        const b = el("button", "bouton bouton-contour bouton-petit composer-lien", "Composer");
         b.type = "button";
         b.dataset.garniture = p.id;
         cote.append(b);
       }
-    } else if (commandable(p)) {
-      cote.append(boutonAjouter(p));
-    } else if (a(p, "surPlace") && !p.soldOut) {
-      cote.append(el("span", "plat-sur-place", "Sur place"));
     }
     if (animer && !sobre.matches && i < 14) {
       n.classList.add("apparait");
@@ -444,7 +439,7 @@
     const texte = el("div");
     texte.append(el("p", "pinceau", "Le wok, à votre façon"), el("h3", "", "Composez votre wok"),
       el("p", "", "Une base, une garniture, et un petit plus si le cœur vous en dit : nous faisons sauter le tout, devant le feu."));
-    const lien = el("a", "bouton bouton-feu bouton-grand");
+    const lien = el("a", "bouton bouton-blanc bouton-grand");
     lien.href = "#composer";
     lien.append(icone("ic-feu"), "C'est parti");
     n.append(texte, lien);
@@ -508,8 +503,6 @@
   });
 
   zone.addEventListener("click", (e) => {
-    const ajout = e.target.closest(".ajouter");
-    if (ajout) return ajouter(Number(ajout.dataset.id), [], 1, ajout);
     const composer = e.target.closest(".composer-lien");
     if (composer) {
       choisirGarniture(Number(composer.dataset.garniture));
@@ -517,232 +510,39 @@
     }
   });
 
-  // ---------- Ma commande : le panier (gardé sur cet appareil) ----------
-  let panier = stockage.lire("wok888-panier", []);
-  if (!Array.isArray(panier)) panier = [];
-  const cleLigne = (id, options) => [id, ...[...options].sort((x, y) => x - y)].join("+");
-
-  function resoudre(ligne) {
-    const entree = produits.get(ligne.id);
-    if (!entree) return null;
-    const options = ligne.options.map((o) => produits.get(o)?.p);
-    if (options.some((o) => !o)) return null;
-    const unitaire = (entree.p.priceCents ?? 0) + options.reduce((s, o) => s + (o.priceCents ?? 0), 0);
-    return {
-      nom: entree.p.name,
-      details: options.map((o) => o.name).join(" · "),
-      unitaire,
-      ok: commandable(entree.p) && options.every((o) => !o.soldOut),
-    };
-  }
-
-  // Après une mise à jour de la carte : retire ce qui n'est plus commandable
-  function nettoyerPanier() {
-    const avant = panier.length;
-    panier = panier.filter((l) => resoudre(l)?.ok);
-    if (panier.length !== avant) {
-      sauverPanier();
-      annoncer("Un plat de votre commande n'est plus disponible : il a été retiré.");
-    }
-  }
-  const sauverPanier = () => stockage.ecrire("wok888-panier", panier.map(({ id, options, quantite }) => ({ id, options, quantite })));
-  const totalPanier = () => panier.reduce((s, l) => s + (resoudre(l)?.unitaire ?? 0) * l.quantite, 0);
-  const nombreArticles = () => panier.reduce((n, l) => n + l.quantite, 0);
-
-  function ajouter(id, options = [], quantite = 1, depuis = null) {
-    const cle = cleLigne(id, options);
-    const ligne = panier.find((l) => cleLigne(l.id, l.options) === cle);
-    if (ligne) ligne.quantite = Math.min(30, ligne.quantite + quantite);
-    else panier.push({ id, options: [...options], quantite });
-    sauverPanier();
-    majPanier();
-    const info = resoudre({ id, options });
-    if (info) annoncer(`« ${info.nom} » ajouté à votre commande.`);
-    if (depuis) {
-      volerVersPanier(depuis);
-      depuis.classList.remove("ajoute");
-      void depuis.offsetWidth;
-      depuis.classList.add("ajoute");
-    }
-    navigator.vibrate?.(12);
-  }
-
-  function changerQuantite(index, delta) {
-    const ligne = panier[index];
-    if (!ligne) return;
-    ligne.quantite = Math.max(0, Math.min(30, ligne.quantite + delta));
-    if (!ligne.quantite) panier.splice(index, 1);
-    sauverPanier();
-    majPanier();
-  }
-
-  function boutonPanierVisible() {
-    const barre = $("#barre-panier");
-    return barre.getBoundingClientRect().width ? barre : $("#ouvrir-panier");
-  }
-
-  function secouerPanier() {
-    const b = boutonPanierVisible();
-    b.classList.remove("secousse");
-    void b.offsetWidth;
-    b.classList.add("secousse");
-  }
-
-  // Une pastille de feu file de l'élément touché jusqu'à « Ma commande ».
-  function volerVersPanier(depuis) {
-    if (sobre.matches) return secouerPanier();
-    const de = depuis.getBoundingClientRect();
-    const vers = boutonPanierVisible().getBoundingClientRect();
-    const x0 = de.left + de.width / 2, y0 = de.top + de.height / 2;
-    const x1 = vers.left + vers.width / 2, y1 = vers.top + vers.height / 2;
-    const sommet = Math.min(y0, y1) - 90;
-    const porteur = el("span", "vol-porteur");
-    const point = el("span", "vol-panier");
-    porteur.append(point);
-    document.body.append(porteur);
-    const duree = 760;
-    porteur.animate([{ transform: `translateX(${x0}px)` }, { transform: `translateX(${x1}px)` }], { duration: duree, easing: "linear", fill: "forwards" });
-    const anim = point.animate([
-      { transform: `translateY(${y0}px) scale(.5)`, opacity: 0.4, easing: "cubic-bezier(.2,.7,.4,1)" },
-      { transform: `translateY(${sommet}px) scale(1.1)`, opacity: 1, offset: 0.4, easing: "cubic-bezier(.6,0,.9,.5)" },
-      { transform: `translateY(${y1}px) scale(.35)`, opacity: 0.9 },
-    ], { duration: duree, fill: "forwards" });
-    anim.onfinish = () => {
-      porteur.remove();
-      secouerPanier();
-    };
-  }
-
-  function majPanier() {
-    const n = nombreArticles();
-    for (const id of ["#panier-compte", "#barre-compte"]) {
-      const badge = $(id);
-      const avant = badge.textContent;
-      badge.textContent = String(n);
-      badge.hidden = n === 0;
-      if (n && avant !== String(n)) {
-        badge.classList.remove("pop");
-        void badge.offsetWidth;
-        badge.classList.add("pop");
-      }
-    }
-    $("#panier-libelle").textContent = n ? typo(`Ma commande : ${n} article${n > 1 ? "s" : ""}`) : "Ma commande, vide";
-    // Quantités affichées sur les boutons « + » de la carte
-    $$(".ajouter[data-id]").forEach((b) => {
-      const qte = quantiteDans(Number(b.dataset.id));
-      let badge = $(".ajouter-qte", b);
-      if (!qte) return badge?.remove();
-      if (!badge) b.append((badge = el("span", "ajouter-qte")));
-      badge.textContent = String(qte);
-    });
-    rendreLignes();
-  }
-
-  function rendreLignes() {
-    const vide = !panier.length;
-    $("#panier-vide").hidden = !vide;
-    $("#panier-pied").hidden = vide;
-    $("#lignes").replaceChildren(...panier.map((l, index) => {
-      const info = resoudre(l) ?? { nom: "Plat indisponible", details: "", unitaire: 0 };
-      const li = el("li", "ligne");
-      const texte = el("div");
-      texte.append(el("p", "ligne-nom", info.nom));
-      if (info.details) texte.append(el("p", "ligne-details", info.details));
-      const qte = el("div", "ligne-qte");
-      const moins = el("button", "qte-btn");
-      moins.type = "button";
-      moins.dataset.index = index;
-      moins.dataset.delta = "-1";
-      moins.setAttribute("aria-label", l.quantite > 1 ? `Retirer un « ${info.nom} »` : `Retirer « ${info.nom} » de ma commande`);
-      moins.append(icone("ic-moins"));
-      const plus = el("button", "qte-btn");
-      plus.type = "button";
-      plus.dataset.index = index;
-      plus.dataset.delta = "1";
-      plus.setAttribute("aria-label", `Ajouter un « ${info.nom} »`);
-      plus.append(icone("ic-plus"));
-      qte.append(moins, el("span", "qte-valeur", String(l.quantite)), plus);
-      li.append(texte, el("p", "ligne-prix", prix(info.unitaire * l.quantite)), qte);
-      return li;
-    }));
-    const total = prix(totalPanier());
-    $("#panier-total").textContent = total;
-    $("#formulaire-total").textContent = total;
-    $("#envoyer-commande").textContent = `Envoyer ma commande · ${total}`;
-  }
-
-  $("#lignes").addEventListener("click", (e) => {
-    const b = e.target.closest(".qte-btn");
-    if (!b) return;
-    const index = Number(b.dataset.index);
-    const delta = Number(b.dataset.delta);
-    if (delta < 0 && panier[index]?.quantite === 1 && !sobre.matches) {
-      b.closest(".ligne").classList.add("retiree");
-      setTimeout(() => changerQuantite(index, delta), 250);
-    } else {
-      changerQuantite(index, delta);
-    }
-  });
-  $("#vider-panier").addEventListener("click", () => {
-    if (!confirm("Vider votre commande ?")) return;
-    panier = [];
-    sauverPanier();
-    majPanier();
-  });
-
-  function majDisponibilite() {
-    const dispo = $("#commande-dispo");
-    if (!etatCommande) {
-      dispo.textContent = "";
-      return;
-    }
-    dispo.classList.toggle("ok", etatCommande.possible);
-    dispo.textContent = typo(etatCommande.possible
-      ? `Commande en ligne ouverte : retrait dès ${etatCommande.creneaux[0].libelle}`
-      : etatCommande.raison === "fermee"
-        ? "La commande en ligne ouvre aux heures d'ouverture."
-        : "Commande en ligne indisponible pour le moment : appelez-nous.");
-  }
-
-  // ---------- Le tiroir « Ma commande » et la fenêtre (réservation, photos) ----------
-  const tiroir = $("#panier");
+  // ---------- La fenêtre : réservation et photos ----------
   const modale = $("#modale");
   let retourFocus = null;
-  let fenetreOuverte = null;
 
-  function ouvrir(fenetre) {
-    if (fenetreOuverte && fenetreOuverte !== fenetre) fermer(fenetreOuverte, false);
+  function ouvrirModale(titre, contenu) {
+    $("#modale-titre").textContent = titre;
+    $("#modale-corps").replaceChildren(...contenu);
     retourFocus = document.activeElement;
-    fenetreOuverte = fenetre;
-    fenetre.hidden = false;
+    modale.hidden = false;
     document.body.style.overflow = "hidden";
-    requestAnimationFrame(() => requestAnimationFrame(() => fenetre.classList.add("ouvert")));
-    $(".tiroir-panneau, .modale-panneau", fenetre).focus({ preventScroll: true });
+    requestAnimationFrame(() => requestAnimationFrame(() => modale.classList.add("ouvert")));
+    $(".modale-panneau", modale).focus({ preventScroll: true });
   }
-  function fermer(fenetre = fenetreOuverte, rendreFocus = true) {
-    if (!fenetre || fenetre.hidden) return;
-    fenetre.classList.remove("ouvert");
-    if (fenetreOuverte === fenetre) fenetreOuverte = null;
+  function fermerModale() {
+    if (modale.hidden) return;
+    modale.classList.remove("ouvert");
     document.body.style.overflow = "";
     setTimeout(() => {
-      if (fenetre.classList.contains("ouvert")) return;
-      fenetre.hidden = true;
-      if (fenetre === modale) $("#modale-corps").replaceChildren(); // décharge la réservation ou la photo
+      if (modale.classList.contains("ouvert")) return;
+      modale.hidden = true;
+      $("#modale-corps").replaceChildren(); // décharge la réservation ou la photo
     }, sobre.matches ? 0 : 420);
-    if (rendreFocus) retourFocus?.focus?.({ preventScroll: true });
+    retourFocus?.focus?.({ preventScroll: true });
   }
-  for (const fenetre of [tiroir, modale]) {
-    fenetre.addEventListener("click", (e) => {
-      if (e.target.closest("[data-fermer]")) fermer(fenetre, !e.target.closest("a[href^='#']"));
-    });
-  }
+  modale.addEventListener("click", (e) => {
+    if (e.target.closest("[data-fermer]")) fermerModale();
+  });
   document.addEventListener("keydown", (e) => {
-    if (!fenetreOuverte) return;
-    if (e.key === "Escape") return fermer();
+    if (modale.hidden) return;
+    if (e.key === "Escape") return fermerModale();
     if (e.key !== "Tab") return;
     // Le focus reste dans la fenêtre ouverte
-    const focusables = $$("a[href], button:not([disabled]), input:not([tabindex='-1']), select, textarea", fenetreOuverte)
-      .filter((n) => n.getClientRects().length && !n.closest("[hidden]"));
+    const focusables = $$("a[href], button:not([disabled])", modale).filter((n) => n.getClientRects().length);
     if (!focusables.length) return;
     const premier = focusables[0], dernier = focusables.at(-1);
     if (e.shiftKey && document.activeElement === premier) {
@@ -753,197 +553,6 @@
       premier.focus();
     }
   });
-
-  function montrerVue(vue) {
-    for (const v of ["panier", "formulaire", "suivi"]) $(`#vue-${v}`).hidden = v !== vue;
-    $("#panier-retour").hidden = vue !== "formulaire";
-    $("#panier-titre").textContent = vue === "suivi" ? "Ma commande" : vue === "formulaire" ? "À emporter" : "Ma commande";
-  }
-
-  function ouvrirPanier() {
-    montrerVue("panier");
-    ouvrir(tiroir);
-    chargerEtat();
-  }
-  $("#ouvrir-panier").addEventListener("click", ouvrirPanier);
-  $("#barre-panier").addEventListener("click", ouvrirPanier);
-  $("#panier-retour").addEventListener("click", () => montrerVue("panier"));
-
-  // ---------- Commande à emporter ----------
-  const formulaire = $("#vue-formulaire");
-
-  function remplirRecap(liste) {
-    liste.replaceChildren(...panier.map((l) => {
-      const info = resoudre(l);
-      if (!info) return "";
-      const li = el("li");
-      li.append(el("span", "q", `${l.quantite} ×`), el("span", "", info.nom), el("span", "p", prix(info.unitaire * l.quantite)));
-      if (info.details) li.append(el("small", "", info.details));
-      return li;
-    }));
-  }
-
-  async function allerCommande() {
-    montrerVue("formulaire");
-    $("#erreur-commande").hidden = true;
-    $("#envoyer-commande").disabled = true;
-    for (const bloc of ["#champs", "#formulaire-pied", "#indispo"]) $(bloc).hidden = true;
-    $("#chargement-commande").hidden = false;
-    await chargerEtat();
-    $("#chargement-commande").hidden = true;
-    const ouvert = Boolean(etatCommande?.possible);
-    $("#indispo").hidden = ouvert;
-    $("#champs").hidden = !ouvert;
-    $("#formulaire-pied").hidden = !ouvert;
-    if (!ouvert) {
-      $("#indispo-texte").textContent = typo(etatCommande?.raison === "fermee"
-        ? "La commande en ligne ouvre aux heures d'ouverture. Appelez-nous : votre commande est prête à être lue au téléphone."
-        : "Appelez-nous : votre commande est prête à être lue au téléphone.");
-      remplirRecap($("#recap-tel"));
-      $("#recap-tel-total").textContent = typo(`Total : ${prix(totalPanier())}`);
-      return;
-    }
-    remplirCreneaux(etatCommande.creneaux);
-    const client = stockage.lire("wok888-client", {});
-    if (!formulaire.nom.value && client.nom) formulaire.nom.value = client.nom;
-    if (!formulaire.telephone.value && client.telephone) formulaire.telephone.value = client.telephone;
-    $("#envoyer-commande").disabled = false;
-    formulaire.retrait.focus({ preventScroll: true });
-  }
-  $("#aller-commande").addEventListener("click", allerCommande);
-
-  function remplirCreneaux(creneaux) {
-    const select = formulaire.retrait;
-    const avant = select.value;
-    select.replaceChildren(...creneaux.map((c, i) => {
-      const o = el("option", "", i === 0 ? `Dès que possible · ${c.libelle}` : c.libelle);
-      o.value = c.valeur;
-      return o;
-    }));
-    if ([...select.options].some((o) => o.value === avant)) select.value = avant;
-  }
-
-  formulaire.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const erreur = $("#erreur-commande");
-    const montrerErreur = (texte, champ) => {
-      erreur.textContent = typo(texte);
-      erreur.hidden = false;
-      if (champ) {
-        champ.setAttribute("aria-invalid", "true");
-        champ.focus();
-      }
-    };
-    $$("[aria-invalid]", formulaire).forEach((n) => n.removeAttribute("aria-invalid"));
-    erreur.hidden = true;
-    const nom = formulaire.nom.value.trim();
-    const telephone = formulaire.telephone.value.trim();
-    if (nom.length < 2) return montrerErreur("Indiquez votre nom, pour que l'on vous reconnaisse au retrait.", formulaire.nom);
-    if (!/^\+?[\d\s.\-()]{8,20}$/.test(telephone)) return montrerErreur("Indiquez un numéro de téléphone valide, par exemple 06 12 34 56 78.", formulaire.telephone);
-    if (!panier.length) return montrerErreur("Votre commande est vide.");
-    const bouton = $("#envoyer-commande");
-    bouton.disabled = true;
-    bouton.textContent = "Envoi en cours…";
-    try {
-      const r = await api("commande.php?action=envoyer", {
-        nom,
-        telephone,
-        note: formulaire.note.value.trim(),
-        retrait: Number(formulaire.retrait.value),
-        site: formulaire.site.value,
-        articles: panier.map(({ id, options, quantite }) => ({ id, options, quantite })),
-      });
-      stockage.ecrire("wok888-client", { nom, telephone });
-      const suivis = stockage.lire("wok888-suivis", []).filter((s) => Date.now() - s.cree < 12 * 3600e3);
-      suivis.unshift({ jeton: r.jeton, numero: r.numero, cree: Date.now() });
-      stockage.ecrire("wok888-suivis", suivis.slice(0, 5));
-      panier = [];
-      sauverPanier();
-      majPanier();
-      formulaire.note.value = "";
-      montrerVue("suivi");
-      suivre(r.jeton, true);
-      feuDeJoie($(".suivi-wok"));
-    } catch (err) {
-      if (err.data?.creneaux) remplirCreneaux(err.data.creneaux);
-      if (err.data?.raison) return allerCommande();
-      montrerErreur(err.message);
-      if (err.status === 409) chargerCarte();
-    } finally {
-      bouton.disabled = false;
-      rendreLignes();
-    }
-  });
-
-  // ---------- Suivi de la commande ----------
-  const MESSAGES = {
-    nouvelle: (r) => `Envoyée ! Le restaurant la confirme dans un instant. Retrait prévu à ${r.retraitTexte}.`,
-    acceptee: (r) => `Acceptée : ça saute dans le wok ! Retrait à ${r.retraitTexte}.`,
-    prete: () => "Elle est prête : elle vous attend au comptoir. À tout de suite !",
-    retiree: () => "Retirée. Bon appétit, et merci !",
-    annulee: () => `Le restaurant n'a pas pu prendre cette commande. Appelez-nous au ${TEL}.`,
-  };
-  let suiviJeton = null;
-  let dernierStatut = null;
-  let minuteurSuivi = null;
-
-  async function suivre(jeton, immediat = false) {
-    suiviJeton = jeton;
-    clearTimeout(minuteurSuivi);
-    try {
-      const r = await api(`commande.php?action=suivi&jeton=${encodeURIComponent(jeton)}`);
-      afficherSuivi(r, immediat);
-      if (["nouvelle", "acceptee", "prete"].includes(r.statut)) minuteurSuivi = setTimeout(() => suivre(jeton), 15000);
-      else oublierSuivi(jeton);
-    } catch (err) {
-      if (err.status === 404) oublierSuivi(jeton);
-      else minuteurSuivi = setTimeout(() => suivre(jeton), 30000);
-    }
-  }
-
-  function oublierSuivi(jeton) {
-    stockage.ecrire("wok888-suivis", stockage.lire("wok888-suivis", []).filter((s) => s.jeton !== jeton));
-    $("#suivi-pastille").hidden = true;
-  }
-
-  function afficherSuivi(r, immediat) {
-    $("#suivi-numero").textContent = `N° ${r.numero}`;
-    $("#suivi-message").textContent = typo(MESSAGES[r.statut]?.(r) ?? "");
-    // Étapes franchies : « Envoyée » dès la réception, « En préparation » en cours une fois acceptée, puis « Prête ».
-    const faites = { nouvelle: 1, acceptee: 1, prete: 3, retiree: 3 }[r.statut] ?? 0;
-    $$("#etapes-suivi li").forEach((li, i) => {
-      li.classList.toggle("fait", i < faites);
-      li.classList.toggle("actuel", r.statut === "acceptee" && i === 1);
-    });
-    const recap = $("#recap-suivi");
-    recap.replaceChildren(...r.articles.map((art) => {
-      const li = el("li");
-      li.append(el("span", "q", `${art.quantite} ×`), el("span", "", art.nom), el("span", "p", prix(art.prixCents * art.quantite)));
-      if (art.details) li.append(el("small", "", art.details));
-      return li;
-    }));
-    $("#suivi-total").textContent = typo(`Total : ${prix(r.totalCents)}, à régler au retrait`);
-    const pastille = $("#suivi-pastille");
-    const enCours = ["nouvelle", "acceptee", "prete"].includes(r.statut);
-    pastille.hidden = !enCours;
-    pastille.textContent = typo(`Commande n° ${r.numero} · ${{ nouvelle: "envoyée", acceptee: "en préparation", prete: "prête !" }[r.statut] ?? ""}`);
-    if (!immediat && dernierStatut && dernierStatut !== r.statut) {
-      if (r.statut === "prete") {
-        carillon();
-        navigator.vibrate?.([80, 60, 80]);
-        feuDeJoie(pastille);
-      }
-      annoncer(`Commande n° ${r.numero} : ${MESSAGES[r.statut]?.(r)}`);
-    }
-    dernierStatut = r.statut;
-  }
-
-  $("#suivi-pastille").addEventListener("click", () => {
-    montrerVue("suivi");
-    ouvrir(tiroir);
-    if (suiviJeton) suivre(suiviJeton);
-  });
-  $("#nouvelle-commande").addEventListener("click", () => montrerVue("panier"));
 
   // ---------- Composez votre wok ----------
   const choixWok = { base: null, garniture: null, supplements: new Set() };
@@ -1055,7 +664,7 @@
     const section = $("#composer");
     const visible = Boolean(wok && wok.garnitures.length);
     section.hidden = !visible;
-    $$('a[href="#composer"]').forEach((lien) => (lien.hidden = !visible && !lien.closest(".tiroir")));
+    $$('a[href="#composer"]').forEach((lien) => (lien.hidden = !visible));
     if (!visible) return;
     if (wok.categorie.note) $("#composer-note").textContent = typo(`Choisissez votre base et votre garniture : nous faisons sauter le tout au wok. ${wok.categorie.note}`);
     // Garde les choix encore valables après une mise à jour de la carte
@@ -1143,41 +752,40 @@
     } else {
       animerPrix(null);
     }
-    $("#wok-ajouter").disabled = !(base && garniture && commandable(garniture));
+    $("#wok-appeler").classList.toggle("pret", Boolean(base && garniture));
     $("#wok-recommencer").hidden = !(base || garniture || supplements.size);
+  }
+
+  // Le wok est complet (base et garniture) : une gerbe d'étincelles, et il n'y a plus qu'à appeler.
+  const wokComplet = () => Boolean(choixWok.base && choixWok.garniture);
+  function feterWok(avant) {
+    if (!avant && wokComplet()) setTimeout(() => feuDeJoie(scene, 18), 650);
   }
 
   $("#composeur").addEventListener("change", (e) => {
     const input = e.target;
     const id = Number(input.value);
+    const avant = wokComplet();
     if (input.name === "base") choixWok.base = wok.bases.find((b) => b.id === id) ?? null;
     if (input.name === "garniture") choixWok.garniture = wok.garnitures.find((g) => g.id === id) ?? null;
     if (input.name === "supplement") input.checked ? choixWok.supplements.add(id) : choixWok.supplements.delete(id);
     redessinerWok(true);
     majResumeWok();
     faireSauter(input.name === "supplement" ? 350 : 520);
+    feterWok(avant);
   });
 
   function choisirGarniture(id) {
     if (!wok) return;
+    const avant = wokComplet();
     choixWok.garniture = wok.garnitures.find((g) => g.id === id) ?? choixWok.garniture;
     const input = $(`#choix-garniture input[value="${id}"]`);
     if (input) input.checked = true;
     redessinerWok(true);
     majResumeWok();
     faireSauter(700);
+    feterWok(avant);
   }
-
-  $("#wok-ajouter").addEventListener("click", (e) => {
-    const { base, garniture, supplements } = choixWok;
-    if (!base || !garniture) return;
-    ajouter(garniture.id, [base.id, ...wok.supplements.filter((s) => supplements.has(s.id)).map((s) => s.id)], 1, e.currentTarget);
-    const bouton = e.currentTarget;
-    const texte = bouton.lastChild.textContent;
-    bouton.lastChild.textContent = typo("Ajouté à votre commande !");
-    setTimeout(() => (bouton.lastChild.textContent = texte), 1600);
-    feuDeJoie(scene);
-  });
 
   $("#wok-recommencer").addEventListener("click", () => {
     choixWok.base = null;
@@ -1235,31 +843,14 @@
     source.start();
   }
 
-  function carillon() {
-    const ac = contexteAudio();
-    if (!ac) return;
-    const t0 = ac.currentTime;
-    [[880, 0], [1320, 0.16]].forEach(([frequence, decalage]) => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.frequency.value = frequence;
-      gain.gain.setValueAtTime(0.0001, t0 + decalage);
-      gain.gain.exponentialRampToValueAtTime(0.25, t0 + decalage + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + decalage + 0.8);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(t0 + decalage);
-      osc.stop(t0 + decalage + 0.85);
-    });
-  }
-
-  // Gerbe d'étincelles dorées autour d'un élément (ajout du wok, commande envoyée, machine 888)
+  // Gerbe d'étincelles autour d'un élément (wok complet, machine 888)
   function feuDeJoie(autour, nombre = 22) {
     if (sobre.matches || !autour) return;
     const r = autour.getBoundingClientRect();
     if (!r.width) return;
     const x = r.left + r.width / 2, y = r.top + r.height / 2;
     for (let i = 0; i < nombre; i++) {
-      const p = el("span", "piece-or");
+      const p = el("span", "etincelle");
       document.body.append(p);
       const angle = (i / nombre) * Math.PI * 2 + Math.random() * 0.4;
       const force = 80 + Math.random() * 110;
@@ -1332,14 +923,14 @@
       }
       const bas = el("div", "menu-bas");
       bas.append(el("p", "menu-prix", prix(p.priceCents)));
-      if (commandable(p)) {
-        const b = el("button", "bouton bouton-feu");
-        b.type = "button";
-        b.dataset.id = p.id;
-        b.append(icone("ic-sac"), "Ajouter");
-        bas.append(b);
+      if (p.soldOut) {
+        bas.append(el("span", "epuise-texte", "Épuisé"));
       } else {
-        bas.append(el("span", "epuise-texte", p.soldOut ? "Épuisé" : "Sur place"));
+        const lien = el("a", "bouton bouton-contour bouton-petit");
+        lien.href = "tel:+33561580697";
+        lien.setAttribute("aria-label", `Commander « ${p.name} » par téléphone`);
+        lien.append(icone("ic-tel"), "Commander");
+        bas.append(lien);
       }
       carte.append(bas);
       if (!sobre.matches) carte.style.transitionDelay = `${i * 80}ms`;
@@ -1348,10 +939,6 @@
     observerApparitions(section);
   }
 
-  $("#signature-liste").addEventListener("click", (e) => {
-    const b = e.target.closest("button[data-id]");
-    if (b) ajouter(Number(b.dataset.id), [], 1, b);
-  });
   // Léger effet de relief des cartes au survol de la souris
   $("#signature-liste").addEventListener("pointermove", (e) => {
     if (!pointeurFin.matches || sobre.matches) return;
@@ -1377,8 +964,8 @@
     for (const u of univers) {
       for (const c of u.categories) {
         for (const p of c.products) {
-          if (!commandable(p)) continue;
-          const choix = { id: p.id, options: [], nom: p.name, details: "", prix: p.priceCents };
+          if (!disponible(p)) continue;
+          const choix = { nom: p.name, details: "", prix: p.priceCents };
           if (u.cle === "entrees" && p.priceCents >= 400) reserve.entree.push(choix);
           else if ((u.cle === "nos plats" && !norm(c.sousNom).includes("accompagnement")) || u.cle === "poke bowls") reserve.plat.push(choix);
           else if (u.cle === "desserts") reserve.dessert.push(choix);
@@ -1388,7 +975,7 @@
     // Les woks : une garniture et une base tirées au sort
     if (wok) {
       const bases = wok.bases.filter((b) => !b.soldOut);
-      for (const g of wok.garnitures.filter(commandable)) {
+      for (const g of wok.garnitures.filter(disponible)) {
         if (bases.length) reserve.plat.push({ wok: g, bases });
       }
     }
@@ -1404,7 +991,7 @@
     const choix = auHasard(reserves[type]);
     if (!choix.wok) return choix;
     const base = auHasard(choix.bases);
-    return { id: choix.wok.id, options: [base.id], nom: choix.wok.name, details: base.name, prix: choix.wok.priceCents + base.priceCents };
+    return { nom: choix.wok.name, details: base.name, prix: choix.wok.priceCents + base.priceCents };
   };
 
   function caseRouleau(choix) {
@@ -1447,7 +1034,7 @@
     levier.classList.add("tire");
     setTimeout(() => levier.classList.remove("tire"), 450);
     machine.classList.add("tourne");
-    $("#machine-ajouter").hidden = true;
+    $("#machine-appeler").hidden = true;
     $("#machine-resultat").textContent = "Les rouleaux tournent…";
     tirage = { entree: tirer("entree"), plat: tirer("plat"), dessert: tirer("dessert") };
     await Promise.all($$(".rouleau", machine).map((r, i) => tourner(r, tirage[r.dataset.type], r.dataset.type, 1300 + i * 500)));
@@ -1456,27 +1043,14 @@
     const resultat = $("#machine-resultat");
     resultat.replaceChildren(typo("Votre repas porte-bonheur : "), el("b", "", prix(total)));
     annoncer(`La machine a choisi : ${tirage.entree.nom}, ${tirage.plat.nom}, ${tirage.dessert.nom}, pour ${prix(total)}.`);
-    $("#machine-ajouter").hidden = false;
+    $("#machine-appeler").hidden = false;
     relancer(machine, "gagne");
     feuDeJoie($(".machine-enseigne"), 26);
     enCours = false;
   }
   $("#lancer").addEventListener("click", lancer);
   $("#levier").addEventListener("click", lancer);
-  $("#machine-ajouter").addEventListener("click", (e) => {
-    if (!tirage) return;
-    for (const choix of [tirage.entree, tirage.plat, tirage.dessert]) ajouter(choix.id, choix.options, 1, null);
-    volerVersPanier(e.currentTarget);
-    e.currentTarget.hidden = true;
-    $("#machine-resultat").textContent = typo("C'est dans votre commande. Bon appétit !");
-  });
-
   // ---------- Réservation (resOS), chargée seulement à la demande ----------
-  function ouvrirModale(titre, contenu) {
-    $("#modale-titre").textContent = titre;
-    $("#modale-corps").replaceChildren(...contenu);
-    ouvrir(modale);
-  }
   $("#ouvrir-resa").addEventListener("click", () => {
     const cadre = el("iframe");
     cadre.src = RESERVATION;
@@ -1511,7 +1085,7 @@
   // ---------- Galerie : les photos déposées dans le dossier photos/ ----------
   async function chargerPhotos() {
     try {
-      const { photos } = await api("photos.php");
+      const { photos } = await lire("photos.php");
       if (!photos?.length) return;
       const grille = $("#galerie-grille");
       grille.replaceChildren(...photos.map((photo) => {
@@ -1540,22 +1114,16 @@
   }
 
   // ---------- Démarrage ----------
-  majPanier();
+  majHoraires();
   chargerCarte();
-  chargerEtat();
   chargerPhotos();
+  setInterval(majHoraires, 30_000);
   setInterval(() => {
-    if (document.hidden) return;
-    chargerCarte();
-    chargerEtat();
+    if (!document.hidden) chargerCarte();
   }, 60_000);
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) return;
+    majHoraires();
     chargerCarte();
-    chargerEtat();
-    if (suiviJeton) suivre(suiviJeton);
   });
-  // Une commande envoyée récemment depuis cet appareil : on reprend son suivi
-  const suiviRecent = stockage.lire("wok888-suivis", []).find((s) => Date.now() - s.cree < 12 * 3600e3);
-  if (suiviRecent) suivre(suiviRecent.jeton, true);
 })();

@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1440">
   <defs>
-    <linearGradient id="feu" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffc23a"/>
-      <stop offset=".55" stop-color="#ff6a1a"/>
-      <stop offset="1" stop-color="#e3262b"/>
+    <linearGradient id="jade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c8f5da"/>
+      <stop offset=".55" stop-color="#5fd396"/>
+      <stop offset="1" stop-color="#1f9d63"/>
     </linearGradient>
   </defs>
-  <rect width="1440" height="1440" rx="300" fill="#120e0c"/>
+  <rect width="1440" height="1440" rx="300" fill="#0b5236"/>
   <g transform="translate(720 735) scale(.95) translate(-692 -597)">
-    <path fill="#f6eee2" d="M95 470 155 435 372 820 331 890Z M297 468 357 435 533 745 810 265 870 300 535 890Z M1160 323H1268L1028 612 1288 927H1180L972 672 945 690 975 550Z"/>
-    <path fill="url(#feu)" d="M908 348A354 354 0 0 1 582 902L630 818A265 265 0 0 0 860 430Z"/>
+    <path fill="#fff" d="M95 470 155 435 372 820 331 890Z M297 468 357 435 533 745 810 265 870 300 535 890Z M1160 323H1268L1028 612 1288 927H1180L972 672 945 690 975 550Z"/>
+    <path fill="url(#jade)" d="M908 348A354 354 0 0 1 582 902L630 818A265 265 0 0 0 860 430Z"/>
   </g>
 </svg>
