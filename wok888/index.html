@@ -165,6 +165,9 @@
       <circle cx="24" cy="20" r="8.5" fill="#ffb300"/><circle cx="21" cy="17" r="2.6" fill="#ffe082"/>
     </symbol>
 
+    <!-- Décor : feuille de bambou, qui flotte dans les sections claires -->
+    <symbol id="d-feuille" viewBox="0 0 64 24"><path d="M2 12C16 1 42-1 62 12 42 25 16 23 2 12Z" fill="#3fbf7f"/><path d="M2 12C16 1 42-1 62 12Z" fill="#7fdcaa"/><path d="M5 12h54" fill="none" stroke="#1f9d63" stroke-width="1.3" stroke-linecap="round"/></symbol>
+
     <!-- Univers de la carte -->
     <symbol id="u-entrees" viewBox="0 0 24 24"><path d="M3 15c0-4 4-7 9-7s9 3 9 7c-2 2-5 3-9 3s-7-1-9-3Z"/><path d="M8 9.5 9 12M12 8v3.5M16 9.5 15 12"/></symbol>
     <symbol id="u-wok" viewBox="0 0 24 24"><path d="M2.5 11h19a9.5 6.5 0 0 1-19 0Z"/><path d="M21.5 11 23 9.5M9 3.5c-1 1 1 2 0 3.5M13 3c-1 1 1 2 0 3.5"/></symbol>
@@ -179,6 +182,7 @@
     <!-- Icônes -->
     <symbol id="ic-tel" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8Z"/></symbol>
     <symbol id="ic-fermer" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="ic-encore" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></symbol>
     <symbol id="ic-retour" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
     <symbol id="ic-pin" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></symbol>
     <symbol id="ic-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
@@ -228,6 +232,7 @@
         <span class="sr-only">Appeler le restaurant</span>
       </a>
     </div>
+    <span class="progression" id="progression" aria-hidden="true"></span>
   </header>
 
   <main>
@@ -240,6 +245,7 @@
           <p class="pinceau heros-sur">Saveurs d'Asie à Seilh</p>
           <h1 class="heros-titre" id="heros-titre"><span class="titre-ligne">L'art</span> <span class="titre-ligne feu" data-texte="du wok">du wok</span></h1>
           <p class="heros-intro">Woks à composer, sushis, poké bowls et bouchées vapeur&nbsp;: une cuisine asiatique authentique et savoureuse, préparée avec passion. Sur place ou à emporter.</p>
+          <p class="envie" aria-hidden="true">Ce soir, envie <span class="envie-cadre" id="envie-cadre"><span class="envie-mot" id="envie-mot">d'un wok au canard</span></span>&nbsp;?</p>
           <div class="heros-actions">
             <a class="bouton bouton-blanc bouton-grand" href="#composer">
               <svg aria-hidden="true"><use href="#ic-feu"/></svg>Composer mon wok
@@ -253,8 +259,8 @@
           </ul>
         </div>
 
-        <div class="heros-scene" aria-hidden="true">
-          <svg class="scene-wok" viewBox="0 0 640 560">
+        <div class="heros-scene">
+          <svg class="scene-wok" viewBox="0 0 640 560" aria-hidden="true">
             <ellipse class="lueur" cx="330" cy="380" rx="300" ry="230" fill="url(#g-lueur)"/>
             <!-- Vapeur -->
             <g class="vapeur" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="10">
@@ -323,7 +329,8 @@
               <g transform="translate(330 502) scale(.42 .7)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme-coeur)"/></g>
             </g>
           </svg>
-          <p class="heros-badge"><span class="pinceau">888</span><span>le chiffre<br/>du bonheur</span></p>
+          <button type="button" class="wok-toucher" id="wok-toucher" hidden><span class="sr-only">Faire sauter le wok</span><span class="wok-indice" id="wok-indice" aria-hidden="true">Touchez le wok&nbsp;!</span></button>
+          <p class="heros-badge" aria-hidden="true"><span class="pinceau">888</span><span>le chiffre<br/>du bonheur</span></p>
         </div>
       </div>
       <a class="defiler" href="#wok-hei"><span class="sr-only">Découvrir</span><span class="defiler-souris" aria-hidden="true"></span></a>
@@ -339,12 +346,17 @@
 
     <!-- ============ Wok hei ============ -->
     <section class="wokhei" id="wok-hei" aria-labelledby="wokhei-titre">
+      <div class="decor" aria-hidden="true">
+        <svg class="decor-el dc-feuille-1" data-vitesse=".22"><use href="#d-feuille"/></svg>
+        <svg class="decor-el dc-carotte" data-vitesse=".45"><use href="#i-carotte"/></svg>
+        <svg class="decor-el dc-feuille-2" data-vitesse=".32"><use href="#d-feuille"/></svg>
+      </div>
       <div class="wrap wokhei-grille">
         <p class="hanzi" lang="zh-Hant" aria-hidden="true" data-revele><span>鑊氣</span></p>
         <div class="wokhei-texte" data-revele>
           <p class="pinceau">Wok hei</p>
           <h2 id="wokhei-titre">Le souffle du wok</h2>
-          <p class="grand">En cantonais, on l'appelle <em>wok hei</em>&nbsp;: le «&nbsp;souffle du wok&nbsp;». C'est ce parfum légèrement fumé que prennent les aliments saisis à feu très vif, en quelques secondes.</p>
+          <p class="grand">En cantonais, on l'appelle <em>wok hei</em>&nbsp;: le «&nbsp;souffle du wok&nbsp;». C'est ce parfum légèrement fumé que prennent les aliments <span class="surligne">saisis à feu très vif</span>, en quelques secondes.</p>
           <p>Les légumes restent croquants, les viandes caramélisent, la sauce enrobe chaque bouchée. C'est tout l'art du wok, et c'est notre façon de cuisiner.</p>
           <ul class="chiffres">
             <li><span class="chiffre" data-compteur="36" id="chiffre-woks">36</span><span>façons de composer votre wok</span></li>
@@ -389,6 +401,10 @@
 
     <!-- ============ Composer son wok ============ -->
     <section class="composer" id="composer" aria-labelledby="composer-titre">
+      <div class="decor" aria-hidden="true">
+        <svg class="decor-el dc-feuille-3" data-vitesse=".25"><use href="#d-feuille"/></svg>
+        <svg class="decor-el dc-brocoli" data-vitesse=".4"><use href="#i-brocoli"/></svg>
+      </div>
       <div class="wrap">
         <header class="section-tete" data-revele>
           <p class="pinceau">À vous de jouer</p>
@@ -437,6 +453,11 @@
                   <g id="couche-plus"></g>
                   <path d="M60 236a200 48 0 0 0 400 0" fill="none" stroke="#5c514a" stroke-width="7"/>
                 </g>
+                <g class="vapeur vapeur-poele" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="8">
+                  <path class="v1" d="M206 218c-14-20 12-34 0-56-10-20 10-32 2-50"/>
+                  <path class="v2" d="M260 212c-14-22 12-36 0-60-10-22 10-34 2-54"/>
+                  <path class="v3" d="M314 218c-14-20 12-34 0-56-10-20 10-32 2-50"/>
+                </g>
                 <g class="flammes flammes-avant">
                   <g transform="translate(222 394) scale(.6 .8)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
                   <g transform="translate(260 396) scale(.7 1)"><use class="fl" href="#forme-flamme" fill="url(#g-flamme)"/></g>
@@ -483,7 +504,7 @@
         <header class="section-tete" data-revele>
           <p class="pinceau">Midi et soir</p>
           <h2 id="carte-titre">La carte</h2>
-          <p>Sur place ou à emporter&nbsp;: commandez par téléphone au <a href="tel:+33561580697">05 61 58 06 97</a>.</p>
+          <p>Sur place ou à emporter&nbsp;: <span class="surligne">commandez par téléphone</span> au <a href="tel:+33561580697">05 61 58 06 97</a>.</p>
         </header>
       </div>
       <div class="carte-outils" id="carte-outils">
@@ -507,11 +528,15 @@
 
     <!-- ============ La machine 888 ============ -->
     <section class="machine" id="machine" aria-labelledby="machine-titre" hidden>
+      <div class="decor" aria-hidden="true">
+        <svg class="decor-el dc-feuille-4" data-vitesse=".3"><use href="#d-feuille"/></svg>
+        <svg class="decor-el dc-crevette" data-vitesse=".5"><use href="#i-crevette"/></svg>
+      </div>
       <div class="wrap machine-grille">
         <div class="machine-texte" data-revele>
           <p class="pinceau">Pas d'idée&nbsp;?</p>
           <h2 id="machine-titre">La machine <span class="accent">888</span></h2>
-          <p>Le 8 porte bonheur&nbsp;: laissez la chance composer votre repas. Une entrée, un plat, un dessert… et si le menu vous plaît, il n'y a plus qu'à le commander.</p>
+          <p><span class="surligne">Le 8 porte bonheur</span>&nbsp;: laissez la chance composer votre repas. Une entrée, un plat, un dessert… et si le menu vous plaît, il n'y a plus qu'à le commander.</p>
         </div>
         <div class="machine-boite" data-revele>
           <div class="machine-ampoules" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -527,6 +552,59 @@
             <a class="bouton bouton-clair" id="machine-appeler" href="tel:+33561580697" aria-label="Le commander par téléphone au 05 61 58 06 97" hidden><svg aria-hidden="true"><use href="#ic-tel"/></svg>Le commander</a>
           </div>
           <button type="button" class="levier" id="levier" tabindex="-1" aria-hidden="true"><span class="levier-tige"></span><span class="levier-boule"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Le fortune cookie (affiché par site.js) ============ -->
+    <section class="fortune" id="fortune" aria-labelledby="fortune-titre" hidden>
+      <div class="decor" aria-hidden="true">
+        <svg class="decor-el dc-feuille-5" data-vitesse=".28"><use href="#d-feuille"/></svg>
+      </div>
+      <div class="wrap fortune-grille">
+        <div class="fortune-texte" data-revele>
+          <p class="pinceau">Le mot de la fin</p>
+          <h2 id="fortune-titre">Votre fortune cookie</h2>
+          <p>Comme à la fin du repas&nbsp;: cassez-le, lisez votre message porte-bonheur… et découvrez le plat qui va avec.</p>
+        </div>
+        <div class="fortune-scene" data-revele>
+          <button type="button" class="fortune-cookie" id="fortune-cookie" aria-describedby="fortune-aide">
+            <span class="sr-only">Casser le fortune cookie</span>
+            <svg viewBox="0 0 260 200" aria-hidden="true">
+              <circle class="fortune-halo" cx="130" cy="104" r="96" fill="#8fd6ae" opacity=".22"/>
+              <ellipse class="fortune-ombre" cx="130" cy="180" rx="78" ry="9" fill="#0b5236" opacity=".14"/>
+              <g class="fortune-corps">
+                <g class="fortune-papier">
+                  <path d="M122 120 188 162 181 173 115 131Z" fill="#fffdf6" stroke="#e3d6b6" stroke-width="1.5"/>
+                  <path d="M134 133 172 157" stroke="#1f9d63" stroke-width="2.6" stroke-linecap="round"/>
+                </g>
+                <g class="fortune-moitie fortune-g">
+                  <path d="M130 42C84 40 40 66 30 106 26 122 30 138 42 152 66 146 100 136 130 118Z" fill="#e8a958"/>
+                  <path d="M56 80C70 62 96 50 122 49" fill="none" stroke="#f7d9a3" stroke-width="7" stroke-linecap="round"/>
+                  <path d="M50 144C74 138 100 130 124 120" fill="none" stroke="#c98a3e" stroke-width="5" stroke-linecap="round" opacity=".6"/>
+                </g>
+                <g class="fortune-moitie fortune-d">
+                  <path d="M130 42C176 40 220 66 230 106 234 122 230 138 218 152 194 146 160 136 130 118Z" fill="#dd9c4b"/>
+                  <path d="M204 80C190 62 164 50 138 49" fill="none" stroke="#f3cf93" stroke-width="7" stroke-linecap="round"/>
+                  <path d="M210 144C186 138 160 130 136 120" fill="none" stroke="#bf7f35" stroke-width="5" stroke-linecap="round" opacity=".6"/>
+                </g>
+                <g class="fortune-pli">
+                  <path d="M110 129C119 125 126 122 130 117 134 122 141 125 150 129 141 135 119 135 110 129Z" fill="#b9772f"/>
+                  <path d="M130 118C127 98 127 78 131 56" fill="none" stroke="#c98a3e" stroke-width="3" stroke-linecap="round"/>
+                </g>
+              </g>
+            </svg>
+          </button>
+          <p class="fortune-aide pinceau" id="fortune-aide">Touchez le cookie pour le casser</p>
+        </div>
+        <div class="fortune-resultat" id="fortune-resultat" hidden>
+          <p class="fortune-message" id="fortune-message"></p>
+          <p class="fortune-chiffres" id="fortune-chiffres"></p>
+          <p class="fortune-plat" id="fortune-plat"></p>
+          <div class="fortune-actions">
+            <button type="button" class="bouton bouton-principal" id="fortune-encore"><svg aria-hidden="true"><use href="#ic-encore"/></svg>Un autre cookie</button>
+            <a class="bouton bouton-contour" href="tel:+33561580697" aria-label="Le commander par téléphone au 05 61 58 06 97"><svg aria-hidden="true"><use href="#ic-tel"/></svg>Le commander</a>
+          </div>
         </div>
       </div>
     </section>
@@ -552,7 +630,7 @@
       <div class="wrap reserver-contenu" data-revele>
         <p class="pinceau">Une table pour ce soir&nbsp;?</p>
         <h2 id="reserver-titre">Réservez votre table</h2>
-        <p class="grand">Choisissez le jour, l'heure et le nombre de convives&nbsp;: votre table vous attend.</p>
+        <p class="grand">Choisissez le jour, l'heure et le nombre de convives&nbsp;: <span class="surligne">votre table vous attend</span>.</p>
         <div class="reserver-actions">
           <button type="button" class="bouton bouton-blanc bouton-grand" id="ouvrir-resa"><svg aria-hidden="true"><use href="#ic-calendrier"/></svg>Réserver en ligne</button>
           <a class="bouton bouton-clair bouton-grand" href="tel:+33561580697"><svg aria-hidden="true"><use href="#ic-tel"/></svg>05 61 58 06 97</a>
@@ -601,7 +679,7 @@
           </article>
           <figure class="plan" id="plan" data-revele>
             <div class="plan-attente">
-              <svg aria-hidden="true"><use href="#ic-pin"/></svg>
+              <span class="plan-epingle" aria-hidden="true"><svg><use href="#ic-pin"/></svg></span>
               <button type="button" class="bouton bouton-principal" id="afficher-plan">Afficher le plan</button>
               <p>Le plan est fourni par OpenStreetMap&nbsp;: il ne se charge que si vous le demandez.</p>
             </div>

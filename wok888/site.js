@@ -1,4 +1,4 @@
-// WOK 888 : carte (api.php), wok à composer, machine 888, horaires en direct, réservation et animations.
+// WOK 888 : carte (api.php), wok à composer, machine 888, fortune cookie, horaires en direct, réservation et animations.
 (() => {
   "use strict";
 
@@ -116,7 +116,39 @@
   const observerApparitions = (racine = document) => $$("[data-revele]:not(.visible)", racine).forEach((n) => apparitions.observe(n));
   observerApparitions();
 
+  // ---------- Titres : les mots montent un à un quand le bloc apparaît ----------
+  function decouperTitre(titre) {
+    if (sobre.matches) return;
+    let i = 0;
+    const morceaux = [];
+    const ajouterMot = (contenu) => {
+      const mot = el("span", "mot");
+      mot.append(contenu);
+      mot.style.setProperty("--i", i++);
+      morceaux.push(mot);
+    };
+    for (const noeud of [...titre.childNodes]) {
+      if (noeud.nodeType !== Node.TEXT_NODE) {
+        ajouterMot(noeud); // « 888 » de la machine : déjà dans son élément
+        continue;
+      }
+      for (const partie of noeud.textContent.split(/([ \n\t]+)/)) {
+        if (!partie) continue;
+        if (!partie.trim()) {
+          morceaux.push(document.createTextNode(" "));
+          continue;
+        }
+        const texte = document.createElement("span");
+        texte.textContent = partie;
+        ajouterMot(texte);
+      }
+    }
+    titre.replaceChildren(...morceaux);
+  }
+  $$(".section-tete h2, .wokhei-texte h2, .machine-texte h2, .reserver-contenu h2, .fortune-texte h2").forEach(decouperTitre);
+
   // ---------- Braises de l'accueil ----------
+  let jaillir = () => {}; // gerbe d'étincelles quand on fait sauter le wok (définie par braises())
   (function braises() {
     const toile = $("#braises");
     const ctx = toile.getContext("2d");
@@ -183,6 +215,16 @@
       dimensionner();
       requestAnimationFrame(boucle);
     };
+    jaillir = (nombre) => {
+      if (!actif) return;
+      for (let i = 0; i < nombre; i++) {
+        const p = nouvelle();
+        p.vx = (Math.random() - 0.5) * 2.6;
+        p.vy = -(2.4 + Math.random() * 3.4);
+        p.duree = 60 + Math.random() * 90;
+        particules.push(p);
+      }
+    };
     new IntersectionObserver(([e]) => (e.isIntersecting ? demarrer() : (actif = false))).observe($("#accueil"));
     document.addEventListener("visibilitychange", () => (document.hidden ? (actif = false) : demarrer()));
     addEventListener("resize", () => actif && dimensionner());
@@ -222,6 +264,7 @@
   function majHoraires() {
     const maintenant = heureLocale();
     const s = statut(maintenant);
+    document.documentElement.classList.toggle("ouvert-maintenant", s.ouvert);
     $$("[data-statut]").forEach((n) => {
       if (n.textContent !== s.texte) n.textContent = s.texte; // évite de répéter l'annonce aux lecteurs d'écran
       n.classList.toggle("ouvert", s.ouvert && !s.bientot);
@@ -315,25 +358,53 @@
     document.documentElement.style.setProperty("--decalage", `${decalage() + 12}px`);
     const onglets = $("#univers");
     onglets.classList.toggle("defilable", onglets.scrollWidth > onglets.clientWidth + 2);
+    placerPastille();
   }
   addEventListener("resize", mesurer);
+  document.fonts?.ready.then(mesurer); // la largeur des onglets change quand la police arrive
+
+  // La pastille verte glisse jusqu'à l'onglet choisi
+  const pastille = el("span", "onglet-pastille");
+  pastille.setAttribute("aria-hidden", "true");
+  let pastillePlacee = false;
+  function placerPastille() {
+    const actif = $('.onglet[aria-selected="true"]', $("#univers"));
+    pastille.classList.toggle("cachee", !actif);
+    if (!actif) return;
+    if (!pastillePlacee) pastille.classList.add("sans-transition");
+    pastille.style.width = `${actif.offsetWidth}px`;
+    pastille.style.height = `${actif.offsetHeight}px`;
+    pastille.style.transform = `translate(${actif.offsetLeft}px, ${actif.offsetTop}px)`;
+    if (pastillePlacee) return;
+    void pastille.offsetWidth;
+    pastille.classList.remove("sans-transition");
+    pastillePlacee = true;
+  }
 
   function rendreOnglets() {
     const liste = $("#univers");
     if (!univers.some((u) => u.cle === universActif)) universActif = univers[0]?.cle ?? null;
     const recherche = Boolean(requete || filtresActifs.size);
-    liste.replaceChildren(...univers.map((u) => {
-      const b = el("button", "onglet");
-      b.type = "button";
-      b.setAttribute("role", "tab");
-      b.dataset.cle = u.cle;
-      const actif = u.cle === universActif && !recherche;
-      b.setAttribute("aria-selected", String(actif));
-      b.tabIndex = u.cle === universActif ? 0 : -1;
+    // Les onglets ne sont recréés que si les univers changent : sinon la pastille ne pourrait pas glisser
+    const signature = univers.map((u) => `${u.cle}:${u.nom}`).join("|");
+    if (liste.dataset.signature !== signature) {
+      liste.dataset.signature = signature;
+      liste.replaceChildren(pastille, ...univers.map((u) => {
+        const b = el("button", "onglet");
+        b.type = "button";
+        b.setAttribute("role", "tab");
+        b.dataset.cle = u.cle;
+        b.append(icone(ICONES_UNIVERS[u.cle] || "u-defaut"), u.nom);
+        return b;
+      }));
+      pastillePlacee = false;
+    }
+    for (const b of $$(".onglet", liste)) {
+      b.setAttribute("aria-selected", String(b.dataset.cle === universActif && !recherche));
+      b.tabIndex = b.dataset.cle === universActif ? 0 : -1;
       b.classList.toggle("attenue", recherche);
-      b.append(icone(ICONES_UNIVERS[u.cle] || "u-defaut"), u.nom);
-      return b;
-    }));
+    }
+    placerPastille();
   }
 
   $("#univers").addEventListener("click", (e) => {
@@ -694,7 +765,7 @@
     majResumeWok();
   }
 
-  function redessinerWok(animer) {
+  function redessinerWok(animer, retard = 0) {
     const options = { tomber: animer };
     for (const [couche, choix, role, emplacements] of [
       [$("#couche-base"), choixWok.base, "base", EMPLACEMENTS.base],
@@ -704,7 +775,7 @@
       if (couche.dataset.contenu === voulu) continue;
       couche.dataset.contenu = voulu;
       animer ? vider(couche) : couche.replaceChildren();
-      if (choix) poser(couche, symboleDe(choix, role), emplacements, { ...options, delai: animer ? 120 : 0, graine: choix.id });
+      if (choix) poser(couche, symboleDe(choix, role), emplacements, { ...options, delai: animer ? 120 + retard : 0, graine: choix.id });
     }
     const plus = $("#couche-plus");
     const voulus = [...choixWok.supplements].sort().join(",");
@@ -713,7 +784,7 @@
       animer ? vider(plus) : plus.replaceChildren();
       [...choixWok.supplements].forEach((id, i) => {
         const p = wok.supplements.find((s) => s.id === id);
-        if (p) poser(plus, symboleDe(p, "supplement"), [EMPLACEMENTS.plus[0].map((v, j) => v + (j ? 0 : i * 40))], { ...options, delai: 150 });
+        if (p) poser(plus, symboleDe(p, "supplement"), [EMPLACEMENTS.plus[0].map((v, j) => v + (j ? 0 : i * 40))], { ...options, delai: 150 + retard });
       });
     }
   }
@@ -753,13 +824,41 @@
       animerPrix(null);
     }
     $("#wok-appeler").classList.toggle("pret", Boolean(base && garniture));
+    $("#poele").classList.toggle("pret", Boolean(base && garniture)); // le wok fume
     $("#wok-recommencer").hidden = !(base || garniture || supplements.size);
   }
 
   // Le wok est complet (base et garniture) : une gerbe d'étincelles, et il n'y a plus qu'à appeler.
   const wokComplet = () => Boolean(choixWok.base && choixWok.garniture);
-  function feterWok(avant) {
-    if (!avant && wokComplet()) setTimeout(() => feuDeJoie(scene, 18), 650);
+  function feterWok(avant, retard = 0) {
+    if (!avant && wokComplet()) setTimeout(() => feuDeJoie(scene, 18), 650 + retard);
+  }
+
+  // L'ingrédient choisi file en cloche jusque dans le wok. Renvoie la durée du vol (0 : pas de vol).
+  function volerVersWok(option) {
+    const image = option && $(".option-icone", option);
+    if (sobre.matches || !image) return 0;
+    const de = image.getBoundingClientRect();
+    const vers = wokPoele.getBoundingClientRect();
+    if (!de.width || vers.bottom < 0 || vers.top > innerHeight) return 0;
+    const demi = de.width / 2;
+    const x0 = de.left + demi, y0 = de.top + de.height / 2;
+    const x1 = vers.left + vers.width / 2, y1 = vers.top + vers.height * 0.3;
+    const sommet = Math.min(y0, y1) - 90;
+    const porteur = el("span", "vol-porteur");
+    const copie = image.cloneNode(true);
+    copie.classList.add("vol-ingredient");
+    porteur.append(copie);
+    document.body.append(porteur);
+    const duree = 620;
+    porteur.animate([{ transform: `translateX(${x0 - demi}px)` }, { transform: `translateX(${x1 - demi}px)` }],
+      { duration: duree, easing: "cubic-bezier(.3, .1, .5, 1)", fill: "forwards" });
+    copie.animate([
+      { transform: `translateY(${y0 - demi}px) scale(1) rotate(0)`, easing: "cubic-bezier(.2, .7, .4, 1)" },
+      { transform: `translateY(${sommet - demi}px) scale(1.15) rotate(-140deg)`, offset: 0.42, easing: "cubic-bezier(.6, 0, .9, .5)" },
+      { transform: `translateY(${y1 - demi}px) scale(.3) rotate(-320deg)`, opacity: 0.3 },
+    ], { duration: duree, fill: "forwards" }).onfinish = () => porteur.remove();
+    return duree;
   }
 
   $("#composeur").addEventListener("change", (e) => {
@@ -769,10 +868,12 @@
     if (input.name === "base") choixWok.base = wok.bases.find((b) => b.id === id) ?? null;
     if (input.name === "garniture") choixWok.garniture = wok.garnitures.find((g) => g.id === id) ?? null;
     if (input.name === "supplement") input.checked ? choixWok.supplements.add(id) : choixWok.supplements.delete(id);
-    redessinerWok(true);
+    const vol = input.checked ? volerVersWok(input.closest(".option")) : 0;
+    const retard = vol ? vol - 220 : 0; // les morceaux tombent quand l'ingrédient arrive
+    redessinerWok(true, retard);
     majResumeWok();
-    faireSauter(input.name === "supplement" ? 350 : 520);
-    feterWok(avant);
+    faireSauter((input.name === "supplement" ? 350 : 520) + retard);
+    feterWok(avant, retard);
   });
 
   function choisirGarniture(id) {
@@ -891,7 +992,13 @@
     $$('a[href="#menus"]').forEach((lien) => (lien.hidden = !vedettes.length));
     if (!vedettes.length) return;
     const premiere = vedettes[0].c;
-    $("#signature-titre").textContent = vedettes.every((v) => v.c === premiere) ? premiere.sousNom : "À la une";
+    const titre = $("#signature-titre");
+    const texteTitre = vedettes.every((v) => v.c === premiere) ? premiere.sousNom : "À la une";
+    if (titre.dataset.texte !== texteTitre) {
+      titre.dataset.texte = texteTitre;
+      titre.textContent = texteTitre;
+      decouperTitre(titre);
+    }
     $("#signature-note").textContent = vedettes.every((v) => v.c === premiere) ? typo(premiere.note) : "";
     $("#signature-liste").replaceChildren(...vedettes.map(({ p }, i) => {
       const carte = el("article", "menu-carte");
@@ -1111,6 +1218,341 @@
     } catch {
       /* pas de galerie : rien à montrer */
     }
+  }
+
+  // ---------- Effets du défilement et de la souris (une seule boucle d'animation) ----------
+  // Chaque tâche est appelée à chaque image tant qu'elle renvoie true.
+  const taches = new Set();
+  let boucleActive = false;
+  function boucle() {
+    for (const tache of taches) if (!tache()) taches.delete(tache);
+    boucleActive = taches.size > 0;
+    if (boucleActive) requestAnimationFrame(boucle);
+  }
+  function boucler(tache) {
+    taches.add(tache);
+    if (boucleActive) return;
+    boucleActive = true;
+    requestAnimationFrame(boucle);
+  }
+
+  const progression = $("#progression");
+  const accueil = $("#accueil");
+  const herosScene = $(".heros-scene");
+  const herosTexte = $(".heros-texte");
+  const herosBadge = $(".heros-badge");
+  const cadreBandeau = $(".bandeau-cadre");
+  const reserver = $("#reserver");
+  const grandEcran = matchMedia("(min-width: 1100px)");
+  const ecranLarge = matchMedia("(min-width: 900px)"); // accueil sur deux colonnes
+  const decors = $$(".decor").map((d) => ({
+    section: d.parentElement,
+    elements: $$(".decor-el", d).map((n) => ({ n, vitesse: Number(n.dataset.vitesse) || 0.3 })),
+  }));
+  const lanternes = $$(".lanterne").map((n, i) => ({ n, angle: 0, vitesse: 0, poids: 1 + i * 0.3 }));
+  const aLEcran = new Set(); // blocs animés actuellement visibles
+  const surveillance = new IntersectionObserver((entrees) => {
+    for (const e of entrees) e.isIntersecting ? aLEcran.add(e.target) : aLEcran.delete(e.target);
+  });
+  [accueil, cadreBandeau, reserver, ...decors.map((d) => d.section)].forEach((n) => surveillance.observe(n));
+
+  // Accueil : la scène suit un peu la souris et glisse moins vite que la page (profondeur)
+  const souris = { x: 0, y: 0, lx: 0, ly: 0 }; // position visée et position lissée, de -0,5 à 0,5
+  let hauteurAccueil = accueil.offsetHeight;
+  addEventListener("resize", () => (hauteurAccueil = accueil.offsetHeight));
+  function majAccueil() {
+    if (!aLEcran.has(accueil)) return;
+    const y = ecranLarge.matches ? Math.min(scrollY, hauteurAccueil) : 0; // sur téléphone, la scène suit la page
+    herosScene.style.translate = `${(souris.lx * -28).toFixed(1)}px ${(souris.ly * -18 + y * 0.12).toFixed(1)}px`;
+    herosTexte.style.translate = `${(souris.lx * 10).toFixed(1)}px ${(souris.ly * 8 + y * 0.05).toFixed(1)}px`;
+    herosBadge.style.translate = `${(souris.lx * 36).toFixed(1)}px ${(souris.ly * 26).toFixed(1)}px`;
+    herosBadge.style.rotate = `${(y * 0.03).toFixed(1)}deg`;
+  }
+  function suivreSouris() {
+    souris.lx += (souris.x - souris.lx) * 0.08;
+    souris.ly += (souris.y - souris.ly) * 0.08;
+    majAccueil();
+    return Math.abs(souris.x - souris.lx) + Math.abs(souris.y - souris.ly) > 0.002;
+  }
+
+  // Lanternes : le défilement les fait se balancer (ressort amorti)
+  let elan = 0; // vitesse du défilement, lissée (pixels par image)
+  function balancerLanternes() {
+    let bouge = false;
+    for (const l of lanternes) {
+      l.vitesse += -l.angle * 0.012 - l.vitesse * 0.03 + (elan * 0.002) / l.poids;
+      l.angle = Math.max(-14, Math.min(14, l.angle + l.vitesse));
+      if (Math.abs(l.angle) > 0.05 || Math.abs(l.vitesse) > 0.01) bouge = true;
+      else l.angle = l.vitesse = 0;
+      l.n.style.rotate = `${l.angle.toFixed(2)}deg`;
+    }
+    return bouge;
+  }
+
+  let dernierY = scrollY;
+  let animBandeau = null;
+  function suivreDefilement() {
+    // Lectures d'abord, écritures ensuite : pas de mise en page forcée
+    const y = scrollY;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const blocsDecor = grandEcran.matches && !sobre.matches
+      ? decors.filter((d) => aLEcran.has(d.section)).map((d) => [d, d.section.getBoundingClientRect()]) : [];
+    elan += (y - dernierY - elan) * 0.3;
+    dernierY = y;
+    if (Math.abs(elan) < 0.05) elan = 0;
+    progression.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max).toFixed(4) : 0})`;
+    if (sobre.matches) return false;
+    majAccueil();
+    // Le bandeau accélère avec le défilement, et repart en arrière quand on remonte
+    if (aLEcran.has(cadreBandeau)) {
+      animBandeau ??= $(".bandeau-piste").getAnimations()[0] ?? null;
+      if (animBandeau) animBandeau.playbackRate = 1 + Math.max(-5, Math.min(7, elan * 0.2));
+    }
+    if (elan && aLEcran.has(reserver)) boucler(balancerLanternes);
+    for (const [d, r] of blocsDecor) {
+      const ecart = r.top + r.height / 2 - innerHeight / 2;
+      for (const e of d.elements) e.n.style.translate = `0 ${(ecart * e.vitesse * -0.6).toFixed(1)}px`;
+    }
+    return elan !== 0;
+  }
+  addEventListener("scroll", () => boucler(suivreDefilement), { passive: true });
+  if (pointeurFin.matches && !sobre.matches) {
+    accueil.addEventListener("pointermove", (e) => {
+      const r = accueil.getBoundingClientRect();
+      souris.x = (e.clientX - r.left) / r.width - 0.5;
+      souris.y = (e.clientY - r.top) / r.height - 0.5;
+      boucler(suivreSouris);
+    });
+    accueil.addEventListener("pointerleave", () => {
+      souris.x = souris.y = 0;
+      boucler(suivreSouris);
+    });
+  }
+
+  // ---------- Accueil : « Ce soir, envie… » ----------
+  const ENVIES = ["d'un wok au canard", "de sushis", "d'un poké bowl", "de nems maison", "d'un bò bún", "de bouchées vapeur", "du menu Royal 888", "d'un mojito"];
+  let envie = 0;
+  async function envieSuivante() {
+    if (document.hidden || !aLEcran.has(accueil)) return;
+    const cadre = $("#envie-cadre");
+    const mot = $("#envie-mot");
+    envie = (envie + 1) % ENVIES.length;
+    const largeur = cadre.offsetWidth;
+    const sortie = mot.animate([{ transform: "none", opacity: 1 }, { transform: "translateY(-100%)", opacity: 0 }],
+      { duration: 260, easing: "cubic-bezier(.5, 0, .75, 0)", fill: "forwards" });
+    try {
+      await sortie.finished;
+    } catch {
+      return;
+    }
+    mot.textContent = typo(ENVIES[envie]);
+    cadre.animate([{ width: `${largeur}px` }, { width: `${cadre.offsetWidth}px` }], { duration: 380, easing: "cubic-bezier(.2, .8, .2, 1)" });
+    mot.animate([{ transform: "translateY(100%)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 520, easing: "cubic-bezier(.2, .8, .2, 1.3)" });
+    sortie.cancel();
+  }
+  if (!sobre.matches) setInterval(envieSuivante, 2600);
+
+  // ---------- Accueil : le wok se fait sauter d'un clic ----------
+  const sceneWok = $(".scene-wok");
+  const indiceWok = $("#wok-indice");
+  const INDICES = ["Encore !", "Plus fort !", "Bravo, vous avez le coup de main !"];
+  const VOLANTS = ["i-brocoli", "i-carotte", "i-crevette", "i-poivron", "i-courgette", "i-oignon", "i-nouille"];
+  let sauts = 0;
+
+  // Une poignée d'ingrédients jaillit du wok et retombe
+  function lancerIngredients(nombre = 12) {
+    const groupe = $(".volants", sceneWok);
+    for (let i = 0; i < nombre; i++) {
+      const s = auHasard(VOLANTS);
+      const [l, h] = TAILLES[s];
+      const position = svg("g", { transform: `translate(${Math.round(250 + Math.random() * 160)} ${Math.round(296 + Math.random() * 16)})` });
+      const morceau = svg("use", { href: `#${s}`, x: -l * 0.65, y: -h * 0.65, width: l * 1.3, height: h * 1.3, class: "piece" });
+      position.append(morceau);
+      groupe.append(position);
+      const dx = (Math.random() - 0.5) * 300, haut = 170 + Math.random() * 190, tour = (Math.random() - 0.5) * 1000;
+      morceau.animate([
+        { transform: "translate(0, 0) rotate(0)", opacity: 1, easing: "cubic-bezier(.2, .7, .4, 1)" },
+        { transform: `translate(${dx * 0.55}px, ${-haut}px) rotate(${tour * 0.5}deg)`, opacity: 1, offset: 0.45, easing: "cubic-bezier(.6, 0, .9, .5)" },
+        { transform: `translate(${dx}px, ${60 - haut * 0.2}px) rotate(${tour}deg)`, opacity: 0 },
+      ], { duration: 1100 + Math.random() * 500, delay: Math.random() * 120, fill: "backwards" }).onfinish = () => position.remove();
+    }
+  }
+
+  $("#wok-toucher").hidden = sobre.matches;
+  $("#wok-toucher").addEventListener("click", () => {
+    relancer(sceneWok, "grand-saut");
+    lancerIngredients();
+    jaillir(36);
+    gresiller(1.2);
+    navigator.vibrate?.(15);
+    if (sauts < INDICES.length) {
+      indiceWok.textContent = typo(INDICES[sauts]);
+      indiceWok.animate([{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.12, offset: 0.6 }, { opacity: 1, scale: 1 }],
+        { duration: 450, easing: "ease-out", fill: "forwards" });
+      if (sauts === INDICES.length - 1) indiceWok.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, delay: 2600, fill: "forwards" });
+    }
+    sauts++;
+  });
+  sceneWok.addEventListener("animationend", (e) => {
+    if (e.animationName === "grand-saut") sceneWok.classList.remove("grand-saut");
+  });
+
+  // ---------- Le fortune cookie ----------
+  const FORTUNES = [
+    "Un bon wok n'attend pas : la chance sourit aux affamés.",
+    "Le 8 vous porte bonheur : aujourd'hui, tout vous réussit.",
+    "Qui partage ses nems double son bonheur.",
+    "Votre prochaine bouchée sera la meilleure de la semaine.",
+    "Celui qui hésite entre sushis et wok… prend les deux.",
+    "Le feu vif révèle les saveurs ; l'amitié révèle les gens.",
+    "Un repas partagé est un repas réussi.",
+    "La chance, c'est comme le riz sauté : elle se savoure chaude.",
+    "Les grandes aventures commencent par un bol de nouilles.",
+    "Ce soir, laissez parler votre appétit.",
+    "Un sourire et des baguettes : vous avez tout pour être heureux.",
+    "La patience est une vertu, sauf devant un wok qui fume.",
+    "Une bonne nouvelle arrive, et elle sent bon le gingembre.",
+    "Les meilleures soirées commencent autour d'une table bien garnie.",
+  ];
+  const cookie = $("#fortune-cookie");
+  const resultatFortune = $("#fortune-resultat");
+  let frappe = 0;
+
+  // Le message s'écrit lettre à lettre (la place est déjà réservée : rien ne bouge autour)
+  function taper(cible, texte) {
+    clearInterval(frappe);
+    texte = typo(texte);
+    if (sobre.matches) return void (cible.textContent = texte);
+    const tape = document.createElement("span");
+    const reste = el("span", "reste");
+    reste.textContent = texte;
+    cible.replaceChildren(tape, reste);
+    let n = 0;
+    frappe = setInterval(() => {
+      n = Math.min(texte.length, n + 1);
+      tape.textContent = texte.slice(0, n);
+      reste.textContent = texte.slice(n);
+      if (n === texte.length) clearInterval(frappe);
+    }, 32);
+  }
+
+  function chiffresPorteBonheur() {
+    const chiffres = new Set([8]);
+    while (chiffres.size < 4) chiffres.add(1 + Math.floor(Math.random() * 88));
+    return [...chiffres].sort((x, y) => x - y);
+  }
+
+  function platPorteBonheur() {
+    const choix = [...produits.values()].filter(({ p, c }) => disponible(p) && c.univers.cle !== "boissons");
+    return choix.length ? auHasard(choix) : null;
+  }
+
+  // Des miettes s'échappent du cookie
+  function miettes(autour, nombre = 14) {
+    if (sobre.matches) return;
+    const r = autour.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height * 0.62;
+    for (let i = 0; i < nombre; i++) {
+      const m = el("span", "miette");
+      document.body.append(m);
+      const dx = (Math.random() - 0.5) * 240, dy = -40 - Math.random() * 90;
+      m.animate([
+        { transform: `translate(${x}px, ${y}px) rotate(0)`, opacity: 1 },
+        { transform: `translate(${x + dx * 0.6}px, ${y + dy}px) rotate(${Math.random() * 360}deg)`, opacity: 1, offset: 0.4 },
+        { transform: `translate(${x + dx}px, ${y + 130}px) rotate(${Math.random() * 720}deg)`, opacity: 0 },
+      ], { duration: 900 + Math.random() * 400, easing: "cubic-bezier(.2, .6, .4, 1)" }).onfinish = () => m.remove();
+    }
+  }
+
+  // Le « crac » du cookie (si le son est activé)
+  function craquement() {
+    const ac = contexteAudio();
+    if (!ac) return;
+    const n = Math.floor(ac.sampleRate * 0.14);
+    const tampon = ac.createBuffer(1, n, ac.sampleRate);
+    const donnees = tampon.getChannelData(0);
+    for (let i = 0; i < n; i++) donnees[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+    const source = ac.createBufferSource();
+    source.buffer = tampon;
+    const filtre = ac.createBiquadFilter();
+    filtre.type = "highpass";
+    filtre.frequency.value = 1800;
+    const gain = ac.createGain();
+    gain.gain.value = 0.45;
+    source.connect(filtre).connect(gain).connect(ac.destination);
+    source.start();
+  }
+
+  function casserCookie() {
+    if (cookie.classList.contains("casse")) return nouveauCookie();
+    cookie.classList.remove("nouveau");
+    cookie.classList.add("casse");
+    $(".sr-only", cookie).textContent = "Prendre un autre fortune cookie";
+    $("#fortune-aide").textContent = "Touchez-le pour en prendre un autre";
+    miettes(cookie);
+    craquement();
+    navigator.vibrate?.(20);
+    const message = auHasard(FORTUNES);
+    const chiffres = chiffresPorteBonheur().join(" · ");
+    const choix = platPorteBonheur();
+    resultatFortune.hidden = false;
+    taper($("#fortune-message"), message);
+    $("#fortune-chiffres").replaceChildren(typo("Vos chiffres porte-bonheur : "), el("b", "", chiffres));
+    const plat = $("#fortune-plat");
+    plat.hidden = !choix;
+    let texteAnnonce = `${message} Vos chiffres porte-bonheur : ${chiffres}.`;
+    if (choix) {
+      const { p, c } = choix;
+      const tarif = wok && c === wok.categorie ? `dès ${prix(p.priceCents)}` : prix(p.priceCents);
+      plat.replaceChildren(typo("Votre plat porte-bonheur : "), el("b", "", p.name), ` · ${tarif}`);
+      texteAnnonce += ` Votre plat porte-bonheur : ${p.name}, ${tarif}.`;
+    }
+    annoncer(typo(texteAnnonce));
+    // Sur téléphone, le message s'affiche sous le cookie : on le montre s'il est hors de l'écran
+    if (!sobre.matches) {
+      setTimeout(() => {
+        if (resultatFortune.getBoundingClientRect().bottom > innerHeight) resultatFortune.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 450);
+    }
+  }
+
+  function nouveauCookie() {
+    clearInterval(frappe);
+    cookie.classList.remove("casse");
+    relancer(cookie, "nouveau");
+    $(".sr-only", cookie).textContent = "Casser le fortune cookie";
+    $("#fortune-aide").textContent = "Touchez le cookie pour le casser";
+    resultatFortune.hidden = true;
+  }
+
+  $("#fortune").hidden = false;
+  cookie.addEventListener("click", casserCookie);
+  $("#fortune-encore").addEventListener("click", () => {
+    nouveauCookie();
+    cookie.focus({ preventScroll: true });
+    if (!sobre.matches) cookie.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  // ---------- Grands boutons « aimantés » (souris seulement) ----------
+  if (pointeurFin.matches && !sobre.matches) {
+    let aimante = null;
+    const relacher = () => {
+      aimante?.style.removeProperty("--mx");
+      aimante?.style.removeProperty("--my");
+      aimante = null;
+    };
+    document.addEventListener("pointermove", (e) => {
+      const b = e.target.closest?.(".bouton-grand");
+      if (b !== aimante) relacher();
+      if (!b || b.disabled) return;
+      aimante = b;
+      const r = b.getBoundingClientRect();
+      const dx = Math.max(-10, Math.min(10, (e.clientX - r.left - r.width / 2) * 0.18));
+      const dy = Math.max(-6, Math.min(6, (e.clientY - r.top - r.height / 2) * 0.3));
+      b.style.setProperty("--mx", `${dx.toFixed(1)}px`);
+      b.style.setProperty("--my", `${dy.toFixed(1)}px`);
+    }, { passive: true });
+    document.documentElement.addEventListener("pointerleave", relacher);
   }
 
   // ---------- Démarrage ----------

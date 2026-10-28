@@ -1,6 +1,6 @@
 # WOK 888 : nouveau site
 
-Nouveau site du restaurant WOK 888, 16 route de Grenade à Seilh, qui remplace le site WordPress de wok888.fr. Il reprend toute la carte (195 plats et boissons, aux prix de l'ancien site : voir « À vérifier avec le restaurant ») dans un thème **vert et blanc**, avec des animations et une vraie expérience client : composer son wok, laisser la machine 888 choisir son repas, réserver sa table. Les commandes se passent **par téléphone** : il n'y a pas de commande en ligne.
+Nouveau site du restaurant WOK 888, 16 route de Grenade à Seilh, qui remplace le site WordPress de wok888.fr. Il reprend toute la carte (195 plats et boissons, aux prix de l'ancien site : voir « À vérifier avec le restaurant ») dans un thème **vert et blanc**, avec des animations et une vraie expérience client : faire sauter le wok, composer le sien, laisser la machine 888 choisir son repas, casser un fortune cookie, réserver sa table. Les commandes se passent **par téléphone** : il n'y a pas de commande en ligne.
 
 Il fonctionne en **PHP** avec une base **SQLite** (un simple fichier créé tout seul dans `data/`) : rien d'autre à installer. Il tourne tel quel sous **XAMPP** (Apache) comme chez n'importe quel hébergeur PHP.
 
@@ -9,14 +9,17 @@ Il fonctionne en **PHP** avec une base **SQLite** (un simple fichier créé tout
 | Section | Ce qui se passe |
 |---|---|
 | Ouverture | Le logo se dessine trait par trait, le bol de jade s'allume, « WOK 888 » apparaît (une fois par visite, se passe d'un clic). |
-| Accueil | Un wok qui saute au-dessus des flammes, des étincelles qui s'envolent, « Ouvert · jusqu'à 22h30 » en direct. |
+| Accueil | Un wok qui saute au-dessus des flammes ; le client le fait sauter lui-même d'un clic (« Touchez le wok ! ») et les ingrédients volent. « Ce soir, envie d'un wok au canard ? » : le plat change toutes les trois secondes environ. La scène suit la souris et donne de la profondeur au défilement. « Ouvert · jusqu'à 22h30 » en direct. |
 | Le souffle du wok | 鑊氣, le *wok hei* : ce qui fait le goût d'un plat sauté au wok, avec des chiffres qui s'animent. |
-| **Composez votre wok** | Le client choisit sa base, sa garniture et l'œuf bio : chaque ingrédient tombe dans le wok, qui saute et flambe. Le prix se met à jour ; quand le wok est complet, le bouton « Le commander au 05 61 58 06 97 » appelle le restaurant. Grésillement du wok en option (bouton « Son »). |
+| **Composez votre wok** | Le client choisit sa base, sa garniture et l'œuf bio : l'ingrédient choisi vole jusque dans le wok, qui saute et flambe. Le prix se met à jour ; quand le wok est complet, il fume, des étincelles jaillissent et le bouton « Le commander au 05 61 58 06 97 » appelle le restaurant. Grésillement du wok en option (bouton « Son »). |
 | À la une | Les menus japonais (Royal 888, Duo, Maki, Sushi) en grandes cartes, chacune avec un bouton « Commander » qui appelle le restaurant ; elles se font glisser sur téléphone. |
-| La carte | 8 univers (Entrées, Côté wok, Poké bowls, Nos plats, Japonais, Menus, Desserts, Boissons), recherche, filtres, plats épuisés signalés en direct. |
+| La carte | 8 univers (Entrées, Côté wok, Poké bowls, Nos plats, Japonais, Menus, Desserts, Boissons) avec une pastille qui glisse de l'un à l'autre, recherche, filtres, plats épuisés signalés en direct. |
 | La machine 888 | Une machine à sous qui tire une entrée, un plat et un dessert ; le repas tiré se commande d'un geste par téléphone. |
-| Réserver | Lanternes qui se balancent ; la réservation resOS du restaurant s'ouvre dans la page. |
-| Horaires et accès | Jour du jour mis en avant, Google Maps, Waze, Plans, plan OpenStreetMap à la demande. |
+| **Le fortune cookie** | Le client casse un fortune cookie (miettes, « crac » si le son est activé) : un message porte-bonheur s'écrit lettre à lettre, avec ses chiffres porte-bonheur et un plat de la carte tiré au sort, à commander par téléphone. |
+| Réserver | Lanternes qui se balancent, et plus fort quand on fait défiler la page ; la réservation resOS du restaurant s'ouvre dans la page. |
+| Horaires et accès | Jour du jour mis en avant, Google Maps, Waze, Plans, plan OpenStreetMap à la demande (l'épingle tombe et fait des ondes). |
+
+Partout : les titres montent mot à mot, des mots clés se surlignent au feutre vert, une barre de progression suit la lecture, le bandeau accélère avec le défilement (et repart en arrière quand on remonte), des feuilles de bambou flottent sur les grands écrans, les grands boutons suivent légèrement la souris et le téléphone « sonne » de temps en temps quand le restaurant est ouvert.
 
 Tout s'adapte au téléphone (barre d'actions en bas : Appeler, La carte, Mon wok, Réserver). Les animations s'arrêtent pour les visiteurs qui ont demandé à leur appareil de limiter les mouvements.
 
@@ -75,6 +78,10 @@ Du mardi au dimanche, 12h00 – 22h30, fermé le lundi. Ils sont écrits à deux
 2. `index.html` : le tableau des horaires, le pied de page, l'accueil et la fiche Google (`openingHoursSpecification`).
 
 Les tests vérifient que les deux concordent.
+
+## Textes animés
+
+Les plats de « Ce soir, envie… » (`ENVIES`) et les messages des fortune cookies (`FORTUNES`) sont en clair dans `site.js` : ils se modifient comme du texte. Le plat porte-bonheur, lui, est tiré de la carte (jamais une boisson ni un plat épuisé).
 
 ## Couleurs
 
