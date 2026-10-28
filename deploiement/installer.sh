@@ -3,11 +3,12 @@
 # accessibles par l'adresse IP :
 #   http://IP/restaurant/   Aux Saveurs Braisées (carte et espace de gestion)
 #   http://IP/cambodge/     Aux Saveurs du Cambodge (site, carte et espace de gestion)
+#   http://IP/wok888/       WOK 888 (site animé, carte et espace de gestion)
 #   http://IP/fleur-dor/    La Fleur d'Or (site et panneau d'administration)
 #   http://IP/toilettage/   le salon de toilettage
 #
 # Installation ou mise à jour, en une commande sur le serveur :
-#   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash
 #
 # Relancer la même commande met les sites à jour depuis GitHub sans toucher aux données :
 # bases des restaurants (produits, stocks, compte, statistiques), carte et mot de passe de La Fleur d'Or.
@@ -16,6 +17,7 @@
 # Sur un serveur déjà installé, les sites nommés s'ajoutent à ceux qui y sont (liste dans /opt/sites/sites-installes) :
 #   curl -fsSL …/installer.sh | sudo bash -s -- restaurant
 #   curl -fsSL …/installer.sh | sudo bash -s -- cambodge      (ajoute Aux Saveurs du Cambodge)
+#   curl -fsSL …/installer.sh | sudo bash -s -- wok888        (ajoute WOK 888 : les autres sites et leurs données restent)
 #
 # Déménagement : si le fichier sauvegarde-sites.tar.gz créé par sauvegarder.sh sur l'ancien serveur
 # se trouve dans le dossier personnel de l'utilisateur (ou est indiqué par « --importer FICHIER »),
@@ -27,16 +29,16 @@ set -euo pipefail
 
 GITHUB=https://github.com/laurenttranchard9-beep
 SAVEURS_DEPOT=${SAVEURS_DEPOT:-"$GITHUB/Site-internet-aux-saveurs-brais-e.git"}
-SAVEURS_BRANCHE=${SAVEURS_BRANCHE:-claude/pet-grooming-landing-page-po26m7}
+SAVEURS_BRANCHE=${SAVEURS_BRANCHE:-claude/relaxed-allen-03uwo8}
 FLEUR_DEPOT="$GITHUB/Fleur-d-or.git"
 FLEUR_BRANCHE=claude/practical-mendel-dpj572
 
 SOURCES=${SOURCES:-/opt/sites}
 WEB=${WEB:-/var/www/html}
 SAUVEGARDE_NOM=sauvegarde-sites.tar.gz
-TOUS_LES_SITES="restaurant cambodge fleur-dor toilettage"
+TOUS_LES_SITES="restaurant cambodge wok888 fleur-dor toilettage"
 SITES_PAR_DEFAUT="restaurant fleur-dor toilettage" # installés quand aucun site n'est nommé (première installation)
-SITES_CARTE="restaurant cambodge"  # sites bâtis sur le moteur de carte : api.php, base SQLite, espace de gestion
+SITES_CARTE="restaurant cambodge wok888"  # sites bâtis sur le moteur de carte : api.php, base SQLite, espace de gestion
 MEMOIRE="$SOURCES/sites-installes" # sites installés sur ce serveur
 DOMAINES_IMPORTES=""               # lignes « domaine site » des certificats repris
 
@@ -72,6 +74,7 @@ nom_site() {
     case $1 in
         restaurant) echo "Aux Saveurs Braisées" ;;
         cambodge) echo "Aux Saveurs du Cambodge" ;;
+        wok888) echo "WOK 888" ;;
         fleur-dor) echo "La Fleur d'Or" ;;
         toilettage) echo "Salon de toilettage" ;;
     esac
@@ -92,6 +95,18 @@ detecter_systeme() {
             SYSTEME=redhat; APACHE_LOGS=/var/log/httpd/error_log
             WEB_USER=${WEB_USER:-apache} ;;
         *) erreur "système non pris en charge (${PRETTY_NAME:-inconnu}). Utilisez Ubuntu, Debian ou Amazon Linux 2023." ;;
+    esac
+}
+
+# Serveur partagé : si le port 80 est déjà tenu par un autre serveur web que Apache (nginx, Caddy…),
+# installer Apache le casserait. On s'arrête avant d'avoir rien modifié.
+verifier_port_web() {
+    command -v ss >/dev/null 2>&1 || return 0
+    local occupant
+    occupant=$(ss -Hltnp 'sport = :80' 2>/dev/null | grep -oE 'users:\(\("[^"]+"' | head -n 1 | cut -d'"' -f2 || true)
+    case $occupant in
+        ""|apache2|httpd) ;;
+        *) erreur "le port 80 est déjà utilisé par « $occupant ». Ces scripts installent les sites avec Apache ; rien n'a été modifié." ;;
     esac
 }
 
@@ -135,13 +150,17 @@ recuperer() { # dépôt, branche, dossier
 
 # ---------- Déploiement ----------
 
-deployer_carte() { # site (dossier du dépôt et du serveur : restaurant, cambodge)
+deployer_carte() { # site (dossier du dépôt et du serveur : restaurant, cambodge, wok888)
     local src="$SOURCES/aux-saveurs-braisees/$1" dst="$WEB/$1"
+    [ -d "$src" ] || erreur "le site « $1 » est absent de la branche $SAVEURS_BRANCHE du dépôt."
     mkdir -p "$dst"
-    # Les fichiers exclus (base de données, fichier de réinitialisation) ne sont jamais écrasés ni supprimés.
+    # Les fichiers exclus (base de données, fichier de réinitialisation, photos de la galerie déposées
+    # sur le serveur) ne sont jamais écrasés ni supprimés.
     rsync -a --delete \
         --exclude 'data/*.sqlite*' \
         --exclude 'data/reinitialiser.txt' \
+        --exclude 'photos/*.[jJ][pP][gG]' --exclude 'photos/*.[jJ][pP][eE][gG]' \
+        --exclude 'photos/*.[pP][nN][gG]' --exclude 'photos/*.[wW][eE][bB][pP]' \
         "$src/" "$dst/"
     chown -R "$WEB_USER:$WEB_USER" "$dst/data"
     selinux_ecriture "$dst/data"
@@ -222,6 +241,7 @@ page_accueil() {
 HTML
     if site_choisi restaurant; then echo '  <a href="restaurant/">Aux Saveurs Braisées<small>La carte du restaurant</small></a>'; fi
     if site_choisi cambodge; then echo '  <a href="cambodge/">Aux Saveurs du Cambodge<small>Cuisine cambodgienne à Saint-Alban</small></a>'; fi
+    if site_choisi wok888; then echo '  <a href="wok888/">WOK 888<small>Restaurant asiatique à Seilh</small></a>'; fi
     if site_choisi fleur-dor; then echo '  <a href="fleur-dor/">La Fleur d'"'"'Or<small>Restaurant asiatique à Grenade</small></a>'; fi
     if site_choisi toilettage; then echo '  <a href="toilettage/">Bulles &amp; Moustaches<small>Le salon de toilettage</small></a>'; fi
     cat <<'HTML'
@@ -296,6 +316,12 @@ importer_sauvegarde() {
     chmod 700 "$avant"
 
     for site in $SITES_CARTE; do importer_base "$site" "$tmp" "$avant"; done
+
+    # WOK 888 : photos de la galerie (ajoutées à celles déjà présentes).
+    if [ -d "$tmp/wok888/photos" ] && site_choisi wok888; then
+        rsync -a "$tmp/wok888/photos/" "$WEB/wok888/photos/"
+        echo "   WOK 888 : photos de la galerie reprises."
+    fi
 
     # La Fleur d'Or : carte, sauvegardes de la carte et mot de passe du panneau.
     if [ -f "$tmp/fleur-dor/donnees/carte.json" ] && ! site_choisi fleur-dor; then
@@ -480,6 +506,10 @@ verifications() {
         verifier "$nom : base protégée"                "/$site/data/"                        403
         verifier "$nom : code protégé"                 "/$site/inc/db.php"                   403
     done
+    if site_choisi wok888; then
+        verifier "WOK 888 : galerie"                       "/wok888/photos.php"                  200
+        verifier "WOK 888 : documentation protégée"        "/wok888/README.md"                   403
+    fi
     if site_choisi fleur-dor; then
         verifier "La Fleur d'Or : site"                    "/fleur-dor/"                         200
         verifier "La Fleur d'Or : panneau"                 "/fleur-dor/admin/"                   200
@@ -510,7 +540,7 @@ main() {
     while [ $# -gt 0 ]; do
         case $1 in
             --importer) [ $# -ge 2 ] || erreur "indiquez le fichier après --importer."; IMPORTER=$2; shift 2 ;;
-            restaurant|cambodge|fleur-dor|toilettage) demandes+="$1 "; shift ;;
+            restaurant|cambodge|wok888|fleur-dor|toilettage) demandes+="$1 "; shift ;;
             *) erreur "« $1 » inconnu. Sites possibles : $TOUS_LES_SITES ; option : --importer FICHIER." ;;
         esac
     done
@@ -518,6 +548,7 @@ main() {
     choisir_sites "$demandes"
     echo "Sites installés sur ce serveur : $SITES_CHOISIS"
     detecter_systeme
+    verifier_port_web
     trap 'rm -rf "${IMPORT_TMP:-}"' EXIT
 
     etape "1/7 Installation d'Apache, de PHP et de Git"

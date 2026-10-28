@@ -1,14 +1,15 @@
 #!/bin/bash
 # Sauvegarde les données des sites, pour les garder ou pour déménager sur un autre serveur :
-#   - Aux Saveurs Braisées et Aux Saveurs du Cambodge : la base (carte, prix, stocks, compte, statistiques) ;
+#   - Aux Saveurs Braisées, Aux Saveurs du Cambodge et WOK 888 : la base (carte, prix, stocks, compte, statistiques) ;
+#   - WOK 888 : les photos de la galerie ;
 #   - La Fleur d'Or : la carte, ses sauvegardes et le mot de passe du panneau ;
 #   - les certificats HTTPS (Let's Encrypt) de leurs domaines, pour que ceux-ci fonctionnent tout de suite
 #     sur le nouveau serveur.
 #
 # Sur l'ANCIEN serveur, par exemple pour déménager seulement le restaurant :
-#   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/sauvegarder.sh | sudo bash -s -- restaurant ubuntu@ADRESSE-IP-DU-NOUVEAU-SERVEUR
+#   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/sauvegarder.sh | sudo bash -s -- restaurant ubuntu@ADRESSE-IP-DU-NOUVEAU-SERVEUR
 #
-# Sites : restaurant, cambodge, fleur-dor, toilettage (sans précision : tous). Le fichier sauvegarde-sites.tar.gz est créé
+# Sites : restaurant, cambodge, wok888, fleur-dor, toilettage (sans précision : tous). Le fichier sauvegarde-sites.tar.gz est créé
 # dans le dossier personnel, puis envoyé dans celui de l'utilisateur indiqué sur le nouveau serveur (son mot de passe
 # est demandé). Sans destination, le fichier est seulement créé. Sur le nouveau serveur, installer.sh le trouve et le reprend.
 
@@ -17,8 +18,8 @@ set -euo pipefail
 
 WEB=${WEB:-/var/www/html}
 NOM=sauvegarde-sites.tar.gz
-TOUS_LES_SITES="restaurant cambodge fleur-dor toilettage"
-DEPOT_BRUT=https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7
+TOUS_LES_SITES="restaurant cambodge wok888 fleur-dor toilettage"
+DEPOT_BRUT=https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8
 
 erreur() { echo "Erreur : $*" >&2; exit 1; }
 
@@ -26,6 +27,7 @@ nom_site() {
     case $1 in
         restaurant) echo "Aux Saveurs Braisées" ;;
         cambodge) echo "Aux Saveurs du Cambodge" ;;
+        wok888) echo "WOK 888" ;;
     esac
 }
 
@@ -55,7 +57,7 @@ copier_certificat() { # domaine, site, dossier de la sauvegarde
 
 main() {
     [ "$(id -u)" -eq 0 ] || erreur "lancez ce script en administrateur (sudo)."
-    local destination="" sites="" arg site domaine utilisateur=${SUDO_USER:-root} dossier tmp archive base
+    local destination="" sites="" arg site domaine utilisateur=${SUDO_USER:-root} dossier tmp archive base nb_photos
     for arg in "$@"; do
         if [[ " $TOUS_LES_SITES " == *" $arg "* ]]; then
             sites+="${sites:+ }$arg"
@@ -75,7 +77,7 @@ main() {
 
     echo "==> 1/2 Sauvegarde ($sites)"
     # Sites à carte : copie cohérente de la base, même si quelqu'un modifie la carte au même moment.
-    for site in restaurant cambodge; do
+    for site in restaurant cambodge wok888; do
         [[ " $sites " == *" $site "* ]] || continue
         base=""
         # Dossier absent (site non installé ici) : find échouerait et arrêterait le script.
@@ -89,6 +91,19 @@ main() {
             echo "   $(nom_site "$site") : pas de base trouvée dans $WEB/$site/data."
         fi
     done
+    # WOK 888 : les photos de la galerie, déposées sur le serveur (elles ne sont pas sur GitHub).
+    if [[ " $sites " == *" wok888 "* ]] && [ -d "$WEB/wok888/photos" ]; then
+        mkdir -p "$tmp/wok888/photos"
+        find "$WEB/wok888/photos" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) \
+            -exec cp -a -t "$tmp/wok888/photos" {} +
+        nb_photos=$(find "$tmp/wok888/photos" -type f | wc -l)
+        if [ "$nb_photos" -gt 0 ]; then
+            echo "   WOK 888 : $nb_photos photo(s) de la galerie sauvegardée(s)."
+        else
+            rmdir "$tmp/wok888/photos"
+            rmdir "$tmp/wok888" 2>/dev/null || true
+        fi
+    fi
     if [[ " $sites " == *" fleur-dor "* ]] && [ -f "$WEB/fleur-dor/donnees/carte.json" ]; then
         mkdir -p "$tmp/fleur-dor"
         cp -a "$WEB/fleur-dor/donnees" "$tmp/fleur-dor/donnees"

@@ -1,11 +1,12 @@
 # Mise en ligne des sites (Ubuntu, Debian ou Amazon Linux 2023)
 
-Quatre sites peuvent être installés sur un serveur, dans des sous-dossiers de son adresse IP :
+Cinq sites peuvent être installés sur un serveur, dans des sous-dossiers de son adresse IP :
 
 | Site | Nom dans les scripts | Adresse | Administration |
 |---|---|---|---|
 | Aux Saveurs Braisées | `restaurant` | `http://ADRESSE-IP/restaurant/` | `http://ADRESSE-IP/restaurant/admin/` |
 | Aux Saveurs du Cambodge | `cambodge` | `http://ADRESSE-IP/cambodge/` | `http://ADRESSE-IP/cambodge/admin/` |
+| WOK 888 | `wok888` | `http://ADRESSE-IP/wok888/` | `http://ADRESSE-IP/wok888/admin/` |
 | La Fleur d'Or | `fleur-dor` | `http://ADRESSE-IP/fleur-dor/` | `http://ADRESSE-IP/fleur-dor/admin/` |
 | Salon de toilettage | `toilettage` | `http://ADRESSE-IP/toilettage/` | |
 
@@ -13,7 +14,7 @@ Quatre sites peuvent être installés sur un serveur, dans des sous-dossiers de 
 
 Les scripts récupèrent les sites directement sur GitHub :
 
-- `Site-internet-aux-saveurs-brais-e`, branche `claude/pet-grooming-landing-page-po26m7` (les deux restaurants, le salon et ces scripts) ;
+- `Site-internet-aux-saveurs-brais-e`, branche `claude/relaxed-allen-03uwo8` (Aux Saveurs Braisées, Aux Saveurs du Cambodge, WOK 888, le salon et ces scripts) ;
 - `Fleur-d-or`, branche `claude/practical-mendel-dpj572`.
 
 | Script | Rôle |
@@ -22,18 +23,63 @@ Les scripts récupèrent les sites directement sur GitHub :
 | `ajouter-domaine.sh` | relie un nom de domaine à un site, avec HTTPS |
 | `sauvegarder.sh` | sauvegarde les données, et peut les envoyer sur un nouveau serveur |
 
+## Ajouter WOK 888 sur un serveur qui a déjà des sites
+
+Sur le serveur (connexion : voir « Se connecter au serveur » plus bas), collez cette commande :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash -s -- wok888
+```
+
+- **Les sites déjà installés par ces scripts restent en place avec toutes leurs données** (cartes, prix, stocks, comptes, statistiques, carte de La Fleur d'Or) ; ils sont seulement mis à jour vers leur dernière version, comme lors d'une mise à jour normale. La page d'accueil `http://ADRESSE-IP/` gagne un lien vers WOK 888.
+- **Les sites installés autrement** (configurés à la main) ne sont pas touchés : leur page d'accueil `/var/www/html/index.html` et leurs hôtes virtuels sont conservés. Si le port 80 est tenu par un autre serveur web qu'Apache (nginx…), le script s'arrête sans rien modifier.
+- Le script demande l'**identifiant** et le **mot de passe** de l'espace de gestion de WOK 888 (10 caractères au moins ; rien ne s'affiche pendant la saisie, c'est normal), puis vérifie que tout répond : une ligne « OK » par point, pour chaque site.
+
+WOK 888 est alors en ligne à l'adresse `http://ADRESSE-IP/wok888/`, son espace de gestion à `http://ADRESSE-IP/wok888/admin/`.
+
+**À partir de maintenant, utilisez les commandes de cette page** (branche `claude/relaxed-allen-03uwo8`) pour les mises à jour : l'ancienne commande, avec `claude/pet-grooming-landing-page-po26m7`, ne connaît pas WOK 888 et s'arrêterait sur une erreur.
+
+### Relier le domaine wok888.fr
+
+Tant que la zone DNS de `wok888.fr` n'a pas changé, l'ancien site WordPress reste en ligne : vérifiez d'abord le nouveau site par l'adresse IP.
+
+1. Chez le registraire de `wok888.fr`, dans la zone DNS : les enregistrements **A** de `@` et de `www` pointent vers l'adresse IP du serveur. Supprimez les éventuels enregistrements **AAAA** de ces deux noms ; laissez la messagerie (**MX**, **TXT**) telle quelle.
+2. Une heure environ après, sur le serveur :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/ajouter-domaine.sh | sudo bash -s -- wok888 wok888.fr votre@email.fr
+```
+
+Le HTTPS est mis en place et renouvelé automatiquement ; les domaines des autres sites ne changent pas. Si le script répond que le domaine pointe encore vers une autre adresse, attendez un peu et relancez la même commande. Changez ensuite le mot de passe de l'espace de gestion : avant le HTTPS, il circulait sans chiffrement.
+
+### Ajouter des photos à la galerie
+
+Les photos (JPG, PNG ou WebP) se déposent dans `/var/www/html/wok888/photos/` ; le nom du fichier sert de légende (`01-wok-aux-crevettes.jpg` s'affiche « Wok aux crevettes »). Depuis votre ordinateur, dans PowerShell sous Windows :
+
+```powershell
+scp 01-wok-aux-crevettes.jpg ubuntu@ADRESSE-IP:
+```
+
+puis sur le serveur :
+
+```bash
+sudo mv ~/01-wok-aux-crevettes.jpg /var/www/html/wok888/photos/
+```
+
+Les mises à jour du site ne les effacent pas, et `sauvegarder.sh` les sauvegarde avec la carte.
+
 ## Installer les sites
 
 Ouvrez un terminal sur le serveur (voir « Se connecter au serveur » plus bas) et collez :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash
 ```
 
 Sur un serveur neuf, cette commande installe Aux Saveurs Braisées, La Fleur d'Or et le salon. Pour n'installer que certains sites, nommez-les à la fin, après `bash -s --` :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash -s -- restaurant
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash -s -- restaurant
 ```
 
 Le script installe Apache et PHP, copie les sites et protège les données. Si aucun compte n'existe encore, il **demande les mots de passe** (10 caractères au moins ; rien ne s'affiche pendant la saisie, c'est normal). Il vérifie ensuite que tout répond (une ligne « OK » par point) et affiche les adresses.
@@ -42,10 +88,10 @@ Le script installe Apache et PHP, copie les sites et protège les données. Si a
 
 Relancez la commande d'installation, **sans nommer les sites** : le serveur se souvient de ceux qui y sont installés (liste dans `/opt/sites/sites-installes`). Le script récupère la dernière version sur GitHub et conserve toutes les données :
 
-- Aux Saveurs Braisées et Aux Saveurs du Cambodge : produits, prix, stocks, catégories, compte et statistiques ;
+- Aux Saveurs Braisées, Aux Saveurs du Cambodge et WOK 888 : produits, prix, stocks, catégories, compte et statistiques ; pour WOK 888, les photos de la galerie aussi ;
 - La Fleur d'Or : carte modifiée dans le panneau, sauvegardes et mot de passe.
 
-Pour **ajouter un site** sur un serveur déjà installé, nommez-le : il s'ajoute aux autres. Par exemple, `… | sudo bash -s -- cambodge`.
+Pour **ajouter un site** sur un serveur déjà installé, nommez-le : il s'ajoute aux autres. Par exemple, `… | sudo bash -s -- cambodge` ou `… | sudo bash -s -- wok888`.
 
 ## Aux Saveurs du Cambodge : quitter Squarespace
 
@@ -56,7 +102,7 @@ Le nouveau site remplace celui de Squarespace sur le même nom de domaine, `auxs
 Sur le serveur OVH, collez :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash -s -- cambodge
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash -s -- cambodge
 ```
 
 Le script demande l'identifiant et le mot de passe de l'espace de gestion du nouveau site. Les autres sites du serveur ne sont pas touchés.
@@ -79,7 +125,7 @@ Squarespace regroupe parfois ces lignes sous « Squarespace Defaults » : suppri
 Une heure environ après le changement, sur le serveur OVH :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/ajouter-domaine.sh | sudo bash -s -- cambodge auxsaveursducambodge-saintalban.com votre@email.fr
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/ajouter-domaine.sh | sudo bash -s -- cambodge auxsaveursducambodge-saintalban.com votre@email.fr
 ```
 
 Si le script répond que le domaine pointe encore vers une autre adresse, attendez un peu et relancez la même commande.
@@ -104,7 +150,7 @@ Dans l'espace client OVH, notez l'**adresse IP** du serveur (IPv4). L'e-mail d'i
 Dans un terminal sur le serveur **AWS**, collez cette commande en remplaçant `ADRESSE-IP-OVH` :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/sauvegarder.sh | sudo bash -s -- restaurant ubuntu@ADRESSE-IP-OVH
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/sauvegarder.sh | sudo bash -s -- restaurant ubuntu@ADRESSE-IP-OVH
 ```
 
 Répondez `yes` si une question sur l'« authenticity of host » s'affiche, puis tapez le **mot de passe du serveur OVH**. Le fichier `sauvegarde-sites.tar.gz` arrive dans le dossier personnel de `ubuntu` sur le serveur OVH.
@@ -123,7 +169,7 @@ scp sauvegarde-sites.tar.gz ubuntu@ADRESSE-IP-OVH:
 Connectez-vous au serveur OVH, puis collez :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/installer.sh | sudo bash -s -- restaurant
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash -s -- restaurant
 ```
 
 Le script trouve la sauvegarde et reprend les données et le certificat. Il relie ensuite `auxsaveursbraisee.fr` au site, en HTTPS. Il ne demande aucun mot de passe : le compte de l'espace de gestion est celui de l'ancien serveur.
@@ -158,7 +204,7 @@ La Fleur d'Or et son domaine ne sont pas concernés.
 Sur le serveur :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/sauvegarder.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/sauvegarder.sh | sudo bash
 ```
 
 Le fichier `sauvegarde-sites.tar.gz` est créé dans votre dossier personnel. Il contient les clés des certificats HTTPS : gardez-le en lieu sûr. Pour le récupérer sur votre ordinateur, utilisez PowerShell, sous Windows :
@@ -182,10 +228,10 @@ Pour remettre ces données sur un serveur, placez le fichier dans le dossier per
 3. **Relier le domaine au site.** Depuis le terminal du serveur, lancez une commande par site :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/ajouter-domaine.sh | sudo bash -s -- restaurant auxsaveursbraisee.fr votre@email.fr
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/ajouter-domaine.sh | sudo bash -s -- restaurant auxsaveursbraisee.fr votre@email.fr
 ```
 
-Remplacez `restaurant` par `fleur-dor` ou `toilettage`, puis le domaine et l'e-mail par les vôtres.
+Remplacez `restaurant` par `cambodge`, `wok888`, `fleur-dor` ou `toilettage`, puis le domaine et l'e-mail par les vôtres.
 
 Le script vérifie que le domaine pointe vers ce serveur, puis il configure Apache et obtient le certificat HTTPS gratuit, renouvelé automatiquement. Il redirige aussi le HTTP vers le HTTPS et vérifie que le site répond.
 

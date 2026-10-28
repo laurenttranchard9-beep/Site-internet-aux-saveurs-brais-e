@@ -12,10 +12,10 @@
 # et le changement chez le registraire se fait sans coupure.
 #
 # Utilisation (une fois par site) :
-#   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/pet-grooming-landing-page-po26m7/deploiement/ajouter-domaine.sh | sudo bash -s -- SITE DOMAINE [EMAIL]
+#   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/ajouter-domaine.sh | sudo bash -s -- SITE DOMAINE [EMAIL]
 #
-#   SITE     restaurant, cambodge, fleur-dor ou toilettage
-#   DOMAINE  par exemple auxsaveursbraisees.fr (sans « www » ni « https:// »)
+#   SITE     restaurant, cambodge, wok888, fleur-dor ou toilettage
+#   DOMAINE  par exemple auxsaveursbraisees.fr ou wok888.fr (sans « www » ni « https:// »)
 #   EMAIL    facultatif : Let's Encrypt y envoie un avertissement si le certificat risque d'expirer
 #
 # Les sites restent aussi accessibles par l'adresse IP (http://IP/restaurant/…).
@@ -23,7 +23,7 @@
 set -euo pipefail
 
 WEB=${WEB:-/var/www/html}
-SITES="restaurant cambodge fleur-dor toilettage"
+SITES="restaurant cambodge wok888 fleur-dor toilettage"
 
 erreur() { echo "Erreur : $*" >&2; exit 1; }
 
@@ -327,7 +327,7 @@ main() {
     echo "Terminé : https://$domaine/ affiche le site « $site »."
     [ -n "$www" ] && echo "          https://$www/ aussi."
     case $site in
-        restaurant|cambodge) echo "Espace de gestion : https://$domaine/admin/" ;;
+        restaurant|cambodge|wok888) echo "Espace de gestion : https://$domaine/admin/" ;;
         fleur-dor)  echo "Panneau d'administration : https://$domaine/admin/" ;;
     esac
     echo "Les mots de passe ont circulé sans chiffrement avant le HTTPS : changez-les depuis l'administration."

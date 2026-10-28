@@ -107,4 +107,12 @@ php tests/site_test.php
 
 ## Mettre le site en ligne
 
-Envoyez le contenu du dossier `wok888` sur un hébergement PHP (FileZilla ou le gestionnaire de fichiers de l'hébergeur), ouvrez **tout de suite** `https://votre-domaine/admin/` pour créer le compte, puis faites pointer `wok888.fr` vers ce site. Utilisez l'adresse en **https://** : sans elle, le mot de passe de l'espace de gestion circule sans chiffrement.
+**Sur un serveur Ubuntu, même s'il héberge déjà d'autres sites**, une commande suffit (les autres sites et leurs données restent en place) :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash -s -- wok888
+```
+
+Elle installe Apache et PHP si besoin, copie le site dans `/var/www/html/wok888/`, protège les données, demande le compte de l'espace de gestion et vérifie que tout répond. Le domaine `wok888.fr` se relie ensuite en HTTPS avec `ajouter-domaine.sh`. Tout est expliqué dans [`deploiement/README.md`](../deploiement/README.md), « Ajouter WOK 888 sur un serveur qui a déjà des sites ».
+
+**Sur un hébergement PHP mutualisé** : envoyez le contenu du dossier `wok888` (FileZilla ou le gestionnaire de fichiers de l'hébergeur), ouvrez **tout de suite** `https://votre-domaine/admin/` pour créer le compte, puis faites pointer `wok888.fr` vers ce site. Utilisez l'adresse en **https://** : sans elle, le mot de passe de l'espace de gestion circule sans chiffrement.
