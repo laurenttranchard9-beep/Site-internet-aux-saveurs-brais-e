@@ -109,14 +109,15 @@ ecrire_hote_par_defaut() {
     if [ "$SYSTEME" = debian ] && ! autres_sites_presents; then a2dissite -q 000-default >/dev/null 2>&1 || true; fi
 }
 
-# Vrai si Apache sert déjà d'autres sites que ceux de ces scripts (fichiers site-*.conf et 00-par-defaut.conf),
-# ou si le site d'origine d'Ubuntu (000-default) a été modifié.
+# Vrai si Apache sert déjà d'autres sites que ceux de ces scripts (fichiers site-*.conf, 00-par-defaut.conf
+# et zzz-adresse-ip.conf, l'hôte de l'adresse IP écrit par installer.sh), ou si le site d'origine d'Ubuntu
+# (000-default) a été modifié.
 autres_sites_presents() {
     local f
     for f in "$CONF_DIR"/*.conf; do
         [ -f "$f" ] || continue
         case ${f##*/} in
-            site-*.conf|00-par-defaut.conf|default-ssl.conf) continue ;;
+            site-*.conf|00-par-defaut.conf|zzz-adresse-ip.conf|default-ssl.conf) continue ;;
             000-default.conf)
                 if grep -qiE '^[[:space:]]*(ServerName|ServerAlias)' "$f" \
                     || ! grep -qE '^[[:space:]]*DocumentRoot[[:space:]]+"?/var/www/html"?[[:space:]]*$' "$f"; then

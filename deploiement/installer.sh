@@ -6,6 +6,8 @@
 #   http://IP/wok888/       WOK 888 (site animé, carte et espace de gestion)
 #   http://IP/fleur-dor/    La Fleur d'Or (site et panneau d'administration)
 #   http://IP/toilettage/   le salon de toilettage
+# Sur un serveur qui a déjà d'autres sites, l'adresse IP est reliée à ce dossier (hôte virtuel zzz-adresse-ip) :
+# http://IP/ affiche la page « Nos sites », et les sites reliés à un nom de domaine ne changent pas.
 #
 # Installation ou mise à jour, en une commande sur le serveur :
 #   curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-internet-aux-saveurs-brais-e/claude/relaxed-allen-03uwo8/deploiement/installer.sh | sudo bash
@@ -41,6 +43,8 @@ SITES_PAR_DEFAUT="restaurant fleur-dor toilettage" # installés quand aucun site
 SITES_CARTE="restaurant cambodge wok888"  # sites bâtis sur le moteur de carte : api.php, base SQLite, espace de gestion
 MEMOIRE="$SOURCES/sites-installes" # sites installés sur ce serveur
 DOMAINES_IMPORTES=""               # lignes « domaine site » des certificats repris
+HOTE_IP=zzz-adresse-ip             # fichier de l'hôte virtuel de l'adresse IP (« zzz » : chargé après les autres)
+IP_PUBLIQUE=""                     # adresse IPv4 publique du serveur (vide si elle n'est pas détectée)
 
 etape() { echo; echo "==> $*"; }
 erreur() { echo "Erreur : $*" >&2; exit 1; }
@@ -262,14 +266,37 @@ configurer_apache() {
         # ServerName évite l'avertissement « Could not reliably determine the server's fully qualified domain name ».
         printf 'ServerName localhost\n%s\n' "$conf" > /etc/apache2/conf-available/sites.conf
         a2enconf -q sites >/dev/null
+        if [ -n "$IP_PUBLIQUE" ]; then
+            hote_adresse_ip > "/etc/apache2/sites-available/$HOTE_IP.conf"
+            a2ensite -q "$HOTE_IP" >/dev/null
+        fi
         apachectl configtest
         redemarrer apache2
         ouvrir_pare_feu
     else
         echo "$conf" > /etc/httpd/conf.d/sites.conf
+        if [ -n "$IP_PUBLIQUE" ]; then hote_adresse_ip > "/etc/httpd/conf.d/$HOTE_IP.conf"; fi
         apachectl configtest
         redemarrer php-fpm httpd
     fi
+    if [ -n "$IP_PUBLIQUE" ]; then
+        echo "   Adresse IP $IP_PUBLIQUE : reliée au dossier des sites (les noms de domaine ne changent pas)."
+    else
+        echo "   Adresse IP publique non détectée : si http://IP/ affiche un autre site, relancez en l'indiquant :"
+        echo "   curl -fsSL …/installer.sh | sudo IP_SERVEUR=ADRESSE-IP bash"
+    fi
+}
+
+# Hôte virtuel de l'adresse IP : http://IP/ mène toujours au dossier des sites (http://IP/wok888/…).
+# Sans lui, sur un serveur qui a déjà d'autres sites, l'adresse IP affiche le premier site configuré
+# et les dossiers des sites y sont introuvables (erreur « Not Found »). Son fichier est chargé en dernier :
+# l'hôte par défaut du serveur ne change pas, et chaque nom de domaine garde son site.
+hote_adresse_ip() {
+    echo "# Adresse IP du serveur -> dossier des sites (écrit par installer.sh)"
+    echo "<VirtualHost *:80>"
+    echo "    ServerName $IP_PUBLIQUE"
+    echo "    DocumentRoot \"$WEB\""
+    echo "</VirtualHost>"
 }
 
 # Pare-feu Ubuntu (ufw), s'il est activé : ouvre le web (HTTP et HTTPS), sans toucher au reste.
@@ -484,9 +511,10 @@ comptes() {
 # ---------- Vérifications ----------
 
 VERIF_OK=1
+VERIF_URL=http://localhost
 verifier() { # nom, adresse, codes HTTP acceptés (ex. "403|404")
     local code
-    code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost$2")
+    code=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: ${IP_PUBLIQUE:-localhost}" "$VERIF_URL$2")
     if [[ "$code" =~ ^($3)$ ]]; then
         echo "   OK      $1"
     else
@@ -497,6 +525,12 @@ verifier() { # nom, adresse, codes HTTP acceptés (ex. "403|404")
 
 verifications() {
     local site nom
+    # Chaque adresse est demandée comme le fait un visiteur qui tape l'adresse IP du serveur : directement quand
+    # le serveur porte lui-même cette adresse (OVH…), sinon par localhost avec l'adresse IP comme nom d'hôte
+    # (AWS, où l'adresse publique est traduite par le réseau).
+    if [ -n "$IP_PUBLIQUE" ] && ip -4 -o addr show 2>/dev/null | grep -qF " $IP_PUBLIQUE/"; then
+        VERIF_URL="http://$IP_PUBLIQUE"
+    fi
     verifier "Page d'accueil"                          "/"                                   200
     for site in $SITES_CARTE; do
         site_choisi "$site" || continue
@@ -579,6 +613,7 @@ main() {
     if site_choisi fleur-dor; then publier_fleur; fi
 
     etape "5/7 Configuration d'Apache"
+    IP_PUBLIQUE=$(adresse_ip)
     configurer_apache
     if [ -n "$DOMAINES_IMPORTES" ]; then
         echo "   Noms de domaine repris de l'ancien serveur :"
@@ -591,9 +626,7 @@ main() {
     etape "7/7 Vérifications"
     verifications
 
-    local ip
-    ip=$(adresse_ip)
-    ip=${ip:-ADRESSE-IP-DU-SERVEUR}
+    local ip=${IP_PUBLIQUE:-ADRESSE-IP-DU-SERVEUR}
     echo
     if [ "$VERIF_OK" = 1 ]; then
         echo "Terminé, tout fonctionne."

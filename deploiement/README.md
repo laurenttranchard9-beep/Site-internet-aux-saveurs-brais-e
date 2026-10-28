@@ -33,11 +33,16 @@ curl -fsSL https://raw.githubusercontent.com/laurenttranchard9-beep/Site-interne
 
 - **Les sites déjà installés par ces scripts restent en place avec toutes leurs données** (cartes, prix, stocks, comptes, statistiques, carte de La Fleur d'Or) ; ils sont seulement mis à jour vers leur dernière version, comme lors d'une mise à jour normale. La page d'accueil `http://ADRESSE-IP/` gagne un lien vers WOK 888.
 - **Les sites installés autrement** (configurés à la main) ne sont pas touchés : leur page d'accueil `/var/www/html/index.html` et leurs hôtes virtuels sont conservés. Si le port 80 est tenu par un autre serveur web qu'Apache (nginx…), le script s'arrête sans rien modifier.
+- **L'adresse IP est reliée au dossier des sites** (hôte virtuel `zzz-adresse-ip`, chargé après les autres). Sur un serveur partagé, elle affichait parfois le premier site configuré, La Fleur d'Or par exemple, et `http://ADRESSE-IP/wok888/` répondait « Not Found ». Désormais `http://ADRESSE-IP/` affiche la page « Nos sites » et chaque site répond dans son dossier ; les sites reliés à un nom de domaine (`https://www.fleurdor31.fr/`…) ne changent pas.
 - Le script demande l'**identifiant** et le **mot de passe** de l'espace de gestion de WOK 888 (10 caractères au moins ; rien ne s'affiche pendant la saisie, c'est normal), puis vérifie que tout répond : une ligne « OK » par point, pour chaque site.
 
 WOK 888 est alors en ligne à l'adresse `http://ADRESSE-IP/wok888/`, son espace de gestion à `http://ADRESSE-IP/wok888/admin/`.
 
 **À partir de maintenant, utilisez les commandes de cette page** (branche `claude/relaxed-allen-03uwo8`) pour les mises à jour : l'ancienne commande, avec `claude/pet-grooming-landing-page-po26m7`, ne connaît pas WOK 888 et s'arrêterait sur une erreur.
+
+### `http://ADRESSE-IP/wok888/` répond « Not Found »
+
+L'adresse IP affiche un autre site du serveur (sa page d'accueil n'est pas « Nos sites ») et la commande a été lancée avec une version plus ancienne du script, qui ne reliait pas l'adresse IP aux sites. Relancez la commande ci-dessus : à l'étape 5, le script écrit « Adresse IP … : reliée au dossier des sites », et à l'étape 7 toutes les lignes sont « OK ». Si une ligne « ÉCHEC » reste, envoyez le résultat de `sudo apache2ctl -S`.
 
 ### Relier le domaine wok888.fr
 
