@@ -97,7 +97,7 @@ Dans `index.html` et `mentions-legales.html`, augmentez le numéro `?v=` des sty
 
 ## Couleurs
 
-Le thème vert et blanc est réglé en haut de `site.css` (`--vert`, `--vert-fonce`, `--menthe`…). Le logo, le favicon et les images de partage (`favicon.svg`, `images/`) reprennent les mêmes verts.
+Le thème vert et blanc est réglé en haut de `site.css` (`--vert`, `--vert-fonce`, `--menthe`…). Le logo, le favicon et les images de partage (`favicon.svg`, `images/`) reprennent les mêmes verts, comme la photo de profil Instagram (`images/logo-instagram.png`, 1080 × 1080, à recadrer en rond).
 
 ## À vérifier avec le restaurant
 
