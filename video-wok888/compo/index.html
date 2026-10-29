@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>WOK 888 · film du site</title>
+<style>
+/* Polices du site (dépôt servi à la racine : voir filmer.sh) */
+@font-face { font-family: Bebas; src: url(../../wok888/polices/bebas-neue.woff2); }
+@font-face { font-family: Outfit; src: url(../../wok888/polices/outfit-latin.woff2); font-weight: 300 800; }
+@font-face { font-family: Kaushan; src: url(../../wok888/polices/kaushan-script.woff2); }
+* { margin: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #083b27; }
+#scene { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #fff; font-family: Outfit, sans-serif; }
+#fond { position: absolute; inset: 0; background: linear-gradient(180deg, #0b5236 0%, #094a30 55%, #072f20 100%); }
+#halo { position: absolute; left: 0; top: 0; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(95, 211, 150, .34), rgba(95, 211, 150, .08) 45%, transparent 68%); }
+#motif { position: absolute; inset: -100px 0 0; opacity: .9;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='80'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.06' stroke-width='2.4'%3E%3Cpath d='M0 80a80 80 0 0 1 160 0M20 80a60 60 0 0 1 120 0M40 80a40 40 0 0 1 80 0M-80 40a80 80 0 0 1 160 0M-60 40a60 60 0 0 1 120 0M-40 40a40 40 0 0 1 80 0M80 40a80 80 0 0 1 160 0M100 40a60 60 0 0 1 120 0M120 40a40 40 0 0 1 80 0'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 45%, transparent 25%, #000 80%); }
+#braises { position: absolute; inset: 0; }
+
+/* Logo d'ouverture et de fin */
+#logo { position: absolute; left: 0; right: 0; top: 0; height: 1920px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#logo svg { width: 700px; height: auto; overflow: visible; }
+#logo .trait { transform-box: fill-box; transform-origin: 50% 100%; }
+#logo-nom { margin-top: 40px; font: 400 230px/.78 Bebas; letter-spacing: .07em; padding-left: .07em; white-space: nowrap; }
+#logo-nom span { display: inline-block; }
+#logo-nom .vert { color: #8fd6ae; }
+#logo-script { margin-top: 44px; font: 64px/1.1 Kaushan; color: #8fd6ae; transform: rotate(-3deg); }
+
+/* Titres des scènes */
+.titre { position: absolute; left: 60px; right: 60px; top: 190px; height: 430px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.titre .sur { font: 58px/1.1 Kaushan; color: #8fd6ae; transform: rotate(-3deg); margin-bottom: 4px; white-space: nowrap; }
+.titre .ligne { overflow: hidden; padding: 6px 10px 0; margin-bottom: -6px; }
+.titre .grand { display: block; font: 400 146px/.88 Bebas; letter-spacing: .02em; white-space: nowrap; }
+.titre .grand span { display: inline-block; }
+.titre .grand .vert { color: #8fd6ae; }
+.titre .sous { margin-top: 22px; max-width: 900px; font-size: 38px; line-height: 1.25; font-weight: 500; color: #d9f2e4; }
+
+/* Téléphone : le site, en vrai, dans une iframe à la taille d'un iPhone (390 × 844) */
+#telephone { position: absolute; left: 229px; top: 664px; width: 621px; height: 1302px; transform-origin: 50% 0; }
+#telephone .cadre { position: absolute; inset: 0; border-radius: 98px; padding: 18px;
+  background: linear-gradient(145deg, #3c4a44, #0d1512 22%, #050807 60%, #26302c);
+  box-shadow: 0 0 0 3px #46524c, 0 60px 120px rgba(0, 0, 0, .55), 0 18px 40px rgba(0, 0, 0, .35); }
+#telephone .ecran { position: relative; width: 585px; height: 1266px; border-radius: 80px; overflow: hidden; background: #0b5236; }
+.barre-etat { position: absolute; left: 0; top: 0; width: 585px; height: 71px; background: #0b5236; display: flex; align-items: center; justify-content: space-between; padding: 8px 52px 0 64px; font: 600 27px Outfit; z-index: 3; }
+.barre-etat svg { height: 22px; fill: #fff; }
+.ilot { position: absolute; left: 50%; top: 32px; width: 168px; height: 50px; margin-left: -84px; border-radius: 30px; background: #000; z-index: 5; }
+#telephone iframe { position: absolute; left: 0; top: 71px; width: 390px; height: 797px; border: 0; transform: scale(1.5); transform-origin: 0 0; background: #fff; }
+#gestion { visibility: hidden; }
+.accueil-ios { position: absolute; left: 50%; bottom: 14px; width: 200px; height: 8px; margin-left: -100px; border-radius: 8px; background: rgba(20, 20, 20, .55); z-index: 4; }
+.reflet { position: absolute; inset: 0; border-radius: 80px; pointer-events: none; z-index: 6;
+  background: linear-gradient(115deg, rgba(255, 255, 255, .09) 0%, rgba(255, 255, 255, 0) 32%); }
+.touchers { position: absolute; left: 0; top: 0; width: 585px; height: 1266px; z-index: 7; pointer-events: none; }
+.toucher { position: absolute; width: 0; height: 0; }
+.toucher i { position: absolute; left: 0; top: 0; border-radius: 50%; }
+.toucher .doigt { width: 74px; height: 74px; margin: -37px 0 0 -37px; background: rgba(255, 255, 255, .55); box-shadow: 0 0 0 3px rgba(255, 255, 255, .9), 0 6px 18px rgba(0, 0, 0, .25); }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; }
+.trace path { fill: none; stroke: #ff9f1c; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .25)); }
+.titre .sous .compteur { font-weight: 800; color: #fff; }
+.toucher .onde { width: 74px; height: 74px; margin: -37px 0 0 -37px; border: 5px solid #fff; }
+
+/* Bulles d'information autour du téléphone */
+.bulle { position: absolute; display: flex; align-items: center; gap: 14px; padding: 18px 28px; border-radius: 40px; background: #fff; color: #0b5236;
+  font: 700 34px/1 Outfit; white-space: nowrap; box-shadow: 0 14px 40px rgba(0, 0, 0, .3); z-index: 20; }
+.bulle b { font: 400 54px/.8 Bebas; color: #12784e; letter-spacing: .02em; }
+.bulle svg { width: 38px; height: 38px; flex: none; }
+
+/* Fin */
+#fin { position: absolute; left: 0; right: 0; top: 0; height: 1920px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#fin .adresse-web { font: 400 168px/.9 Bebas; letter-spacing: .03em; }
+#fin .tel { display: flex; align-items: center; gap: 20px; margin-top: 46px; padding: 22px 46px; border-radius: 60px; background: #fff; color: #0b5236; font: 700 54px/1 Outfit; }
+#fin .tel svg { width: 50px; height: 50px; }
+#fin .lieu { margin-top: 40px; font: 500 40px/1.3 Outfit; color: #d9f2e4; }
+#fin .slogan { margin-top: 30px; font: 62px/1.1 Kaushan; color: #8fd6ae; transform: rotate(-3deg); }
+#fin-logo { width: 360px; height: auto; margin-bottom: 70px; overflow: visible; }
+#voile { position: absolute; inset: 0; background: #041d14; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="scene">
+  <div id="fond"></div>
+  <div id="halo"></div>
+  <div id="motif"></div>
+  <canvas id="braises" width="1080" height="1920"></canvas>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="jade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8f5da"/><stop offset=".55" stop-color="#5fd396"/><stop offset="1" stop-color="#1f9d63"/></linearGradient>
+      <symbol id="ic-tel" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1Z"/></symbol>
+    </defs>
+  </svg>
+
+  <div id="logo">
+    <svg viewBox="90 260 1205 675" aria-hidden="true">
+      <path class="trait" id="lw1" fill="#fff" d="M95 470 155 435 372 820 331 890Z"/>
+      <path class="trait" id="lw2" fill="#fff" d="M297 468 357 435 533 745 810 265 870 300 535 890Z"/>
+      <path class="trait" id="lk" fill="#fff" d="M1160 323H1268L1028 612 1288 927H1180L972 672 945 690 975 550Z"/>
+      <path class="trait" id="larc" fill="url(#jade)" d="M908 348A354 354 0 0 1 582 902L630 818A265 265 0 0 0 860 430Z"/>
+    </svg>
+    <p id="logo-nom"><span>W</span><span>O</span><span>K</span><span>&nbsp;</span><span class="vert">8</span><span class="vert">8</span><span class="vert">8</span></p>
+    <p id="logo-script">Saveurs d'Asie à Seilh</p>
+  </div>
+
+  <div id="titres"></div>
+
+  <div id="telephone">
+    <div class="cadre">
+      <div class="ecran">
+        <div class="barre-etat"><span>19:30</span>
+          <svg viewBox="0 0 92 22" aria-hidden="true"><rect x="0" y="14" width="5" height="8" rx="1.5"/><rect x="8" y="10" width="5" height="12" rx="1.5"/><rect x="16" y="6" width="5" height="16" rx="1.5"/><rect x="24" y="2" width="5" height="20" rx="1.5"/>
+            <path d="M47 8a14 14 0 0 1 18 0l-2.4 2.6a10.5 10.5 0 0 0-13.2 0Zm4.2 4.4a8 8 0 0 1 9.6 0L56 17.6Z"/>
+            <rect x="68" y="3" width="21" height="16" rx="4.5" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><rect x="71" y="6" width="15" height="10" rx="2.5"/><rect x="90.5" y="8.5" width="1.5" height="5" rx=".75"/></svg>
+        </div>
+        <iframe id="site" src="http://127.0.0.1:8765/" scrolling="no"></iframe>
+        <iframe id="gestion" src="http://127.0.0.1:8765/admin/" scrolling="no"></iframe>
+        <div class="accueil-ios"></div>
+        <div class="reflet"></div>
+        <div class="touchers" id="touchers"></div>
+      </div>
+      <div class="ilot"></div>
+    </div>
+  </div>
+
+  <div id="bulles"></div>
+
+  <div id="fin">
+    <svg id="fin-logo" viewBox="90 260 1205 675" aria-hidden="true">
+      <path fill="#fff" d="M95 470 155 435 372 820 331 890Z M297 468 357 435 533 745 810 265 870 300 535 890Z M1160 323H1268L1028 612 1288 927H1180L972 672 945 690 975 550Z"/>
+      <path fill="url(#jade)" d="M908 348A354 354 0 0 1 582 902L630 818A265 265 0 0 0 860 430Z"/>
+    </svg>
+    <p class="adresse-web" id="fin-web">wok888.fr</p>
+    <p class="tel" id="fin-tel"><svg><use href="#ic-tel"/></svg>05 61 58 06 97</p>
+    <p class="lieu" id="fin-lieu">16 route de Grenade · Seilh</p>
+    <p class="slogan" id="fin-slogan">Sur place ou à emporter</p>
+  </div>
+  <div id="voile"></div>
+</div>
+<script src="scenario.js"></script>
+<script src="rendu.js"></script>
+</body>
+</html>
