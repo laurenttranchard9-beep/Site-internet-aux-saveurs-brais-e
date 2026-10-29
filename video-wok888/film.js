@@ -16,7 +16,6 @@ const DE = Number(opts.de || 0);
 const A = Number(opts.a || S.duree);
 const images = opts.images ? opts.images.split(",").map(Number) : null;
 const dossier = opts.dossier || "images";
-const SITE = "http://127.0.0.1:8765";
 
 (async () => {
   const navigateur = await chromium.launch();
@@ -25,8 +24,6 @@ const SITE = "http://127.0.0.1:8765";
     locale: "fr-FR", timezoneId: "Europe/Paris",
   });
   await ctx.addInitScript({ path: path.join(__dirname, "temps-virtuel.js") });
-  const r = await ctx.request.post(`${SITE}/api.php?action=login`, { data: { username: "patron", password: "motdepasse-wok888" } });
-  if (!r.ok()) throw new Error(`connexion à l'espace de gestion : ${r.status()}`);
   const page = await ctx.newPage();
   page.on("pageerror", (e) => console.error("[erreur page]", e.message));
   page.on("console", (m) => { if (m.type() === "error") console.error("[console]", m.text()); });
@@ -37,12 +34,10 @@ const SITE = "http://127.0.0.1:8765";
   await page.goto("http://127.0.0.1:8766/video-wok888/compo/index.html", { waitUntil: "load" });
   await page.waitForFunction(() => window.pret === true);
   const site = await (await page.$("#site")).contentFrame();
-  const gestion = await (await page.$("#gestion")).contentFrame();
-  for (const f of [site, gestion]) await f.waitForFunction(() => window.__tv && document.readyState === "complete");
+  await site.waitForFunction(() => window.__tv && document.readyState === "complete");
   await site.waitForFunction(() => document.querySelectorAll("#choix-base .option").length > 0);
-  await gestion.waitForFunction(() => document.querySelectorAll(".price-input").length > 0);
   await page.waitForTimeout(500);
-  for (const f of [site, gestion]) await f.evaluate(() => window.__tv.remettreAZero());
+  await site.evaluate(() => window.__tv.remettreAZero());
 
   // Touchers annoncés 0,3 s avant l'action (le doigt arrive), puis l'action elle-même
   const evenements = [];
@@ -52,7 +47,7 @@ const SITE = "http://127.0.0.1:8765";
   }
   evenements.sort((x, y) => x.t - y.t);
   async function executer({ annonce, a }) {
-    const f = a.cadre === "gestion" ? gestion : site;
+    const f = site;
     if (annonce) {
       const c = await f.evaluate((a) => window.__tv.centre(a), a);
       return page.evaluate(([t0, x, y]) => window.toucher(t0, x, y), [a.t, c.x, c.y]);
@@ -83,7 +78,6 @@ const SITE = "http://127.0.0.1:8765";
     while (k < evenements.length && evenements[k].t <= t + 1e-9) await executer(evenements[k++]);
     const ts = Math.max(0, t - S.debutSite) * 1000;
     await site.evaluate((x) => window.__tv.aller(x), ts);
-    await gestion.evaluate((x) => window.__tv.aller(x), ts);
     if (t + 1e-9 < DE) continue;
     if (images) {
       const voulu = images.find((x) => Math.round(x * FPS) === i); // l'image la plus proche de chaque instant demandé

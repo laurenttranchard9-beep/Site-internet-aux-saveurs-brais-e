@@ -1,3 +1,4 @@
-# Films et images de contrôle rendus par filmer.sh (trop lourds pour le dépôt)
+# Films et images de contrôle rendus par filmer.sh (trop lourds pour le dépôt), outils téléchargés
 *.mp4
 images/
+.outils/

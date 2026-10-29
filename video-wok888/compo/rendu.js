@@ -248,10 +248,9 @@
 
   // ---------- Téléphone ----------
   const tel = $("#telephone");
-  const site = $("#site"), gestion = $("#gestion");
   const changements = S.titres.slice(1).map((d) => d.de);
   function rendreTelephone(t) {
-    const visible = t >= 3.4 && t < 48.9;
+    const visible = t >= 3.4 && t < S.sortie + 0.95;
     montrer(tel, visible);
     if (!visible) return;
     const monte = prog(t, 3.45, 4.6);
@@ -267,26 +266,19 @@
     // Flottement léger
     y += Math.sin(t * 1.15) * 7;
     rot += Math.sin(t * 0.7) * 0.35;
-    // Retournement vers l'espace de gestion
-    let rotY = 0;
-    const f1 = prog(t, 42.5, 42.9), f2 = prog(t, 42.9, 43.35);
-    if (t >= 42.5 && t < 42.9) rotY = 90 * E.inCubic(f1);
-    else if (t >= 42.9 && t < 43.35) rotY = -90 * (1 - E.outCubic(f2));
-    const enGestion = t >= 42.9;
-    montrer(site, !enGestion);
-    montrer(gestion, enGestion);
     // Sortie
-    const s = prog(t, 47.95, 48.85);
+    const s = prog(t, S.sortie, S.sortie + 0.9);
     y += E.inCubic(s) * 1700;
     rot += E.inCubic(s) * -8;
-    tel.style.transform = `perspective(2600px) translateY(${y}px) rotateY(${rotY}deg) rotate(${rot}deg) scale(${0.92 * echelle})`;
+    tel.style.transform = `translateY(${y}px) rotate(${rot}deg) scale(${0.92 * echelle})`;
   }
 
   // ---------- Fin ----------
   const fin = $("#fin");
-  const finEls = [["#fin-logo", 48.45, "pop"], ["#fin-web", 48.75, "monte"], ["#fin-tel", 49.25, "pop"], ["#fin-lieu", 49.6, "monte"], ["#fin-slogan", 50.0, "trace"]].map(([s, d, mode]) => [$(s), d, mode]);
+  const finEls = [["#fin-logo", 0.05, "pop"], ["#fin-web", 0.35, "monte"], ["#fin-tel", 0.85, "pop"], ["#fin-lieu", 1.2, "monte"], ["#fin-slogan", 1.6, "trace"]]
+    .map(([s, d, mode]) => [$(s), S.fin + d, mode]);
   function rendreFin(t) {
-    const visible = t >= 48.3;
+    const visible = t >= S.fin;
     montrer(fin, visible);
     if (!visible) return;
     for (const [el, d, mode] of finEls) {
@@ -296,7 +288,9 @@
         el.style.transform = `scale(${0.5 + 0.5 * E.outBack(p, 2)})`;
       } else if (mode === "monte") {
         el.style.opacity = String(E.outCubic(p));
-        el.style.transform = `translateY(${(1 - E.outExpo(p)) * 60}px)`;
+        // « wok888.fr » prononcé par la voix : l'adresse grossit un instant
+        const accent = el.id === "fin-web" ? 0.08 * bosse(t, S.accentFin, S.accentFin + 0.55) : 0;
+        el.style.transform = `translateY(${(1 - E.outExpo(p)) * 60}px) scale(${1 + accent})`;
       } else {
         el.style.clipPath = `inset(-20% ${100 - E.outCubic(p) * 100}% -20% -5%)`;
         el.style.transform = "rotate(-3deg)";
@@ -308,10 +302,10 @@
   window.rendu = (t) => {
     // Halo : suit l'action (logo, téléphone, fin)
     const hx = 540 + Math.sin(t * 0.4) * 60;
-    const hy = t < 3.4 ? 900 : t < 48.3 ? mix(900, 1180, prog(t, 3.4, 4.6)) : mix(1180, 950, prog(t, 48.3, 49));
+    const hy = t < 3.4 ? 900 : t < S.fin ? mix(900, 1180, prog(t, 3.4, 4.6)) : mix(1180, 950, prog(t, S.fin, S.fin + 0.7));
     $("#halo").style.transform = `translate(${hx}px, ${hy}px) scale(${1 + Math.sin(t * 0.9) * 0.04})`;
     $("#motif").style.transform = `translateY(${(t * 14) % 80}px)`;
-    const forceBraises = t < 3.6 ? 1 : t < 48.3 ? 0.4 : 1;
+    const forceBraises = t < 3.6 ? 1 : t < S.fin ? 0.4 : 1;
     rendreBraises(t, forceBraises);
     $("#voile").style.opacity = String(1 - E.outCubic(prog(t, 0, 0.6)));
     rendreLogo(t);
