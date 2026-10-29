@@ -1,15 +1,13 @@
 #!/bin/bash
-# Tourne le film de présentation du site WOK 888 (format vertical 1080 × 1920, pour Instagram), avec voix et musique :
+# Tourne le film de présentation du site WOK 888 (format vertical 1080 × 1920, pour Instagram), avec sa musique :
 #   ./filmer.sh [fichier.mp4]
 #   ./filmer.sh --images 9.6,19.4 --dossier images     (seulement les images de ces instants, pour vérifier)
 # Nécessite PHP 8.1 ou plus (avec pdo_sqlite), Python 3, Node.js 18 ou plus avec Playwright (et son Chromium), ffmpeg.
-# Au premier lancement, la synthèse vocale (Piper) et la voix française sont téléchargées dans .outils/.
+# Au premier lancement, numpy et scipy (pour la musique) sont installés dans .outils/.
 set -euo pipefail
 ICI=$(cd "$(dirname "$0")" && pwd)
 DEPOT=$(dirname "$ICI")
 OUTILS="$ICI/.outils"
-VOIX_MODELE="$OUTILS/fr_FR-siwis-medium.onnx"
-VOIX_URL=https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx
 TMP=$(mktemp -d)
 trap 'kill $(jobs -p) 2>/dev/null || true; rm -rf "$TMP"' EXIT
 
@@ -28,17 +26,12 @@ SORTIE=${1:-"$ICI/film-wok888.mp4"}
 echo "Image (une dizaine de minutes)…"
 node "$ICI/film.js" --sortie "$TMP/film-muet.mp4"
 
-echo "Voix et musique…"
-if [ ! -x "$OUTILS/venv/bin/python" ]; then
+echo "Musique…"
+if [ ! -x "$OUTILS/venv/bin/python" ] || ! "$OUTILS/venv/bin/python" -c "import numpy, scipy" 2>/dev/null; then
     python3 -m venv "$OUTILS/venv"
-    "$OUTILS/venv/bin/pip" install -q piper-tts numpy scipy
-fi
-if [ ! -s "$VOIX_MODELE" ] || [ ! -s "$VOIX_MODELE.json" ]; then
-    curl -fsSL -o "$VOIX_MODELE" "$VOIX_URL"
-    curl -fsSL -o "$VOIX_MODELE.json" "$VOIX_URL.json"
+    "$OUTILS/venv/bin/pip" install -q numpy scipy
 fi
 node -p "JSON.stringify(require('$ICI/compo/scenario.js'))" > "$TMP/scenario.json"
-"$OUTILS/venv/bin/python" "$ICI/audio/voix.py" "$TMP/scenario.json" "$VOIX_MODELE" "$TMP/voix.wav"
 "$OUTILS/venv/bin/python" "$ICI/audio/musique.py" "$TMP/scenario.json" "$TMP/musique.wav"
-bash "$ICI/audio/mixer.sh" "$TMP/film-muet.mp4" "$TMP/voix.wav" "$TMP/musique.wav" "$SORTIE"
+bash "$ICI/audio/mixer.sh" "$TMP/film-muet.mp4" "$TMP/musique.wav" "$SORTIE"
 echo "Film : $SORTIE"

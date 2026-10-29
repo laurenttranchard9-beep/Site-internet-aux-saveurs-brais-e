@@ -25,7 +25,7 @@ Le dossier [`cambodge/`](cambodge/) contient le nouveau site du restaurant de Sa
 
 Le dossier [`wok888/`](wok888/) contient le nouveau site du restaurant de Seilh (remplaçant de wok888.fr), en vert et blanc : accueil animé (wok à faire sauter), wok à composer, carte en 8 univers, machine 888, fortune cookie, réservation resOS, horaires en direct ; les commandes se passent par téléphone. Il utilise le même moteur de carte qu'Aux Saveurs Braisées et s'installe tel quel sous XAMPP. Voir [`wok888/README.md`](wok888/README.md).
 
-Le dossier [`video-wok888/`](video-wok888/) contient de quoi tourner le film de présentation du site (51 secondes, format vertical pour Instagram, avec voix off et musique), à partir du vrai site. Voir [`video-wok888/README.md`](video-wok888/README.md).
+Le dossier [`video-wok888/`](video-wok888/) contient de quoi tourner le film de présentation du site (50 secondes, format vertical pour Instagram, avec musique originale), à partir du vrai site. Voir [`video-wok888/README.md`](video-wok888/README.md).
 
 ## Mise en ligne
 

@@ -222,7 +222,7 @@
   const lettresNom = [...document.querySelectorAll("#logo-nom span")];
   const script = $("#logo-script");
   function rendreLogo(t) {
-    const visible = t < 3.5;
+    const visible = t < S.logoSortie[1] + 0.05;
     montrer(logo, visible);
     if (!visible) return;
     const traits = [[lw1, 0.25], [lw2, 0.42], [lk, 0.62]];
@@ -241,7 +241,7 @@
     });
     const ps = E.outCubic(prog(t, 1.75, 2.45));
     script.style.clipPath = `inset(-20% ${100 - ps * 100}% -20% -5%)`;
-    const sortie = E.inOutCubic(prog(t, 2.85, 3.3));
+    const sortie = E.inOutCubic(prog(t, S.logoSortie[0], S.logoSortie[1]));
     logo.style.opacity = String(1 - sortie);
     logo.style.transform = `translateY(${-180 * sortie}px) scale(${1 - 0.25 * sortie})`;
   }
@@ -250,10 +250,10 @@
   const tel = $("#telephone");
   const changements = S.titres.slice(1).map((d) => d.de);
   function rendreTelephone(t) {
-    const visible = t >= 3.4 && t < S.sortie + 0.95;
+    const visible = t >= S.drop - 0.05 && t < S.sortie + 0.95;
     montrer(tel, visible);
     if (!visible) return;
-    const monte = prog(t, 3.45, 4.6);
+    const monte = prog(t, S.drop, S.drop + 1.15); // le téléphone monte sur le départ du rythme
     let y = (1 - E.outBack(monte, 0.7)) * 1500;
     let rot = (1 - E.outCubic(monte)) * 9;
     let echelle = 1;
@@ -302,10 +302,10 @@
   window.rendu = (t) => {
     // Halo : suit l'action (logo, téléphone, fin)
     const hx = 540 + Math.sin(t * 0.4) * 60;
-    const hy = t < 3.4 ? 900 : t < S.fin ? mix(900, 1180, prog(t, 3.4, 4.6)) : mix(1180, 950, prog(t, S.fin, S.fin + 0.7));
+    const hy = t < S.drop ? 900 : t < S.fin ? mix(900, 1180, prog(t, S.drop, S.drop + 1.15)) : mix(1180, 950, prog(t, S.fin, S.fin + 0.7));
     $("#halo").style.transform = `translate(${hx}px, ${hy}px) scale(${1 + Math.sin(t * 0.9) * 0.04})`;
     $("#motif").style.transform = `translateY(${(t * 14) % 80}px)`;
-    const forceBraises = t < 3.6 ? 1 : t < S.fin ? 0.4 : 1;
+    const forceBraises = t < S.drop + 0.2 ? 1 : t < S.fin ? 0.4 : 1;
     rendreBraises(t, forceBraises);
     $("#voile").style.opacity = String(1 - E.outCubic(prog(t, 0, 0.6)));
     rendreLogo(t);
