@@ -66,6 +66,10 @@ Espace de gestion, onglet « Produits & stocks » : prix, stocks, plats masqués
 
 La carte de départ est dans `inc/carte.php`. Elle n'est chargée qu'une fois : ensuite, tout se fait dans l'espace de gestion.
 
+## Réservations
+
+Les tables réservées avec le bouton « Réserver » du site arrivent dans **resOS**. Dans l'espace de gestion, le bouton **« Réservations ↗ »** (en haut) ouvre resOS (<https://app.resos.com/login>) : on s'y connecte avec le compte resOS du restaurant, pas avec celui de l'espace de gestion. L'application resOS (iPhone et Android) donne le même accès sur téléphone.
+
 ## Photos
 
 Déposez vos photos (JPG, PNG ou WebP) dans le dossier `photos/` : la galerie « En images » apparaît d'elle-même. Le nom du fichier sert de légende (`01-wok-aux-crevettes.jpg` s'affiche « Wok aux crevettes »). Voir `photos/LISEZ-MOI.txt`. Sans photo, la galerie n'est pas affichée. Le site n'utilise aucune photo de l'ancien site : les illustrations sont dessinées pour lui.
@@ -101,7 +105,7 @@ Le thème vert et blanc est réglé en haut de `site.css` (`--vert`, `--vert-fon
 
 ## À vérifier avec le restaurant
 
-- **Mentions légales** (`mentions-legales.html`) : le SIRET (932 562 028 00013) et l'hébergeur (IONOS) sont indiqués ; raison sociale, TVA et directeur de la publication sont marqués « à compléter ».
+- **Mentions légales** (`mentions-legales.html`) : société (SAS JVS), SIRET (932 562 028 00013), TVA (FR68932562028), directeur de la publication (Laurent TRANCHARD) et hébergeur (IONOS) sont indiqués ; seul le capital social est marqué « à compléter ».
 - **Prix différents sur l'ancien site** entre la carte et la commande en ligne ; la carte a été suivie : porc croustillant à l'aigre-douce 13,10 € (12,50 € en ligne), riz vinaigré 4,00 € (6,00 €), mangue fraîche 6,90 € (7,90 €), maki crevette et maki ebi tempura 3,30 € (3,50 € et 4,90 €).
 - **Bière pression** : l'ancien site affichait 8,00 € pour 25 cl comme pour 50 cl ; la 25 cl est affichée « sur demande » en attendant le bon prix.
 - **Orthographe corrigée** : « Angkor Red » (« Anghor Red »), « Cosmopolitan » (« Cosmopolitain »), « Ha kao » (« 5 mièces »). À remettre si c'était voulu.
@@ -109,7 +113,7 @@ Le thème vert et blanc est réglé en haut de `site.css` (`--vert`, `--vert-fon
 
 ## Moteur commun avec Aux Saveurs Braisées
 
-`api.php`, `inc/db.php`, `inc/auth.php`, `inc/stats.php`, `admin/admin.js` et `admin/admin.css` sont **les mêmes fichiers** que ceux du dossier `restaurant/`, et `admin/index.html` ne diffère que par le nom du restaurant. Une correction se fait dans les trois dossiers (`restaurant/`, `cambodge/`, `wok888/`) ; les tests vérifient qu'ils sont identiques.
+`api.php`, `inc/db.php`, `inc/auth.php`, `inc/stats.php`, `admin/admin.js` et `admin/admin.css` sont **les mêmes fichiers** que ceux du dossier `restaurant/`, et `admin/index.html` ne diffère que par le nom du restaurant et le bouton « Réservations » (resOS). Une correction se fait dans les trois dossiers (`restaurant/`, `cambodge/`, `wok888/`) ; les tests vérifient qu'ils sont identiques.
 
 ## Tests
 

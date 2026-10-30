@@ -22,7 +22,11 @@ $differents = array_filter($communs, fn($f) => @file_get_contents("$root/$f") !=
 check('moteur identique à celui du restaurant (' . implode(', ', $communs) . ')', !$differents);
 if ($differents) echo '        à synchroniser : ' . implode(', ', $differents) . "\n";
 $adminRestaurant = str_replace('Aux Saveurs Braisées', 'WOK 888', file_get_contents("$restaurant/admin/index.html"));
-check('espace de gestion identique, au nom près', file_get_contents("$root/admin/index.html") === $adminRestaurant);
+// Seul ajout propre à WOK 888 : le bouton « Réservations », qui mène à resOS (où arrivent les réservations du site)
+$adminWok = file_get_contents("$root/admin/index.html");
+$sansReservations = preg_replace('#\n *<a class="btn ghost small" href="https://app\.resos\.com/login"[^\n]*#', '', $adminWok, -1, $boutons);
+check('gestion : bouton Réservations vers resOS', $boutons === 1);
+check('espace de gestion identique, au nom et au bouton Réservations près', $sansReservations === $adminRestaurant);
 
 // --- Pas de commande en ligne : on commande par téléphone ---
 $retires = ['commande.php', 'inc/commandes.php', 'admin/commandes.html', 'admin/commandes.js', 'admin/commandes.css'];
@@ -66,7 +70,6 @@ preg_match_all('#<tr data-jour="(\d)"><th scope="row">\w+</th><td[^>]*>([^<]+)</
 $tableau = array_column($jours, 2, 1);
 check('tableau des horaires : lundi fermé, 12h00 – 22h30 les autres jours', count($tableau) === 7 && $tableau[1] === 'Fermé'
     && count(array_filter($tableau, fn($h) => $h === '12h00 – 22h30')) === 6);
-
 // --- Serveur de test ---
 function port_libre(): int
 {
@@ -159,6 +162,12 @@ $version = array_unique(array_column($versions, 2));
 check('index.html : site.css, intro.js, site.js et consentement.js à la même version', count($versions) === 4 && count($version) === 1);
 check('mentions légales : site.css à la même version', $version
     && str_contains(file_get_contents("$root/mentions-legales.html"), 'href="site.css?v=' . reset($version) . '"'));
+// Le numéro de TVA se déduit du SIREN : FR, clé (12 + 3 × (SIREN mod 97)) mod 97, SIREN
+preg_match('/SIRET&nbsp;: ([^<]+)/', file_get_contents("$root/mentions-legales.html"), $siret);
+preg_match('/TVA intracommunautaire&nbsp;: ([^<]+)/', file_get_contents("$root/mentions-legales.html"), $tva);
+$siren = substr(preg_replace('/\D/', '', $siret[1] ?? ''), 0, 9);
+check('mentions légales : n° de TVA cohérent avec le SIRET', strlen($siren) === 9
+    && trim($tva[1] ?? '') === sprintf('FR%02d%s', (12 + 3 * ((int) $siren % 97)) % 97, $siren));
 // Animations : le choix du visiteur (site.js) est lu avant l'affichage (intro.js), sous le même nom
 check('choix des animations partagé par intro.js et site.js', str_contains(file_get_contents("$root/intro.js"), '"wok888-animations"')
     && str_contains($siteJs, 'stockage.ecrire("wok888-animations"'));
