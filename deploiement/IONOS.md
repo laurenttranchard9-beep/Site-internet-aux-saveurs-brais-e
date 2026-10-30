@@ -16,7 +16,7 @@ Chaque domaine a son propre dossier : plus tard, `fleurdor31.fr` → `fleurdor31
 
 ## 2. Activer le certificat SSL (https)
 
-Espace client → **Domaines & SSL** → **Certificats SSL** : **Gérer** → **Configurer un certificat SSL** → **Activer maintenant** sur le certificat inclus dans votre offre → choisissez le domaine → utilisation : **« Utiliser pour mon site Web IONOS »** → acceptez les conditions → **Configurer le certificat SSL**. Chaque domaine a besoin du sien : refaites-le pour chaque domaine.
+Espace client → **Domaines & SSL** → **Certificats SSL** : **Gérer** → **Configurer un certificat SSL** → **Activer maintenant** sur le certificat inclus dans votre offre → choisissez le domaine → utilisation : **« Utiliser pour mon site Web IONOS »** (pas « mon propre serveur ») → acceptez les conditions → **Configurer le certificat SSL**. Chaque domaine a besoin du sien : refaites-le pour chaque domaine.
 
 Tant que le certificat n'est pas installé, `http://` marche mais `https://` affiche une erreur (« Ce site ne peut pas fournir de connexion sécurisée »).
 
@@ -46,7 +46,7 @@ Espace client → **Hébergement** → **SFTP & SSH** : créez un accès si beso
 - **« 403 Forbidden » sur la page d'accueil** : les fichiers ne sont pas dans le dossier relié au domaine (étape 1), ou ils sont dans un sous-dossier : `index.html` doit être directement dans `auxsaveursbraisee`.
 - **« 500 Internal Server Error »** : dans FileZilla, clic droit sur le fichier `.htaccess` du dossier → **Afficher/Éditer**, supprimez la ligne `Options -Indexes`, enregistrez et renvoyez-le.
 - **La carte reste vide** : ouvrez `https://auxsaveursbraisee.fr/api.php?action=menu` ; un message d'erreur indique ce qui manque (souvent la version de PHP, étape 3).
-- **`https://` affiche une erreur alors que `http://` marche** : IONOS n'a pas de certificat installé pour ce domaine. Dans **Domaines & SSL** → **Certificats SSL** → **Gérer** : si le domaine n'est pas dans la liste, configurez son certificat (étape 2) ; s'il est en cours de création, patientez ; une icône d'avertissement dans la colonne **Statut** signale une création bloquée : passez la souris dessus et donnez le numéro de commande affiché au support d'IONOS.
+- **`https://` affiche une erreur alors que `http://` marche** : IONOS n'a pas de certificat installé pour ce domaine. Dans **Domaines & SSL** → **Certificats SSL** → **Gérer** : si le domaine n'est pas dans la liste, configurez son certificat (étape 2) ; si son état est « Prêt » avec « Vous pouvez l'installer sur vos serveurs », il a été créé pour un autre serveur : onglet **Paramètres avancés**, changez son utilisation pour votre **site Web IONOS** (IONOS le refait et l'installe) ; s'il est en cours de création, patientez ; une icône d'avertissement dans la colonne **Statut** signale une création bloquée : passez la souris dessus et donnez le numéro de commande affiché au support d'IONOS.
 
 ## Mises à jour et sauvegarde
 
