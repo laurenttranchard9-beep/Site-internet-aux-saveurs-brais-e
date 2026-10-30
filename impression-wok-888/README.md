@@ -23,3 +23,13 @@ node imprimer.js
 Sans Node, on peut aussi ouvrir `carte-a3-3-volets.html` dans Chrome, *Imprimer → Enregistrer au format PDF* : A3 paysage, marges « Aucune », « Graphiques d'arrière-plan » coché.
 
 Images : couverture, feuilles et sushis repris du menu d'origine. Polices : Bebas Neue et DM Sans (licence libre, voir `polices/LICENCES.md`).
+
+## Affiche Halloween
+
+**`affiche-halloween.pdf`** (A3 portrait, pour l'impression) et **`affiche-halloween.png`** (pour les réseaux sociaux) : présentation des produits du restaurant le dimanche 1er novembre, de 11h à 14h, avec le logo en version Halloween (symbole couleur citrouille et chapeau de sorcière, citrouille à la place du « O »).
+
+Le texte et la mise en page sont dans `affiche-halloween.html`. Après une modification :
+
+```bash
+node imprimer-affiche.js
+```
