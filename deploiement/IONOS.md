@@ -12,26 +12,32 @@ Il vous faut :
 
 Espace client IONOS → **Domaines & SSL** → cliquez sur `auxsaveursbraisee.fr` → modifiez sa **destination** (ou son **utilisation**) : **Webspace**, puis un dossier à son nom, par exemple `auxsaveursbraisee` (créez-le s'il n'existe pas) → enregistrez.
 
-Chaque domaine a son propre dossier : plus tard, `fleurdor31.fr` → `fleurdor31`, `wok888.fr` → `wok888`.
+Chaque domaine a son propre dossier : plus tard, `fleurdor31.fr` → `fleurdor31`, `wok888.eu` → `wok888`.
 
-## 2. Choisir la version de PHP
+## 2. Activer le certificat SSL (https)
+
+Espace client → **Domaines & SSL** → **Certificats SSL** : **Gérer** → **Configurer un certificat SSL** → **Activer maintenant** sur le certificat inclus dans votre offre → choisissez le domaine → utilisation : **« Utiliser pour mon site Web IONOS »** → acceptez les conditions → **Configurer le certificat SSL**. Chaque domaine a besoin du sien : refaites-le pour chaque domaine.
+
+Tant que le certificat n'est pas installé, `http://` marche mais `https://` affiche une erreur (« Ce site ne peut pas fournir de connexion sécurisée »).
+
+## 3. Choisir la version de PHP
 
 Espace client → **Hébergement** → **PHP** (paramètres PHP) : choisissez **PHP 8.3** (8.1 au minimum) pour ce dossier ou pour tout l'hébergement.
 
-## 3. Récupérer l'accès SFTP
+## 4. Récupérer l'accès SFTP
 
 Espace client → **Hébergement** → **SFTP & SSH** : créez un accès si besoin, et notez le **serveur** (du type `access123456789.webspace-data.io`), l'**identifiant** et le **mot de passe** (port **22**). IONOS propose aussi un fichier de configuration à importer dans FileZilla.
 
-## 4. Envoyer les fichiers
+## 5. Envoyer les fichiers
 
 1. Sur l'ordinateur, faites clic droit sur `aux-saveurs-braisees.zip` → **Extraire tout**.
 2. Ouvrez FileZilla. En haut : Hôte `sftp://` suivi du serveur, l'identifiant, le mot de passe, port `22`, puis **Connexion rapide** (acceptez la clé du serveur la première fois).
 3. À droite (l'hébergement), ouvrez le dossier `auxsaveursbraisee`. À gauche (votre ordinateur), ouvrez le dossier extrait.
 4. À gauche, sélectionnez **tout** (Ctrl + A : les dossiers `admin`, `data`, `inc`…, les fichiers, et `.htaccess`) et faites-les glisser à droite.
 
-## 5. Vérifier, puis créer le compte de gestion
+## 6. Vérifier, puis créer le compte de gestion
 
-1. Ouvrez **`https://auxsaveursbraisee.fr/verifier.php`** : chaque ligne doit être verte. Si c'est le cas, la page se supprime d'elle-même ; sinon, elle dit quoi régler.
+1. Ouvrez **`https://auxsaveursbraisee.fr/verifier.php`** (avec `http://` si le certificat n'est pas encore prêt) : chaque ligne doit être verte. Si c'est le cas, la page se supprime d'elle-même ; sinon, elle dit quoi régler.
 2. Ouvrez **tout de suite** `https://auxsaveursbraisee.fr/admin/` et créez votre compte (identifiant et mot de passe de 10 caractères au moins). Tant que ce n'est pas fait, la première personne qui ouvre cette page peut le créer.
 3. `https://auxsaveursbraisee.fr/` affiche la carte.
 
@@ -39,7 +45,8 @@ Espace client → **Hébergement** → **SFTP & SSH** : créez un accès si beso
 
 - **« 403 Forbidden » sur la page d'accueil** : les fichiers ne sont pas dans le dossier relié au domaine (étape 1), ou ils sont dans un sous-dossier : `index.html` doit être directement dans `auxsaveursbraisee`.
 - **« 500 Internal Server Error »** : dans FileZilla, clic droit sur le fichier `.htaccess` du dossier → **Afficher/Éditer**, supprimez la ligne `Options -Indexes`, enregistrez et renvoyez-le.
-- **La carte reste vide** : ouvrez `https://auxsaveursbraisee.fr/api.php?action=menu` ; un message d'erreur indique ce qui manque (souvent la version de PHP, étape 2).
+- **La carte reste vide** : ouvrez `https://auxsaveursbraisee.fr/api.php?action=menu` ; un message d'erreur indique ce qui manque (souvent la version de PHP, étape 3).
+- **`https://` affiche une erreur alors que `http://` marche** : IONOS n'a pas de certificat installé pour ce domaine. Dans **Domaines & SSL** → **Certificats SSL** → **Gérer** : si le domaine n'est pas dans la liste, configurez son certificat (étape 2) ; s'il est en cours de création, patientez ; une icône d'avertissement dans la colonne **Statut** signale une création bloquée : passez la souris dessus et donnez le numéro de commande affiché au support d'IONOS.
 
 ## Mises à jour et sauvegarde
 
