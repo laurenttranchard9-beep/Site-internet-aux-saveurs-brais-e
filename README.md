@@ -17,6 +17,11 @@ Ouvrez `index.html` dans un navigateur pour voir la page.
 
 Le dossier [`restaurant/`](restaurant/) contient le menu interactif du restaurant et son espace de gestion (prix, stocks, produits, catégories). Il fonctionne en PHP (XAMPP en local, ou n'importe quel hébergement web). Voir [`restaurant/README.md`](restaurant/README.md).
 
+## Cartes imprimées
+
+- [`impression-fleur-dor/`](impression-fleur-dor/) : carte A3 3 volets de La Fleur d'Or.
+- [`impression-wok-888/`](impression-wok-888/) : carte A3 3 volets de Wok 888.
+
 ## Mise en ligne
 
 Le dossier [`deploiement/`](deploiement/) contient les scripts qui installent ces deux sites, ainsi que [La Fleur d'Or](https://github.com/laurenttranchard9-beep/Fleur-d-or), sur un serveur Ubuntu, Debian ou Amazon Linux 2023 : installation, noms de domaine en HTTPS, sauvegarde et déménagement d'un serveur à l'autre. Voir [`deploiement/README.md`](deploiement/README.md).
