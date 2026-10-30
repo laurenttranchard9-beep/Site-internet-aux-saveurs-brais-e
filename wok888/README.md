@@ -101,7 +101,7 @@ Le thème vert et blanc est réglé en haut de `site.css` (`--vert`, `--vert-fon
 
 ## À vérifier avec le restaurant
 
-- **Mentions légales** (`mentions-legales.html`) : raison sociale, SIRET, TVA, directeur de la publication et hébergeur sont marqués « à compléter ».
+- **Mentions légales** (`mentions-legales.html`) : le SIRET (932 562 028 00013) et l'hébergeur (IONOS) sont indiqués ; raison sociale, TVA et directeur de la publication sont marqués « à compléter ».
 - **Prix différents sur l'ancien site** entre la carte et la commande en ligne ; la carte a été suivie : porc croustillant à l'aigre-douce 13,10 € (12,50 € en ligne), riz vinaigré 4,00 € (6,00 €), mangue fraîche 6,90 € (7,90 €), maki crevette et maki ebi tempura 3,30 € (3,50 € et 4,90 €).
 - **Bière pression** : l'ancien site affichait 8,00 € pour 25 cl comme pour 50 cl ; la 25 cl est affichée « sur demande » en attendant le bon prix.
 - **Orthographe corrigée** : « Angkor Red » (« Anghor Red »), « Cosmopolitan » (« Cosmopolitain »), « Ha kao » (« 5 mièces »). À remettre si c'était voulu.
