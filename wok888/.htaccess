@@ -1,5 +1,15 @@
 # En-têtes de sécurité et mise en cache (serveurs Apache : OVH, XAMPP…)
 Options -Indexes
+# Adresse sécurisée : http://wok888.eu passe en https (certificat installé chez IONOS).
+# Seulement pour ce domaine : en local (XAMPP) ou par l'adresse IP, le site reste en http.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^(www\.)?wok888\.eu$ [NC]
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{ENV:HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
 # Documentation du dossier : pas pour les visiteurs.
 <Files "README.md">
   Require all denied
