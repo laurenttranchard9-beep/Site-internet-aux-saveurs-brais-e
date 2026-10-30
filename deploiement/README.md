@@ -1,5 +1,7 @@
 # Mise en ligne des sites (Ubuntu, Debian ou Amazon Linux 2023)
 
+> **Hébergement web sans serveur à administrer (IONOS, OVH, o2switch…)** : voir [`IONOS.md`](IONOS.md). Le script `paquets-hebergement.sh` prépare un fichier ZIP par site, à envoyer avec FileZilla, et une page `verifier.php` contrôle l'hébergement.
+
 Cinq sites peuvent être installés sur un serveur, dans des sous-dossiers de son adresse IP :
 
 | Site | Nom dans les scripts | Adresse | Administration |
@@ -22,6 +24,7 @@ Les scripts récupèrent les sites directement sur GitHub :
 | `installer.sh` | installe ou met à jour les sites ; reprend les données d'un ancien serveur |
 | `ajouter-domaine.sh` | relie un nom de domaine à un site, avec HTTPS |
 | `sauvegarder.sh` | sauvegarde les données, et peut les envoyer sur un nouveau serveur |
+| `paquets-hebergement.sh` | prépare les sites pour un hébergement web mutualisé (IONOS…) : un ZIP par site |
 
 ## Ajouter WOK 888 sur un serveur qui a déjà des sites
 
