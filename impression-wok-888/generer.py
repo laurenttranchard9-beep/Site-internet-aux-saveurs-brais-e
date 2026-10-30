@@ -233,17 +233,23 @@ CALIFORNIA = rubrique("California", note="3 pièces", plats=[
 MISO = "Soupe miso + salade de choux"
 
 
-def menu(nom, prix, compte, lignes):
-    """Formule : lignes = [(libellé, quantité)]."""
-    return rubrique(nom, note=prix, intro=compte, plats=[p(l, q) for l, q in lignes])
+def menu(nom, prix, compte, lignes, vedette=False, corps=""):
+    """Formule présentée en encadré. lignes = [(libellé, quantité)] ; la soupe miso
+    et la salade de choux, servies avec chaque menu, s'affichent à part en tête."""
+    inclus = [l for l, q in lignes if l == MISO]
+    return {"type": "formule", "nom": nom, "prix": prix, "sous": compte, "vedette": vedette, "corps": corps,
+            "inclus": inclus[0] if inclus else "", "lignes": [(l, q) for l, q in lignes if l != MISO]}
 
 
-MENU_JOUR = rubrique("Menu du jour", intro="Uniquement le midi, sauf les jours fériés et les week-ends", plats=[
-    p("Entrée + plat", "17,00 €"),
-    p("Plat + dessert", "17,00 €"),
-    p("Entrée + plat + dessert", "19,00 €"),
-    p("Assiette express", "15,00 €", "Nem poulet, nem porc, brochettes poulet, courgette et champignon, riz nature"),
-])
+MENU_JOUR = menu("Menu du jour", "", "Uniquement le midi, sauf les jours fériés et les week-ends", [], corps=(
+    '<div class="tuiles">'
+    '<div><span>Entrée<br>+ plat</span><b>17,00 €</b></div>'
+    '<div><span>Plat<br>+ dessert</span><b>17,00 €</b></div>'
+    '<div><span>Entrée + plat<br>+ dessert</span><b>19,00 €</b></div>'
+    '</div>'
+    '<div class="express"><div class="ligne"><span class="nom">Assiette express</span><span class="pts"></span>'
+    '<span class="prix">15,00 €</span></div>'
+    '<p class="desc">Nem poulet, nem porc, brochettes poulet, courgette et champignon, riz nature</p></div>'))
 MENU_MAKI = menu("Menu Maki", "25,90 €", "24 pièces", [
     (MISO, ""), ("Maki avocat", "6 pièces"), ("Maki concombre", "6 pièces"),
     ("California avocat surimi", "6 pièces"), ("California avocat saumon", "6 pièces"),
@@ -269,14 +275,13 @@ MENU_ROYAL = menu("Menu Royal 888", "60,00 €", "Pour 2 personnes (42 pièces)"
     ("Sashimi thon", "4 pièces"), ("Sashimi daurade", "4 pièces"), ("Brochettes de poulet", "2 pièces"),
     ("Brochettes de champignons", "2 pièces"), ("Brochettes de courgettes", "2 pièces"),
     ("Riz nature", "2 pièces"), ("Ananas ou coupe de fruits frais", ""),
-])
-MENU_ENFANT = html(
-    '<section class="rubrique"><h3><span>Menu Enfant</span><i></i><b>10,00 €</b></h3>'
+], vedette=True)
+MENU_ENFANT = menu("Menu enfant", "10,00 €", "Un plat, un dessert et une boisson", [], corps=(
     '<div class="enfant">'
     '<span>Saumon grillé, riz ou nouilles</span><em>ou</em><span>Brochettes de poulet, riz</span>'
     '<span>Salade de fruits</span><em>ou</em><span>Glace</span>'
     '<span class="trio"><span>Sirop</span><em>ou</em><span>Jus</span><em>ou</em><span>Soda</span></span>'
-    '</div></section>')
+    '</div>'))
 
 DESSERTS = rubrique("Desserts", plats=[
     p("Tapioca banane", "7,90 €"),
@@ -416,7 +421,7 @@ INTERIEUR = [
 EXTERIEUR = [
     {"colonnes": [[titre("Les", "Menus"), MENU_JOUR, MENU_MAKI, MENU_SUSHI, MENU_SASHIMI, MENU_DUO],
                   [MENU_ROYAL, MENU_ENFANT, titre("Les", "Desserts"), DESSERTS, MOCHI, GLACES, DIGESTIFS_GLACES]],
-     "taille": 8},
+     "taille": 7.8},
     {"colonnes": [[titre("Les", "Boissons"), SOFTS, EAUX, CHAUDES, APERITIFS, SPIRITUEUX,
                    titre("Les", "Bières"), BIERES_BOUTEILLE, BIERES_PRESSION],
                   [titre("Les", "Cocktails"), COCKTAILS, SANS_ALCOOL,
@@ -445,6 +450,15 @@ def bloc(b):
         return f'<h2 class="grand">{petit}{e(b["grand"])}</h2>'
     if b["type"] == "html":
         return b["code"]
+    if b["type"] == "formule":
+        prix = f'<b class="tarif">{e(b["prix"])}</b>' if b["prix"] else ""
+        sous = f'<p class="sous">{e(b["sous"])}</p>' if b["sous"] else ""
+        inclus = f'<p class="inclus">{e(b["inclus"])}</p>' if b["inclus"] else ""
+        lignes = "".join(f'<li><span>{e(l)}</span><em>{e(q)}</em></li>' for l, q in b["lignes"])
+        liste = f"<ul>{lignes}</ul>" if lignes else ""
+        classe = "formule vedette" if b["vedette"] else "formule"
+        return (f'<section class="{classe}"><header><h3>{e(b["nom"])}</h3>{prix}</header>'
+                f'<div class="corps">{sous}{inclus}{liste}{b["corps"]}</div></section>')
     note = f'<b>{e(b["note"])}</b>' if b["note"] else ""
     intro = f'<p class="intro">{e(b["intro"])}</p>' if b["intro"] else ""
     return (f'<section class="rubrique"><h3><span>{e(b["titre"])}</span><i></i>{note}</h3>{intro}'
