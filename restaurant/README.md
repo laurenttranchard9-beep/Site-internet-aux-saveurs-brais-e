@@ -25,13 +25,24 @@ Pour arrêter, cliquez sur **Stop** dans XAMPP. Vos données restent enregistré
 
 ## Mettre le site en ligne
 
-Presque tous les hébergeurs web proposent PHP, même les offres les moins chères (OVH, o2switch, Hostinger, IONOS…).
+Presque tous les hébergeurs web proposent PHP, même les offres les moins chères (IONOS, OVH, o2switch, Hostinger…). Il faut PHP 8.1 ou plus récent, avec SQLite : la page `verification.php` le contrôle.
 
-1. Envoyez le contenu du dossier `restaurant` sur l'hébergement, avec le gestionnaire de fichiers de l'hébergeur ou un logiciel FTP comme FileZilla.
-2. Ouvrez **tout de suite** `https://votre-site.fr/admin/` et créez votre compte. Tant que ce n'est pas fait, la première personne qui ouvre cette page peut créer le compte.
-3. C'est tout.
+1. Envoyez le contenu du dossier `restaurant` sur l'hébergement, avec le gestionnaire de fichiers de l'hébergeur ou un logiciel FTP comme FileZilla. Les dossiers `tests/` et `impression/` ne sont pas utiles en ligne.
+2. Ouvrez `https://votre-site.fr/verification.php` : chaque point doit être coché en vert.
+3. Ouvrez **tout de suite** `https://votre-site.fr/admin/` et créez votre compte. Tant que ce n'est pas fait, la première personne qui ouvre cette page peut créer le compte.
 
-Vérifiez que le dossier `data/` est **accessible en écriture** (c'est le cas par défaut chez la plupart des hébergeurs). Utilisez de préférence l'adresse en **https://**.
+Le dossier `data/` doit être **accessible en écriture** (c'est le cas par défaut chez la plupart des hébergeurs). Utilisez de préférence l'adresse en **https://**.
+
+### Chez IONOS (hébergement web)
+
+1. **Envoyer les fichiers.** Dans l'espace client IONOS, ouvrez **Hébergement**, puis **SFTP & SSH**, et notez l'adresse du serveur, l'identifiant et le mot de passe SFTP. Dans FileZilla, connectez-vous avec ces informations (port 22). Créez un dossier `auxsaveursbraisee`, puis glissez-y le contenu du dossier `restaurant`, y compris les fichiers `.htaccess`.
+2. **Relier le domaine.** Dans **Domaines & SSL**, choisissez `auxsaveursbraisee.fr`, puis **Modifier la destination** → **Espace web** → le dossier `auxsaveursbraisee`. Faites de même pour `www.auxsaveursbraisee.fr` s'il est listé à part. IONOS règle lui-même la zone DNS.
+3. **Activer le HTTPS.** Toujours dans **Domaines & SSL**, activez le certificat SSL du domaine (fourni avec l'hébergement).
+4. **Vérifier** avec `https://auxsaveursbraisee.fr/verification.php`, puis créer le compte de gestion (étapes 2 et 3 ci-dessus).
+
+Si le site affiche « Internal Server Error » dès l'envoi des fichiers, retirez la ligne `Options -Indexes` du fichier `.htaccess` principal (certains hébergeurs ne l'acceptent pas). Si `verification.php` indique que SQLite est absent, demandez au support d'IONOS d'activer l'extension PHP `pdo_sqlite`.
+
+Les QR codes des tables pointent vers `https://auxsaveursbraisee.fr` : ils restent valables tant que le site garde ce domaine.
 
 ## Mot de passe oublié
 
@@ -55,7 +66,7 @@ Les chiffres ne portent donc que sur les visiteurs qui acceptent le cookie.
 
 ## Mentions légales
 
-La page `mentions-legales.html` (lien en bas de la carte et dans le bandeau cookies) indique l'éditeur (SARL SAMNANG), l'hébergeur (OVH), le concepteur du site et l'usage des cookies. Modifiez-la directement si ces informations changent.
+La page `mentions-legales.html` (lien en bas de la carte et dans le bandeau cookies) indique l'éditeur (SARL SAMNANG), l'hébergeur (IONOS), le concepteur du site et l'usage des cookies. Modifiez-la directement si ces informations changent.
 
 ## Stocks
 
