@@ -19,17 +19,24 @@ ICI = Path(__file__).resolve().parent
 
 # ---------- Outils de saisie ----------
 
-def p(nom, prix="", desc="", qte=""):
-    """Une ligne de la carte. prix est écrit tel qu'il doit s'afficher."""
-    return {"nom": nom, "prix": prix, "desc": desc, "qte": qte}
+def p(nom, prix="", desc="", qte="", spe=False):
+    """Une ligne de la carte. prix est écrit tel qu'il doit s'afficher.
+    spe=True : plat mis en avant comme spécialité de la maison (étoile et fond bordeaux)."""
+    return {"nom": nom, "prix": prix, "desc": desc, "qte": qte, "spe": spe}
 
 
-def rubrique(titre, plats, note="", intro=""):
+def rubrique(titre, plats, note="", intro="", spe=False):
+    """spe=True : toute la rubrique est une spécialité de la maison."""
+    if spe:
+        for pl in plats:
+            pl["spe"] = True
     return {"type": "rubrique", "titre": titre, "note": note, "intro": intro, "plats": plats}
 
 
-def titre(petit, grand):
-    return {"type": "titre", "petit": petit, "grand": grand}
+def titre(petit, grand, sticker=False, compact=False):
+    """sticker=True : ajoute le sticker rond « Nos spécialités » à côté du titre.
+    compact=True : titre un peu plus petit, pour laisser la place au sticker dans une colonne."""
+    return {"type": "titre", "petit": petit, "grand": grand, "sticker": sticker, "compact": compact}
 
 
 def html(code):
@@ -65,7 +72,7 @@ SOUPES = rubrique("Soupes & potages", plats=[
     p("Potage pékinois au crabe", "8,90 €", "Chair de crabe, champignons noirs, pousses de bambou"),
     p("Potage pékinois au poulet", "8,90 €", "Blanc de poulet émincé, champignons noirs"),
     p("Soupe de raviolis", "9,90 €", "Raviolis aux crevettes, crevettes, chou chinois"),
-    p("Soupe de nouilles aux fruits de mer", "9,90 €", "Nouilles, crevettes, encornets, champignons noirs, chou chinois"),
+    p("Soupe de nouilles aux fruits de mer", "9,90 €", "Nouilles, crevettes, encornets, champignons noirs, chou chinois", spe=True),
     p("Soupe miso", "4,50 €"),
     p("Soupe miso au crabe", "6,50 €"),
     p("Soupe miso aux crevettes", "6,90 €"),
@@ -73,7 +80,7 @@ SOUPES = rubrique("Soupes & potages", plats=[
 
 TAPAS = rubrique("Tapas à partager", intro="Nems et samoussas faits maison", plats=[
     p("Rouleaux de printemps", "7,90 €", "Salade, vermicelles, crevettes, poulet", "2 pièces"),
-    p("Nem porc", "5,90 €", qte="3 pièces"),
+    p("Nem porc", "5,90 €", qte="3 pièces", spe=True),
     p("Nem poulet", "5,90 €", qte="3 pièces"),
     p("Nem crevette", "5,90 €", qte="3 pièces"),
     p("Beignets de poulet", "6,00 €", qte="4 pièces"),
@@ -125,7 +132,7 @@ WOK = rubrique("Wok", note="Supplément œuf bio + 2,50 €", plats=[
     p("Lak lak", "17,50 €"),
 ])
 
-POKE = rubrique("Poké bowl", intro="Riz vinaigré, brocolis, chou-fleur, avocat, concombre, mayonnaise maison et sauce noire", plats=[
+POKE = rubrique("Poké bowl", intro="Riz vinaigré, brocolis, chou-fleur, avocat, concombre, mayonnaise maison et sauce noire", spe=True, plats=[
     p("Poké bowl crevettes", "17,90 €"),
     p("Poké bowl saumon", "16,90 €", "Chair de crabe, champignons noirs, pousses de bambou"),
     p("Poké bowl thon", "16,90 €", qte="5 pièces"),
@@ -142,13 +149,13 @@ PLATS = rubrique("Spécialités", intro="Servies sans accompagnement", plats=[
     p("Porc frit au curry", "14,90 €", "Porc mariné et pané"),
     p("Porc frit sauce piquante", "14,90 €", "Porc mariné et pané"),
     p("Porc au caramel", "14,90 €", "Porc mijoté"),
-    p("Canard laqué", "15,50 €", f"Magret mariné, {LEG_PLATS}, pousses de soja"),
-    p("Poulet au basilic", "14,50 €", f"Poulet mariné au basilic thaï, {LEG_PLATS}, ananas"),
+    p("Canard laqué", "15,50 €", f"Magret mariné, {LEG_PLATS}, pousses de soja", spe=True),
+    p("Poulet au basilic", "14,50 €", f"Poulet mariné au basilic thaï, {LEG_PLATS}, ananas", spe=True),
     p("Poulet frit à l’aigre-douce", "14,50 €", f"Cuisses de poulet désossées et panées, {LEG_PLATS}, ananas"),
     p("Poulet à l’ananas", "13,50 €", f"Blanc de poulet, {LEG_PLATS}, ananas"),
     p("Fruits de mer à la plancha", "17,00 €", "Encornets, crevettes, moules, Saint-Jacques, oignons"),
     p("Canard grillé sur plaque chauffante au saté", "16,00 €", f"Magret, {LEG_PLATS}, ananas"),
-    p("Bœuf grillé sur plaque chauffante au saté", "16,00 €", f"Bœuf, {LEG_PLATS}, ananas"),
+    p("Bœuf grillé sur plaque chauffante au saté", "16,00 €", f"Bœuf, {LEG_PLATS}, ananas", spe=True),
     p("Bœuf au curry", "15,00 €", f"Bœuf, {LEG_PLATS}, ananas"),
     p("Bœuf piquant", "15,00 €", f"Bœuf, {LEG_PLATS}, ananas"),
 ])
@@ -170,7 +177,7 @@ SUSHI = rubrique("Sushi", note="2 pièces", plats=[
     p("Sushi avocat", "5,80 €"),
     p("Sushi saumon-avocat", "7,00 €"),
     p("Sushi saumon-cheese", "7,00 €"),
-    p("Sushi Hana", "8,00 €", "Saumon, thon, chair de crabe, crevettes, avocat"),
+    p("Sushi Hana", "8,00 €", "Saumon, thon, chair de crabe, crevettes, avocat", spe=True),
 ])
 MAKI = rubrique("Maki", note="3 pièces", plats=[
     p("Maki saumon", "4,30 €"),
@@ -410,11 +417,11 @@ BIERES_PRESSION = rubrique("À la pression", intro="Heineken, Affligem ou bière
 # « taille » est la taille du texte en points : tout le volet (titres, marges) suit.
 
 INTERIEUR = [
-    {"titre": titre("Nos", "Entrées"),
+    {"titre": titre("Nos", "Entrées", sticker=True),
      "colonnes": [[GRILLADES, VAPEUR, SOUPES], [TAPAS, ASSIETTES, SALADES]], "taille": 8.6},
-    {"colonnes": [[titre("Côté", "Wok"), WOK_BASE, WOK, titre("", "Poké bowl"), POKE, ACCOMPAGNEMENTS],
+    {"colonnes": [[titre("Côté", "Wok"), WOK_BASE, WOK, titre("", "Poké bowl", sticker=True, compact=True), POKE, ACCOMPAGNEMENTS],
                   [titre("Nos", "Plats"), PLATS]], "taille": 8.6},
-    {"titre": titre("Spécialités", "Japonaises"),
+    {"titre": titre("Spécialités", "Japonaises", sticker=True),
      "colonnes": [[SUSHI, MAKI, CHIRASHI, SASHIMI], [CRUNCHI, SNOW, CALIFORNIA]], "taille": 8.6},
 ]
 
@@ -436,18 +443,26 @@ def e(s):
     return escape(str(s), quote=True)
 
 
+ETOILE = ('<svg class="etoile" viewBox="0 0 24 24" aria-label="spécialité"><circle cx="12" cy="12" r="12"/>'
+          '<path d="M12 4.6l2.2 4.6 5 .6-3.7 3.4 1 5-4.5-2.5-4.5 2.5 1-5-3.7-3.4 5-.6z" fill="#fff"/></svg>')
+STICKER = (f'<span class="sticker"><span><small>Nos</small>spécialités{ETOILE}</span></span>')
+
+
 def ligne(pl):
     qte = f' <em class="qte">{e(pl["qte"])}</em>' if pl["qte"] else ""
     desc = f'<p class="desc">{e(pl["desc"])}</p>' if pl["desc"] else ""
     pts = '<span class="pts"></span>' if pl["prix"] or not pl["desc"] else ""
-    return (f'<div class="plat"><div class="ligne"><span class="nom">{e(pl["nom"])}{qte}</span>{pts}'
+    classe, etoile = ("plat spe", ETOILE) if pl.get("spe") else ("plat", "")
+    return (f'<div class="{classe}"><div class="ligne"><span class="nom">{etoile}{e(pl["nom"])}{qte}</span>{pts}'
             f'<span class="prix">{e(pl["prix"])}</span></div>{desc}</div>')
 
 
 def bloc(b):
     if b["type"] == "titre":
         petit = f"<small>{e(b['petit'])}</small>" if b["petit"] else ""
-        return f'<h2 class="grand">{petit}{e(b["grand"])}</h2>'
+        sticker = STICKER if b.get("sticker") else ""
+        classe = "grand compact" if b.get("compact") else "grand"
+        return f'<h2 class="{classe}">{petit}{e(b["grand"])}{sticker}</h2>'
     if b["type"] == "html":
         return b["code"]
     if b["type"] == "formule":

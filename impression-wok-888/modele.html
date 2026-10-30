@@ -18,7 +18,7 @@
   @font-face { font-family: "DM Sans"; src: url(polices/dm-sans-700-normal.woff2) format("woff2"); font-weight: 700; }
 
   @page { size: 420mm 297mm; margin: 0; }
-  :root { --vert: #276a43; --vert-clair: #4f8a65; --creme: #fcf8ee; --encre: #1d211e; --points: #8fb09a; --or: #d8b86a; }
+  :root { --vert: #276a43; --vert-clair: #4f8a65; --creme: #fcf8ee; --encre: #1d211e; --points: #8fb09a; --bordeaux: #7b1e32; --bordeaux-clair: #f4e6e8; --or: #d8b86a; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { background: #777; }
   body { font-family: "DM Sans", sans-serif; color: var(--encre); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -89,6 +89,27 @@
   .tuiles b { font-family: "Bebas Neue", sans-serif; font-weight: 400; font-size: 1.5em; line-height: 1; color: var(--vert); }
   .express .ligne { font-weight: 500; }
 
+  /* Spécialités de la maison (étoile, fond bordeaux, sticker) */
+  .etoile { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.17em; margin-right: .3em; fill: var(--bordeaux); }
+  .plat.spe { background: linear-gradient(90deg, var(--bordeaux-clair), rgba(244,230,232,.35)); border-left: 0.7mm solid var(--bordeaux);
+    border-radius: 0 1mm 1mm 0; margin-left: -1.9mm; padding: .35mm .8mm .45mm 1.2mm; }
+  .plat.spe .nom { color: var(--bordeaux); font-weight: 500; }
+  .plat.spe .prix { color: var(--bordeaux); }
+  .plat.spe .pts { border-bottom-color: #c99aa4; }
+  .plat.spe .desc { color: #8c4a57; }
+  .grand { position: relative; width: fit-content; }
+  .grand.compact { font-size: 3.9em; }
+  .grand.compact .sticker { width: 18.5mm; height: 18.5mm; font-size: 9.6pt; left: calc(100% + 1.5mm); }
+  .grand.compact .sticker > span { width: 15mm; height: 15mm; }
+  .sticker { position: absolute; left: calc(100% + 4mm); top: 50%; width: 21mm; height: 21mm; transform: translateY(-50%) rotate(-12deg);
+    border-radius: 50%; background: var(--bordeaux); border: 0.9mm solid #fff; box-shadow: 0 .8mm 1.6mm rgba(60,10,20,.35);
+    display: grid; place-items: center; color: #fff; font-size: 11pt; line-height: .9; letter-spacing: .02em; text-align: center; }
+  .sticker > span { display: grid; place-items: center; width: 17mm; height: 17mm; border-radius: 50%; border: 0.25mm dashed rgba(255,255,255,.6);
+    padding-top: .6mm; }
+  .sticker small { display: block; font-size: .62em; letter-spacing: .12em; }
+  .sticker .etoile { fill: #fff; margin: .4mm 0 0; width: 3.2mm; height: 3.2mm; }
+  .sticker .etoile path { fill: var(--bordeaux); }
+
   /* Menu enfant */
   .enfant { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.2mm 1.2mm; align-items: center; font-size: .93em; line-height: 1.2; }
   .enfant span { border: 0.25mm solid var(--vert); border-radius: 1.4mm; padding: .9mm 1.4mm; text-align: center; }
@@ -123,7 +144,6 @@
 <section class="feuille interieur">
   <i class="pli haut" style="left:141mm"></i><i class="pli bas" style="left:141mm"></i>
   <i class="pli haut" style="left:282mm"></i><i class="pli bas" style="left:282mm"></i>
-  <img class="deco" src="images/feuille.png" alt="" style="left:112mm;top:3mm;height:26mm;transform:rotate(-35deg)" />
   <img class="deco" src="images/feuilles.png" alt="" style="left:232mm;bottom:3mm;height:66mm;transform:scaleX(-1) rotate(-12deg)" />
   <img class="deco" src="images/sushis.png" alt="" style="left:330mm;bottom:8mm;height:84mm" />
   {{INTERIEUR}}

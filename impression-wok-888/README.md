@@ -11,7 +11,7 @@ Le rabat fait 138 mm au lieu de 141 mm pour se replier sans buter contre le pli.
 
 ## Mettre à jour la carte
 
-Les plats et les prix sont dans `generer.py`, la mise en page (couleurs, polices, couverture, décor) dans `modele.html`. Après une modification :
+Les plats et les prix sont dans `generer.py`, la mise en page (couleurs, polices, couverture, décor) dans `modele.html`. Pour mettre un plat en avant comme spécialité de la maison (étoile et fond bordeaux), ajouter `spe=True` à sa ligne, ou à la rubrique entière ; `sticker=True` sur un grand titre ajoute le sticker rond « Nos spécialités ». Après une modification :
 
 ```bash
 python3 generer.py
