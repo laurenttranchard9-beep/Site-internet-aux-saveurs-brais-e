@@ -250,9 +250,9 @@ def menu(nom, prix, compte, lignes, vedette=False, corps=""):
 
 MENU_JOUR = menu("Menu du jour", "", "Uniquement le midi, sauf les jours fériés et les week-ends", [], corps=(
     '<div class="tuiles">'
-    '<div><span>Entrée<br>+ plat</span><b>17,00 €</b></div>'
-    '<div><span>Plat<br>+ dessert</span><b>17,00 €</b></div>'
-    '<div><span>Entrée + plat<br>+ dessert</span><b>19,00 €</b></div>'
+    '<div><span>Entrée <br>+ plat</span><b>17,00 €</b></div>'
+    '<div><span>Plat <br>+ dessert</span><b>17,00 €</b></div>'
+    '<div><span>Entrée + plat <br>+ dessert</span><b>19,00 €</b></div>'
     '</div>'
     '<div class="express"><div class="ligne"><span class="nom">Assiette express</span><span class="pts"></span>'
     '<span class="prix">15,00 €</span></div>'

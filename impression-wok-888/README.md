@@ -33,3 +33,32 @@ Le texte et la mise en page sont dans `affiche-halloween.html`. Après une modif
 ```bash
 node imprimer-affiche.js
 ```
+
+## Diaporama pour les 5 écrans
+
+Le dossier **`cles-usb/`** contient un dossier par écran, à copier tel quel sur sa clé USB :
+
+| Clé | Contenu |
+| --- | --- |
+| `ecran-1-entrees` | grillades, vapeur, soupes · tapas et assiettes · salades |
+| `ecran-2-wok-poke-plats` | wok, poké bowls, accompagnements · plats |
+| `ecran-3-japonais` | sushi, maki, chirashi, sashimi · crunchi, snow rolls, california |
+| `ecran-4-menus` | menu du jour, Maki, Sushi, Sashimi · Duo, Royal 888, Enfant |
+| `ecran-5-desserts-boissons` | desserts · boissons · cocktails · vins et bières |
+
+Dans chaque dossier :
+
+- **`…-boucle.mp4`** : toutes les diapos de l'écran (20 secondes chacune, fondu entre deux). Sur la télévision, lire la vidéo depuis la clé et activer **Répéter** (souvent « Répéter : un » ou « Repeat one ») : elle tourne alors sans fin.
+- **`images/`** : les mêmes diapos en JPEG (1920 × 1080), pour le mode **diaporama photo** si la télévision lit mal les vidéos (régler l'intervalle sur 20 s et la répétition).
+
+Pour une télévision qui ne sait pas répéter une vidéo, `bash fabriquer-videos.sh --10h` ajoute une vidéo de 10 heures par écran (environ 450 Mo chacune, trop lourde pour le dépôt).
+
+Les diapos reprennent les plats et les prix de `generer.py`, avec les spécialités en bordeaux. Après une modification de la carte :
+
+```bash
+python3 diaporama.py
+node imprimer-diaporama.js
+bash fabriquer-videos.sh
+```
+
+La répartition des diapos par écran est dans `diaporama.py`, leur mise en page dans `diaporama-modele.html`.
