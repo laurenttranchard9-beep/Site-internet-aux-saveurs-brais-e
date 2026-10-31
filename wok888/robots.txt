@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin/
 
-Sitemap: https://wok888.fr/sitemap.xml
+Sitemap: https://wok888.eu/sitemap.xml

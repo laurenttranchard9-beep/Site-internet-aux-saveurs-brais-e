@@ -288,7 +288,7 @@
         el.style.transform = `scale(${0.5 + 0.5 * E.outBack(p, 2)})`;
       } else if (mode === "monte") {
         el.style.opacity = String(E.outCubic(p));
-        // « wok888.fr » prononcé par la voix : l'adresse grossit un instant
+        // Sur le coup final, l'adresse du site grossit un instant
         const accent = el.id === "fin-web" ? 0.08 * bosse(t, S.accentFin, S.accentFin + 0.55) : 0;
         el.style.transform = `translateY(${(1 - E.outExpo(p)) * 60}px) scale(${1 + accent})`;
       } else {

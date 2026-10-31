@@ -15,7 +15,7 @@ Tout est calé sur le tempo de la musique (120 temps par minute, une mesure = 2 
 | 28 – 34 s | « La machine 888 » |
 | 34 – 40 s | « Cassez votre fortune cookie » |
 | 40 – 44 s | « Réservez en ligne » ou appelez |
-| 44 – 50 s | Coup final : wok888.fr, téléphone, adresse |
+| 44 – 50 s | Coup final : wok888.eu, téléphone, adresse |
 
 ## Musique et bruitages
 
