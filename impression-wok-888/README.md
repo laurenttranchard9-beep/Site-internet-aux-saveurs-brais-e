@@ -62,3 +62,19 @@ bash fabriquer-videos.sh
 ```
 
 La répartition des diapos par écran est dans `diaporama.py`, leur mise en page dans `diaporama-modele.html`.
+
+## Stories Instagram « à la une »
+
+Le dossier **`instagram/`** (et `instagram.zip`) contient, pour 8 stories à la une :
+
+- **`couvertures-a-la-une/`** : la couverture ronde de chacune (logo Wok 888, étoile des spécialités, et un pictogramme pour les entrées, le wok et les poké bowls, les spécialités japonaises, les menus, les desserts et les boissons) ;
+- **`stories/`** : les stories de chacune, en 1080 × 1920, avec le logo. Toute la carte y est, découpée en pages ; les spécialités sont en bordeaux.
+
+Sur Instagram : publier les stories d'une rubrique (dans l'ordre des numéros), puis *Ajouter à la une*, et choisir comme couverture l'image de `couvertures-a-la-une/` (le rond est déjà centré). Le haut et le bas des stories sont laissés libres pour les boutons d'Instagram.
+
+Après une modification de la carte :
+
+```bash
+python3 stories.py
+node imprimer-stories.js
+```
