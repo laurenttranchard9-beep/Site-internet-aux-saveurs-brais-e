@@ -78,3 +78,11 @@ Après une modification de la carte :
 python3 stories.py
 node imprimer-stories.js
 ```
+
+## Affiche du menu du jour
+
+**`affiche-menu-du-jour.pdf`** (A3 portrait) et **`affiche-menu-du-jour.png`** : l'entrée, le plat et le dessert du jour au choix, la date et les prix des formules de la carte. Pour un autre jour, changer la date et les plats dans `affiche-menu-du-jour.html`, puis :
+
+```bash
+node imprimer-affiche.js affiche-menu-du-jour
+```
