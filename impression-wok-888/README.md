@@ -86,3 +86,11 @@ node imprimer-stories.js
 ```bash
 node imprimer-affiche.js affiche-menu-du-jour
 ```
+
+## Affiche Europa League
+
+**`affiche-europa-league.pdf`** (A3 portrait) et **`affiche-europa-league.png`** : même forme que le menu du jour, pour annoncer la diffusion des matchs de l'Europa League le soir même, avec les prix de la bière à la pression et des cocktails. Pour un autre soir, changer la date dans `affiche-europa-league.html`, puis :
+
+```bash
+node imprimer-affiche.js affiche-europa-league
+```

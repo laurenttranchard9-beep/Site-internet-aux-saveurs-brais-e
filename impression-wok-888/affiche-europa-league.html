@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Soirée Europa League · Wok 888</title>
+<!--
+  Affiche A3 portrait (297 × 420 mm), même forme que le menu du jour : diffusion des matchs de l'Europa League ce soir.
+  Pour un autre soir, changer la date dans le corps de la page, puis : node imprimer-affiche.js affiche-europa-league
+  Les prix sont ceux de la carte (generer.py : bière à la pression, cocktails).
+-->
+<style>
+  @font-face { font-family: "Bebas Neue"; src: url(polices/bebas-neue.woff2) format("woff2"); }
+  @font-face { font-family: "DM Sans"; src: url(polices/dm-sans-400-normal.woff2) format("woff2"); font-weight: 400; }
+  @font-face { font-family: "DM Sans"; src: url(polices/dm-sans-400-italic.woff2) format("woff2"); font-weight: 400; font-style: italic; }
+  @font-face { font-family: "DM Sans"; src: url(polices/dm-sans-500-normal.woff2) format("woff2"); font-weight: 500; }
+  @font-face { font-family: "DM Sans"; src: url(polices/dm-sans-700-normal.woff2) format("woff2"); font-weight: 700; }
+
+  @page { size: 297mm 420mm; margin: 0; }
+  :root { --vert: #276a43; --vert-fonce: #173f28; --creme: #fcf8ee; --or: #e9c46a; --encre: #1d211e; --sauge: #4f8a65; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #555; }
+  body { font-family: "DM Sans", sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media print { html, body { background: none; } .affiche { margin: 0 !important; box-shadow: none !important; } }
+
+  .affiche { position: relative; width: 297mm; height: 420mm; overflow: hidden; margin: 10mm auto; box-shadow: 0 4mm 14mm rgba(0,0,0,.5);
+    color: var(--creme); text-align: center;
+    background: radial-gradient(ellipse 80% 45% at 30% 15%, rgba(60,140,92,.55), transparent 70%), linear-gradient(170deg, #1d5a38, #0d2b1b); }
+  .affiche::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 10mm; opacity: .4;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cg fill='none' stroke='%23e9c46a' stroke-width='.7'%3E%3Ccircle cx='10' cy='10' r='9.4'/%3E%3Ccircle cx='10' cy='10' r='6.4'/%3E%3Ccircle cx='10' cy='10' r='3.4'/%3E%3C/g%3E%3C/svg%3E") repeat-x left bottom / 20mm 10mm; }
+  .abs { position: absolute; }
+
+  .logo { left: 50%; top: 17mm; width: 70mm; transform: translateX(-50%); }
+  .logo img { display: block; width: 100%; }
+  .logo img + img { width: 96%; margin: 4.5mm auto 0; }
+
+  h1 { position: absolute; left: 0; right: 0; top: 82mm; font-family: "Bebas Neue"; font-weight: 400; font-size: 112pt; line-height: .85; color: var(--creme);
+    text-shadow: 0 1.2mm 0 rgba(0,0,0,.25); }
+  .date { left: 50%; top: 124mm; transform: translateX(-50%); white-space: nowrap; font-family: "Bebas Neue"; font-size: 34pt; line-height: 1;
+    letter-spacing: .06em; color: var(--vert-fonce); background: var(--or); border-radius: 12mm; padding: 3mm 12mm 2mm; }
+
+  /* Carte crème avec les trois services */
+  .carte { left: 24mm; right: 24mm; top: 148mm; background: var(--creme); color: var(--encre); border-radius: 8mm; padding: 9mm 12mm 10mm;
+    box-shadow: 0 3mm 10mm rgba(0,0,0,.35); border: 1.2mm solid var(--or); }
+  .service + .service { margin-top: 7mm; padding-top: 7mm; border-top: 0.4mm dashed #cdbf9f; }
+  .service h2 { font-family: "Bebas Neue"; font-weight: 400; font-size: 34pt; line-height: 1; color: var(--vert); letter-spacing: .04em;
+    display: flex; align-items: center; gap: 5mm; margin-bottom: 5.5mm; }
+  .service h2::before, .service h2::after { content: ""; flex: 1; height: 0.5mm; background: var(--or); }
+  .choix { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 5mm; }
+  .choix p { font-size: 21pt; white-space: nowrap; font-weight: 500; line-height: 1.15; }
+  .choix p:first-child { text-align: right; }
+  .choix p:last-child { text-align: left; }
+  .ou { width: 13mm; height: 13mm; border-radius: 50%; background: var(--vert); color: var(--creme); display: grid; place-items: center;
+    font-family: "Bebas Neue"; font-size: 16pt; padding-top: .6mm; }
+  .annonce { display: flex; align-items: center; justify-content: center; gap: 7mm; font-family: "Bebas Neue"; font-size: 46pt; line-height: .95;
+    color: var(--vert); }
+  .ballon { width: 26mm; height: 26mm; flex: none; filter: drop-shadow(0 1mm 1.2mm rgba(0,0,0,.25)); }
+  .ou.plus { font-size: 24pt; padding-top: 1mm; }
+  .texte { font-size: 19pt; line-height: 1.35; font-weight: 500; }
+  .avec { margin-top: 4mm; font-style: italic; font-size: 16pt; color: var(--sauge); }
+
+  /* Formules et prix */
+  .formules { left: 24mm; right: 24mm; top: 322mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; }
+  .formules div { border: 0.6mm solid var(--or); border-radius: 5mm; padding: 4.5mm 3mm 4mm; background: rgba(0,0,0,.15); }
+  .formules span { display: block; font-size: 14pt; line-height: 1.2; min-height: 2.4em; display: grid; place-items: center; }
+  .formules b { display: block; font-family: "Bebas Neue"; font-weight: 400; font-size: 40pt; line-height: 1; color: var(--or); margin-top: 1.5mm; }
+  .condition { left: 20mm; right: 20mm; top: 369mm; font-style: italic; font-size: 13pt; line-height: 1.35; color: #cfe3d3; }
+  .pied { left: 0; right: 0; bottom: 15mm; font-family: "Bebas Neue"; font-size: 17pt; letter-spacing: .28em; color: rgba(246,238,219,.6); }
+
+  .feuilles { left: -22mm; top: 92mm; width: 62mm; transform: rotate(18deg); }
+  .feuille { right: -14mm; top: 70mm; width: 48mm; transform: scaleX(-1) rotate(-30deg); }
+</style>
+</head>
+<body>
+<main class="affiche">
+  <img class="abs feuilles" src="images/feuilles.png" alt="" />
+  <img class="abs feuille" src="images/feuille.png" alt="" />
+
+  <div class="abs logo">
+    <img src="images/logo-symbole.png" alt="Wok 888" />
+    <img src="images/logo-nom.png" alt="" />
+  </div>
+
+  <h1>Europa League</h1>
+  <div class="abs date">Ce soir · jeudi 5 novembre</div>
+
+  <div class="abs carte">
+    <section class="service">
+      <h2>Soirée foot</h2>
+      <p class="annonce"><svg class="ballon" viewBox="-50 -50 100 100" aria-hidden="true"><defs><clipPath id="rond"><circle r="47"/></clipPath></defs><circle r="47" fill="#fff"/><g fill="#1d211e" clip-path="url(#rond)"><polygon points="0.0,-16.0 15.2,-4.9 9.4,12.9 -9.4,12.9 -15.2,-4.9"/><polygon points="0.0,-29.0 -12.4,-38.0 -7.6,-52.5 7.6,-52.5 12.4,-38.0"/><polygon points="27.6,-9.0 32.3,-23.5 47.6,-23.5 52.3,-9.0 39.9,0.0"/><polygon points="17.0,23.5 32.3,23.5 37.1,38.0 24.7,47.0 12.3,38.0"/><polygon points="-17.0,23.5 -12.3,38.0 -24.7,47.0 -37.1,38.0 -32.3,23.5"/><polygon points="-27.6,-9.0 -39.9,0.0 -52.3,-9.0 -47.6,-23.5 -32.3,-23.5"/></g><g stroke="#1d211e" stroke-width="2.4" fill="none"><path d="M0.0 -16.0L0.0 -31.0"/><path d="M15.2 -4.9L29.5 -9.6"/><path d="M9.4 12.9L18.2 25.1"/><path d="M-9.4 12.9L-18.2 25.1"/><path d="M-15.2 -4.9L-29.5 -9.6"/></g><circle r="47" fill="none" stroke="#1d211e" stroke-width="3"/></svg><span>On diffuse les matchs<br>de l’Europa League</span></p>
+    </section>
+    <section class="service">
+      <h2>En direct</h2>
+      <p class="texte">Venez vivre les matchs sur nos écrans,<br>entre amis ou en famille.</p>
+    </section>
+    <section class="service">
+      <h2>Pour accompagner</h2>
+      <div class="choix"><p>Bières &amp; cocktails</p><span class="ou plus">+</span><p>Sushis, wok &amp; tapas</p></div>
+    </section>
+  </div>
+
+  <div class="abs formules">
+    <div><span>Bière pression 25 cl</span><b>3,90 €</b></div>
+    <div><span>Bière pression 50 cl</span><b>7,50 €</b></div>
+    <div><span>Cocktail</span><b>8,00 €</b></div>
+  </div>
+  <p class="abs condition">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
+  <p class="abs pied">Wok 888 · Moment à partager</p>
+</main>
+</body>
+</html>
