@@ -95,10 +95,10 @@ node imprimer-affiche.js affiche-menu-du-jour
 node imprimer-affiche.js affiche-europa-league
 ```
 
-## Affiche Top 14
+## Affiche Championnat des nations
 
-**`affiche-top-14.pdf`** (A3 portrait) et **`affiche-top-14.png`** : même forme que l'affiche Europa League, pour la diffusion du match de Top 14 du samedi 7 novembre au soir. Pour un autre match, changer la date dans `affiche-top-14.html`, puis :
+**`affiche-championnat-des-nations.pdf`** (A3 portrait) et **`affiche-championnat-des-nations.png`** : même forme que l'affiche Europa League, pour la diffusion du match de rugby du Championnat des nations du samedi 7 novembre au soir. Pour un autre match, changer la date dans `affiche-championnat-des-nations.html`, puis :
 
 ```bash
-node imprimer-affiche.js affiche-top-14
+node imprimer-affiche.js affiche-championnat-des-nations
 ```
