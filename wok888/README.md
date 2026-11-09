@@ -1,6 +1,6 @@
 # WOK 888 : nouveau site
 
-Nouveau site du restaurant WOK 888, 16 route de Grenade à Seilh, qui remplace le site WordPress de wok888.fr. Il reprend toute la carte (195 plats et boissons, aux prix de l'ancien site : voir « À vérifier avec le restaurant ») dans un thème **vert et blanc**, avec des animations et une vraie expérience client : faire sauter le wok, composer le sien, laisser la machine 888 choisir son repas, casser un fortune cookie, réserver sa table. Les commandes se passent **par téléphone** : il n'y a pas de commande en ligne.
+Nouveau site du restaurant WOK 888, 16 route de Grenade à Seilh, qui remplace le site WordPress de wok888.fr. Il reprend toute la carte (232 plats et boissons, aux prix de la carte imprimée de novembre 2026) dans un thème **vert et blanc**, avec des animations et une vraie expérience client : faire sauter le wok, composer le sien, laisser la machine 888 choisir son repas, casser un fortune cookie, réserver sa table. Les commandes se passent **par téléphone** : il n'y a pas de commande en ligne.
 
 Il fonctionne en **PHP** avec une base **SQLite** (un simple fichier créé tout seul dans `data/`) : rien d'autre à installer. Il tourne tel quel sous **XAMPP** (Apache) comme chez n'importe quel hébergeur PHP.
 
@@ -12,7 +12,7 @@ Il fonctionne en **PHP** avec une base **SQLite** (un simple fichier créé tout
 | Accueil | Un wok qui saute au-dessus des flammes ; le client le fait sauter lui-même d'un clic (« Touchez le wok ! ») et les ingrédients volent. « Ce soir, envie d'un wok au canard ? » : le plat change toutes les trois secondes environ. La scène suit la souris et donne de la profondeur au défilement. « Ouvert · jusqu'à 22h30 » en direct. |
 | Le souffle du wok | 鑊氣, le *wok hei* : ce qui fait le goût d'un plat sauté au wok, avec des chiffres qui s'animent. |
 | **Composez votre wok** | Le client choisit sa base, sa garniture et l'œuf bio : l'ingrédient choisi vole jusque dans le wok, qui saute et flambe. Le prix se met à jour ; quand le wok est complet, il fume, des étincelles jaillissent et le bouton « Le commander au 05 61 58 06 97 » appelle le restaurant. Grésillement du wok en option (bouton « Son »). |
-| À la une | Les menus japonais (Royal 888, Duo, Maki, Sushi) en grandes cartes, chacune avec un bouton « Commander » qui appelle le restaurant ; elles se font glisser sur téléphone. |
+| À la une | Les menus japonais (Royal 888, Duo, Sashimi, Maki, Sushi) en grandes cartes, chacune avec un bouton « Commander » qui appelle le restaurant ; elles se font glisser sur téléphone. |
 | La carte | 8 univers (Entrées, Côté wok, Poké bowls, Nos plats, Japonais, Menus, Desserts, Boissons) avec une pastille qui glisse de l'un à l'autre, recherche, filtres, plats épuisés signalés en direct. |
 | La machine 888 | Une machine à sous qui tire une entrée, un plat et un dessert ; le repas tiré se commande d'un geste par téléphone. |
 | **Le fortune cookie** | Le client casse un fortune cookie (miettes, « crac » si le son est activé) : un message porte-bonheur s'écrit lettre à lettre, avec ses chiffres porte-bonheur et un plat de la carte tiré au sort, à commander par téléphone. |
@@ -66,6 +66,8 @@ Espace de gestion, onglet « Produits & stocks » : prix, stocks, plats masqués
 
 La carte de départ est dans `inc/carte.php`. Elle n'est chargée qu'une fois : ensuite, tout se fait dans l'espace de gestion.
 
+**Nouvelle carte imprimée ?** Mettez `inc/carte.php` à jour et augmentez `CARTE_VERSION` (en haut du fichier) : à la visite suivante, la carte en ligne est remplacée par celle du fichier. Ce qui avait été changé dans l'espace de gestion (prix, plats masqués, stocks) est remplacé aussi ; le compte et les statistiques sont gardés. C'est ce qui a été fait en novembre 2026 (version 3).
+
 ## Réservations
 
 Les tables réservées avec le bouton « Réserver » du site arrivent dans **resOS**. Dans l'espace de gestion, le bouton **« Réservations ↗ »** (en haut) ouvre resOS (<https://app.resos.com/login>) : on s'y connecte avec le compte resOS du restaurant, pas avec celui de l'espace de gestion. L'application resOS (iPhone et Android) donne le même accès sur téléphone.
@@ -106,9 +108,10 @@ Le thème vert et blanc est réglé en haut de `site.css` (`--vert`, `--vert-fon
 ## À vérifier avec le restaurant
 
 - **Mentions légales** (`mentions-legales.html`) : société (SAS JVS), SIRET (932 562 028 00013), TVA (FR68932562028), directeur de la publication (Laurent TRANCHARD) et hébergeur (IONOS) sont indiqués ; seul le capital social est marqué « à compléter ».
-- **Prix différents sur l'ancien site** entre la carte et la commande en ligne ; la carte a été suivie : porc croustillant à l'aigre-douce 13,10 € (12,50 € en ligne), riz vinaigré 4,00 € (6,00 €), mangue fraîche 6,90 € (7,90 €), maki crevette et maki ebi tempura 3,30 € (3,50 € et 4,90 €).
-- **Bière pression** : l'ancien site affichait 8,00 € pour 25 cl comme pour 50 cl ; la 25 cl est affichée « sur demande » en attendant le bon prix.
-- **Orthographe corrigée** : « Angkor Red » (« Anghor Red »), « Cosmopolitan » (« Cosmopolitain »), « Ha kao » (« 5 mièces »). À remettre si c'était voulu.
+- **Carte imprimée de novembre 2026** (A3, 3 volets) : le site en reprend les prix et les plats. Retirés car absents de cette carte : poké bowl du moment, chirashi du moment. Sur la carte imprimée, à vérifier :
+  - **Menu Duo** : annoncé « 18 pièces », mais sa composition en compte 20 (3 makis, 3 california, 8 sushis, 3 sashimis, 3 brochettes) ;
+  - **Poké bowl saumon** : la description imprimée est celle du potage au crabe (« Chair de crabe, champignons noirs, pousses de bambou ») ; le site n'en met pas ;
+  - **Orthographe gardée sur le site** : « Wok lok lak » (« Lak lak »), « Get 27 » (« Jet 27 »), « Mei Kwei Lu » (« Mei Kweilu »), « Picpoul de Pinet, Beau Vignac » (« Beauvignac »), « sashimi daurade » (« dorade », écrit « daurade » dans les menus).
 - **Horaires** : 12h00 – 22h30 sans interruption, comme sur l'ancien site.
 
 ## Moteur commun avec Aux Saveurs Braisées

@@ -1043,6 +1043,10 @@ address { font-size: 1.15rem; font-style: normal; font-weight: 600; }
   .hanzi { writing-mode: vertical-rl; font-size: clamp(9rem, 15vw, 13rem); letter-spacing: .1em; }
   .composer-grille { grid-template-columns: 1fr 1fr; gap: 40px; }
   .poele { top: calc(var(--entete-h) + 20px); }
+  /* Cinq menus à la une : trois, puis deux au centre (plutôt qu'un menu seul sur la deuxième ligne) */
+  .signature-liste:has(> .menu-carte:nth-child(5):last-child) { grid-template-columns: repeat(6, 1fr); }
+  .signature-liste:has(> .menu-carte:nth-child(5):last-child) > .menu-carte { grid-column: span 2; }
+  .signature-liste:has(> .menu-carte:nth-child(5):last-child) > .menu-carte:nth-child(4) { grid-column: 2 / span 2; }
   .scene-poele { max-height: none; }
   .poele-resume { padding: 18px 24px 22px; }
   .poele-nom { font-size: 1.25rem; white-space: normal; }

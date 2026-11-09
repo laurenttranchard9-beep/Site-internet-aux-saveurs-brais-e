@@ -39,7 +39,7 @@ require "$root/inc/carte.php";
 $carte = carte();
 $notes = carte_notes();
 $plats = array_merge(...array_values($carte));
-check('34 catégories et 195 produits', count($carte) === 34 && count($plats) === 195);
+check('36 catégories et 232 produits', count($carte) === 36 && count($plats) === 232);
 check('prix en centimes (entiers positifs, ou null = sur demande)', !array_filter($plats, fn($p) => !($p[2] === null || (is_int($p[2]) && $p[2] >= 0))));
 // Mêmes limites que l'espace de gestion : sinon un plat ne pourrait plus être modifié tel quel.
 check('noms, descriptions et étiquettes dans les limites de la gestion', !array_filter($plats, fn($p) =>
@@ -54,9 +54,15 @@ check('wok à composer : 6 garnitures, 3 bases, 1 supplément',
     && count(array_filter($wok, fn($p) => $aEtiquette($p, 'Supplément'))) === 1);
 check('bases et suppléments seulement dans « Côté wok »', !array_filter(array_diff_key($carte, ['Côté wok' => 1]), fn($items) =>
     array_filter($items, fn($p) => $aEtiquette($p, 'Base') || $aEtiquette($p, 'Supplément'))));
-check('4 menus « À la une », dont le Royal 888 à 60 €', count(array_filter($plats, fn($p) => $aEtiquette($p, 'À la une'))) === 4
+check('5 menus « À la une », dont le Royal 888 à 60 €', count(array_filter($plats, fn($p) => $aEtiquette($p, 'À la une'))) === 5
     && $carte['Menus · Menus japonais'][0][0] === 'Menu Royal 888' && $carte['Menus · Menus japonais'][0][2] === 6000);
-check('plus d\'étiquette « Sur place » (carte version 2)', CARTE_VERSION === 2 && !array_filter($plats, fn($p) => $aEtiquette($p, 'Sur place')));
+check('plus d\'étiquette « Sur place » (depuis la carte version 2)', CARTE_VERSION >= 2 && !array_filter($plats, fn($p) => $aEtiquette($p, 'Sur place')));
+// Carte version 3 : celle de la carte imprimée de novembre 2026, où chaque plat a son prix
+$prixDe = [];
+foreach ($carte as $cat => $items) foreach ($items as $p) $prixDe["$cat / $p[0]"] = $p[2];
+check('prix de la carte imprimée (version 3), aucun plat « sur demande »', CARTE_VERSION === 3 && !in_array(null, $prixDe, true)
+    && $prixDe['Entrées · Grillades / Brochette de poulet'] === 690 && $prixDe['Poké bowls / Poké bowl crevettes'] === 1790
+    && $prixDe['Menus · Menu du jour / Menu du jour entrée + plat'] === 1700 && $prixDe['Boissons · Bières / Bière pression 25 cl'] === 390);
 $fautes = ['Seihl', 'mièces', 'Soupede', 'Anghor', 'Cosmopolitain', 'Lorem ipsum', 'Benjiro', 'High Salary', 'Bò Bún Nem aux crevettes + 1,50'];
 $textes = file_get_contents("$root/inc/carte.php") . file_get_contents("$root/index.html");
 check("fautes et textes de démonstration de l'ancien site absents", !array_filter($fautes, fn($f) => stripos($textes, $f) !== false));
@@ -117,10 +123,10 @@ $api = function (string $action, ?array $body = null) {
 
 // --- Carte servie par l'API ---
 [$s, $menu] = $api('menu');
-check('carte publique servie', $s === 200 && count($menu['categories']) === 34);
+check('carte publique servie', $s === 200 && count($menu['categories']) === 36);
 $produit = [];
 foreach ($menu['categories'] as $c) foreach ($c['products'] as $p) $produit[$c['name'] . ' / ' . $p['name']] = $p;
-check('« Côté wok » : bases à 0 € et 1,50 €, œuf bio à 2,50 €', $produit['Côté wok / Nouilles']['priceCents'] === 0
+check('« Côté wok » : bases à 0 € et 1,50 €, œuf bio à 2,50 €', $produit['Côté wok / Nouilles ou udon']['priceCents'] === 0
     && $produit['Côté wok / Riz sauté aux crevettes et surimi']['priceCents'] === 150 && $produit['Côté wok / Œuf bio']['priceCents'] === 250);
 
 // --- Pages et fichiers ---
