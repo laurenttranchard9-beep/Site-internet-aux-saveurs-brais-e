@@ -102,3 +102,11 @@ node imprimer-affiche.js affiche-europa-league
 ```bash
 node imprimer-affiche.js affiche-championnat-des-nations
 ```
+
+## Affiche Italie – France
+
+**`affiche-italie-france.pdf`** (A3 portrait) et **`affiche-italie-france.png`** : même forme que les autres affiches de match, pour la diffusion du match Italie – France du jeudi 12 novembre à 21h, avec les drapeaux des deux pays. Pour un autre match, changer les équipes, la date et l'heure dans `affiche-italie-france.html`, puis :
+
+```bash
+node imprimer-affiche.js affiche-italie-france
+```
